@@ -9,8 +9,15 @@ export const tabsliceDashboard = createSlice({
     setActiveTab: (state, action) => {
       state.activeTab = action.payload;
     },
+    setActiveFalse: (state) => {
+      state.activeTab = false;
+    },
+    setActiveTrue: (state) => {
+      state.activeTab = true;
+    },
   },
 });
 
-export const { setActiveTab } = tabsliceDashboard.actions;
+export const { setActiveTab, setActiveFalse, setActiveTrue } =
+  tabsliceDashboard.actions;
 export default tabsliceDashboard.reducer;
