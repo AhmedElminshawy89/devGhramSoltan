@@ -74,7 +74,9 @@ const Studio = () => {
       name: "تاريخ المناسبة",
       options: {
         filter: true,
-        customFilterListRender: (value) => `تاريخ: ${value}`,
+        customFilterListOptions: {
+          render: (value) => `تاريخ: ${value}`,
+        },
         customFilterAndSearch: (filterValue, rowData) => {
           return rowData[2].includes(filterValue);
         },
@@ -170,8 +172,8 @@ const Studio = () => {
 
   const options = {
     filterType: "dropdown",
-    selectableRows: false,
-    elevation: false,
+    selectableRows: 'none',
+    // elevation: false,
     setRowProps: (row, dataIndex, rowIndex) => {
       return {
         style: {

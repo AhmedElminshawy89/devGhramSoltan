@@ -79,8 +79,8 @@ const Quickly = () => {
 
   const options = {
     filterType: "dropdown",
-    selectableRows: false,
-    elevation: false,
+    selectableRows: 'none',
+    // elevation: false,
     setRowProps: (row, dataIndex, rowIndex) => {
       return {
         style: {

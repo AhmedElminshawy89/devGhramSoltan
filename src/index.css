@@ -51,9 +51,6 @@ li {
   z-index: 5555;
 }
 
-.sidebar-mobile .logo {
-  display: none;
-}
 
 .sidebar-mobile .link-pages ul li a p {
   display: none;
@@ -216,7 +213,7 @@ li {
 .sidebar-mobile .link-pages {
   margin-top: 20px;
   overflow-y: scroll;
-  height: calc(100vh - 40px);
+  height: calc(100vh - 70px);
 }
 .sidebar-title {
   display: flex;

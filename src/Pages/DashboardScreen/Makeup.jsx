@@ -72,7 +72,9 @@ const Makeup = () => {
       name: "تاريخ المناسبه",
       options: {
         filter: true,
-        customFilterListRender: (value) => `تاريخ: ${value}`,
+        customFilterListOptions: {
+          render: (value) => `تاريخ: ${value}`,
+        },
         customFilterAndSearch: (filterValue, rowData) => {
           return rowData[2].includes(filterValue);
         },
@@ -218,8 +220,8 @@ const Makeup = () => {
 
   const options = {
     filterType: "dropdown",
-    selectableRows: false,
-    elevation: false,
+    selectableRows: 'none',
+    // elevation: false,
     setRowProps: (row, dataIndex, rowIndex) => {
       return {
         style: {
@@ -484,7 +486,7 @@ const Makeup = () => {
         </Dialog>
       </Transition>
       <MUIDataTable
-        title={"تقارير استوديو التصوير"}
+        title={"تقارير ميكاب"}
         data={data}
         columns={columns}
         options={options}

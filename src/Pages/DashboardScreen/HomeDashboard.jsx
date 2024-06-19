@@ -3,7 +3,7 @@ import { PiUser } from "react-icons/pi";
 import { LuPackage } from "react-icons/lu";
 import MUIDataTable from "mui-datatables";
 import { IoTimer } from "react-icons/io5";
-import {  FaFileInvoiceDollar, FaPhotoVideo } from "react-icons/fa";
+import { FaFileInvoiceDollar, FaPhotoVideo } from "react-icons/fa";
 import { FaRegFaceGrinBeam } from "react-icons/fa6";
 import { Tab } from "@headlessui/react";
 
@@ -17,7 +17,9 @@ const HomeDashboard = () => {
       name: "تاريخ المناسبة",
       options: {
         filter: true,
-        customFilterListRender: (value) => `تاريخ: ${value}`,
+        customFilterListOptions: {
+          render: (value) => `تاريخ: ${value}`,
+        },
         customFilterAndSearch: (filterValue, rowData) => {
           return rowData[2].includes(filterValue);
         },
@@ -29,7 +31,7 @@ const HomeDashboard = () => {
     "باقي",
     "سبب الخصم",
   ];
-
+  
   const data = [
     [
       "12:00",
@@ -92,11 +94,11 @@ const HomeDashboard = () => {
       "خصم موسمي",
     ],
   ];
-
+  
   const options = {
     filterType: "dropdown",
-    selectableRows: false,
-    elevation: false,
+    selectableRows: 'none',
+    // elevation: false,
     setRowProps: (row, dataIndex, rowIndex) => {
       return {
         style: {
@@ -139,6 +141,7 @@ const HomeDashboard = () => {
       },
     },
   };
+  
 
   return (
     <div className="p-4">
@@ -192,13 +195,29 @@ const HomeDashboard = () => {
         <div className="bg-white flex-1 p-4 rounded-xl shadow-lg w-full">
           <div className="flex items-start gap-8 justify-between">
             <div>
-              <p className="text-[#67748e] text-2xl font-semibold">حجوزات الميكاب</p>
+              <p className="text-[#67748e] text-2xl font-semibold">
+                حجوزات الميكاب
+              </p>
               <div className="pr-4">
-              <p className="text-[#344767] text-lg font-medium mb-1">عدد الحجوزات: 6</p>
-              <p className="text-[#344767] text-lg font-medium mb-1">  الاجمالي: 15000</p>
-              <p className="text-[#344767] text-lg font-medium mb-1">  المدفوع: 12250</p>
-              <p className="text-[#344767] text-lg font-medium mb-1"> المبالغ المتبقيه: 2750</p>
-              <p className="text-[#344767] text-lg font-medium mb-1">  %نسبه الخصم: 20</p>
+                <p className="text-[#344767] text-lg font-medium mb-1">
+                  عدد الحجوزات: 6
+                </p>
+                <p className="text-[#344767] text-lg font-medium mb-1">
+                  {" "}
+                  الاجمالي: 15000
+                </p>
+                <p className="text-[#344767] text-lg font-medium mb-1">
+                  {" "}
+                  المدفوع: 12250
+                </p>
+                <p className="text-[#344767] text-lg font-medium mb-1">
+                  {" "}
+                  المبالغ المتبقيه: 2750
+                </p>
+                <p className="text-[#344767] text-lg font-medium mb-1">
+                  {" "}
+                  %نسبه الخصم: 20
+                </p>
               </div>
             </div>
             <div className="bg-gradient-to-br from-[#E9C357] to-[#f3c74d] shadow-lg p-2 rounded-lg">
@@ -209,13 +228,29 @@ const HomeDashboard = () => {
         <div className="bg-white flex-1 p-4 rounded-xl shadow-lg w-full">
           <div className="flex items-start gap-8 justify-between">
             <div>
-              <p className="text-[#67748e] text-2xl font-semibold">حجوزات استوديو</p>
+              <p className="text-[#67748e] text-2xl font-semibold">
+                حجوزات استوديو
+              </p>
               <div className="pr-4">
-              <p className="text-[#344767] text-lg font-medium mb-1">عدد الحجوزات: 6</p>
-              <p className="text-[#344767] text-lg font-medium mb-1">  الاجمالي: 15000</p>
-              <p className="text-[#344767] text-lg font-medium mb-1">  المدفوع: 12250</p>
-              <p className="text-[#344767] text-lg font-medium mb-1"> المبالغ المتبقيه: 2750</p>
-              <p className="text-[#344767] text-lg font-medium mb-1">  %نسبه الخصم: 20</p>
+                <p className="text-[#344767] text-lg font-medium mb-1">
+                  عدد الحجوزات: 6
+                </p>
+                <p className="text-[#344767] text-lg font-medium mb-1">
+                  {" "}
+                  الاجمالي: 15000
+                </p>
+                <p className="text-[#344767] text-lg font-medium mb-1">
+                  {" "}
+                  المدفوع: 12250
+                </p>
+                <p className="text-[#344767] text-lg font-medium mb-1">
+                  {" "}
+                  المبالغ المتبقيه: 2750
+                </p>
+                <p className="text-[#344767] text-lg font-medium mb-1">
+                  {" "}
+                  %نسبه الخصم: 20
+                </p>
               </div>
             </div>
             <div className="bg-gradient-to-br from-[#E9C357] to-[#f3c74d] shadow-lg p-2 rounded-lg">
@@ -224,7 +259,7 @@ const HomeDashboard = () => {
           </div>
         </div>
       </div>
-      <Tab.Group >
+      <Tab.Group>
         <Tab.List className="flex p-1 space-x-1 bg-[#f3c74d] rounded-xl">
           <Tab as={Fragment}>
             {({ selected }) => (
@@ -235,7 +270,7 @@ const HomeDashboard = () => {
                     : "text-black hover:bg-white/[0.12] hover:text-black"
                 }`}
               >
-                حجز يومي 
+                حجز يومي
               </button>
             )}
           </Tab>
@@ -248,7 +283,7 @@ const HomeDashboard = () => {
                     : "text-black hover:bg-white/[0.12] hover:text-black"
                 }`}
               >
-                 حجز استوديو
+                حجز استوديو
               </button>
             )}
           </Tab>
@@ -261,7 +296,7 @@ const HomeDashboard = () => {
                     : "text-black hover:bg-white/[0.12] hover:text-black"
                 }`}
               >
-                 حجز ميكاب
+                حجز ميكاب
               </button>
             )}
           </Tab>
@@ -291,8 +326,8 @@ const HomeDashboard = () => {
               options={options}
             />
           </Tab.Panel>
-          </Tab.Panels>
-          </Tab.Group>
+        </Tab.Panels>
+      </Tab.Group>
     </div>
   );
 };

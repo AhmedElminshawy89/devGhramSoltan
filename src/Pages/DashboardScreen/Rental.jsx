@@ -84,7 +84,7 @@ const Rental = () => {
 
   const options = {
     filterType: "dropdown",
-    selectableRows: false,
+    selectableRows: 'none',
     // elevation: false,
     setRowProps: (row, dataIndex, rowIndex) => {
       return {
