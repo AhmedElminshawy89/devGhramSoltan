@@ -14,6 +14,7 @@ import AddDiscount from "../Pages/DashboardScreen/AddDiscount";
 import AddPackage from "../Pages/DashboardScreen/AddPackage";
 import AddSubPackage from "../Pages/DashboardScreen/AddSubPackage";
 import Reports from "../Pages/DashboardScreen/Reports";
+import Login from "../Pages/DashboardScreen/Login";
 const Routing = () => {
   return (
     <>
@@ -34,6 +35,7 @@ const Routing = () => {
           <Route path="add-subpackage" element={<AddSubPackage />} />
           <Route path="reports" element={<Reports />} />
         </Route>
+        <Route path='/moderator/login' element={<Login/>}/>
       </Routes>
     </>
   );

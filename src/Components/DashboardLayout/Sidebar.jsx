@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import { IoCloseSharp } from "react-icons/io5";
 import { setActiveFalse, setActiveTrue } from "../../app/Feature/TabSlice";
 import links from "../../assets/data/SidebarLinks";
+import { IoIosLogOut } from "react-icons/io";
 
 const Sidebar = () => {
   const activeTab = useSelector((state) => state.tab.activeTab);
@@ -55,6 +56,14 @@ const Sidebar = () => {
                 </Link>
               </li>
             ))}
+                <li
+                onClick={handleCloseDrawer}
+              >
+                <Link to={'/moderator/Login'}>
+                  <IoIosLogOut/>
+                  <p>تسجيل الخروج</p>
+                </Link>
+              </li>
           </ul>
         </div>
       </div>
