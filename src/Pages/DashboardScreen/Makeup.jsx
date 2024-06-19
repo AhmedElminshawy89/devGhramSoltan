@@ -1,7 +1,7 @@
 import React, { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
-import { InputNumber } from 'antd';
+import { InputNumber } from "antd";
 import { VscSaveAs } from "react-icons/vsc";
 import MUIDataTable from "mui-datatables";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
@@ -24,13 +24,13 @@ const Makeup = () => {
   const handleTotalChange = (value) => {
     const newTotal = parseFloat(value) || 0;
     setTotal(newTotal);
-    setRemaining(newTotal - payment - (newTotal * discountRate / 100));
+    setRemaining(newTotal - payment - (newTotal * discountRate) / 100);
   };
 
   const handlePaymentChange = (value) => {
     const newPayment = parseFloat(value) || 0;
     setPayment(newPayment);
-    setRemaining(total - newPayment - (total * discountRate / 100));
+    setRemaining(total - newPayment - (total * discountRate) / 100);
   };
 
   const handleDiscountTypeChange = (e) => {
@@ -47,7 +47,7 @@ const Makeup = () => {
     }
 
     setDiscountRate(discount);
-    setRemaining(total - payment - (total * discount / 100));
+    setRemaining(total - payment - (total * discount) / 100);
   };
 
   const handleSubmit = (e) => {
@@ -66,8 +66,8 @@ const Makeup = () => {
 
   const columns = [
     "نوع الباكدج",
-    "اسم العروسه", 
-    "رقم الهاتف", 
+    "اسم العروسه",
+    "رقم الهاتف",
     {
       name: "تاريخ المناسبه",
       options: {
@@ -76,8 +76,8 @@ const Makeup = () => {
         customFilterAndSearch: (filterValue, rowData) => {
           return rowData[2].includes(filterValue);
         },
-      }
-    }, 
+      },
+    },
     "الاجمالي",
     "المدفوع",
     "الباقي",
@@ -91,10 +91,10 @@ const Makeup = () => {
           return (
             <>
               <button onClick={() => handleEdit(rowIndex)} className="ml-5">
-                <AiOutlineEdit className="text-lg"/>
+                <AiOutlineEdit className="text-2xl text-black" />
               </button>
               <button onClick={() => handleDelete(rowIndex)}>
-                <AiOutlineDelete className="text-lg"/>
+                <AiOutlineDelete className="text-2xl text-[#ef4444]" />
               </button>
             </>
           );
@@ -104,16 +104,116 @@ const Makeup = () => {
   ];
 
   const data = [
-    ["زفاف", "هاله محمد","0123456789", "2023-06-15","5000","2500","1750","خصم موسمي","15 %"],
-    ["زفاف مخصوص ", "مني محمد","0123456789", "2023-06-5","5000","2500","1750","خصم خاص","15 %"],
-    ["زفاف", "شيماء محمد","0123456789", "2023-06-25","5000","2500","1750","خصم موسمي","15 %"],
-    ["زفاف", "دعاء محمد","0123456789", "2023-06-8","5000","2500","1750","خصم موسمي","15 %"],
-    ["زفاف", "هاله محمد","0123456789", "2023-06-9","5000","2500","1750","خصم موسمي","15 %"],
-    ["زفاف", "هاله محمد","0123456789", "2023-06-15","5000","2500","1750","خصم موسمي","15 %"],
-    ["زفاف", "هاله محمد","0123456789", "2023-06-20","5000","2500","1750","خصم موسمي","15 %"],
-    ["زفاف", "هاله محمد","0123456789", "2023-06-25","5000","2500","1750","خصم موسمي","15 %"],
-    ["زفاف", "هاله محمد","0123456789", "2023-06-30","5000","2500","1750","خصم موسمي","15 %"],
-    ["زفاف", "هاله محمد","0123456789", "2023-06-16","5000","2500","1750","خصم موسمي","15 %"],
+    [
+      "زفاف",
+      "هاله محمد",
+      "0123456789",
+      "2023-06-15",
+      "5000",
+      "2500",
+      "1750",
+      "خصم موسمي",
+      "15 %",
+    ],
+    [
+      "زفاف مخصوص ",
+      "مني محمد",
+      "0123456789",
+      "2023-06-5",
+      "5000",
+      "2500",
+      "1750",
+      "خصم خاص",
+      "15 %",
+    ],
+    [
+      "زفاف",
+      "شيماء محمد",
+      "0123456789",
+      "2023-06-25",
+      "5000",
+      "2500",
+      "1750",
+      "خصم موسمي",
+      "15 %",
+    ],
+    [
+      "زفاف",
+      "دعاء محمد",
+      "0123456789",
+      "2023-06-8",
+      "5000",
+      "2500",
+      "1750",
+      "خصم موسمي",
+      "15 %",
+    ],
+    [
+      "زفاف",
+      "هاله محمد",
+      "0123456789",
+      "2023-06-9",
+      "5000",
+      "2500",
+      "1750",
+      "خصم موسمي",
+      "15 %",
+    ],
+    [
+      "زفاف",
+      "هاله محمد",
+      "0123456789",
+      "2023-06-15",
+      "5000",
+      "2500",
+      "1750",
+      "خصم موسمي",
+      "15 %",
+    ],
+    [
+      "زفاف",
+      "هاله محمد",
+      "0123456789",
+      "2023-06-20",
+      "5000",
+      "2500",
+      "1750",
+      "خصم موسمي",
+      "15 %",
+    ],
+    [
+      "زفاف",
+      "هاله محمد",
+      "0123456789",
+      "2023-06-25",
+      "5000",
+      "2500",
+      "1750",
+      "خصم موسمي",
+      "15 %",
+    ],
+    [
+      "زفاف",
+      "هاله محمد",
+      "0123456789",
+      "2023-06-30",
+      "5000",
+      "2500",
+      "1750",
+      "خصم موسمي",
+      "15 %",
+    ],
+    [
+      "زفاف",
+      "هاله محمد",
+      "0123456789",
+      "2023-06-16",
+      "5000",
+      "2500",
+      "1750",
+      "خصم موسمي",
+      "15 %",
+    ],
   ];
 
   const options = {
@@ -123,7 +223,7 @@ const Makeup = () => {
     setRowProps: (row, dataIndex, rowIndex) => {
       return {
         style: {
-          backgroundColor: rowIndex % 2 === 0 ? '#f5f5f5' : '#ffffff',
+          backgroundColor: rowIndex % 2 === 0 ? "#f5f5f5" : "#ffffff",
         },
       };
     },
@@ -131,7 +231,7 @@ const Makeup = () => {
       body: {
         noMatch: "لا توجد بيانات مطابقة",
         toolTip: "فرز",
-        columnHeaderTooltip: column => `فرز لـ ${column.label}`,
+        columnHeaderTooltip: (column) => `فرز لـ ${column.label}`,
       },
       pagination: {
         next: "الصفحة التالية",
@@ -167,9 +267,9 @@ const Makeup = () => {
     <div className="p-4">
       <button
         onClick={openModal}
-        className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
+        className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
       >
-       <VscSaveAs className="ml-3" /> حجز ميكاب
+        <VscSaveAs className="ml-3" /> حجز ميكاب
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -197,7 +297,7 @@ const Makeup = () => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-7xl h-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-5xl h-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
@@ -205,7 +305,10 @@ const Makeup = () => {
                     حجز ميكاب
                   </Dialog.Title>
                   <div className="mt-2 overflow-y-auto h-full">
-                    <form className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3" onSubmit={handleSubmit}>
+                    <form
+                      className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
+                      onSubmit={handleSubmit}
+                    >
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"

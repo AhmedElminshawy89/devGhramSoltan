@@ -42,9 +42,9 @@ const links = [
     icon: <FaFileInvoiceDollar />,
     label: "المصروفات",
   },
-  { to: "/moderator/Loans", icon: <FaHandHoldingUsd />, label: "سلفة العامل" },
+  { to: "/moderator/Loans", icon: <FaHandHoldingUsd />, label: "سلفة الموظف" },
   { to: "/moderator/add-admin", icon: <RiAdminFill />, label: "إضافة أدمن" },
-  { to: "/moderator/add-employee", icon: <FaUserPlus />, label: "إضافة عامل" },
+  { to: "/moderator/add-employee", icon: <FaUserPlus />, label: "إضافة موظف" },
   {
     to: "/moderator/add-discount",
     icon: <RiDiscountPercentFill />,
