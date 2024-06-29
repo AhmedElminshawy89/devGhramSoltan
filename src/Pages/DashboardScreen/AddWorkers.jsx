@@ -4,13 +4,12 @@ import { AiOutlineClose, AiOutlineSave, AiOutlineEdit, AiOutlineDelete } from "r
 import { VscSaveAs } from "react-icons/vsc";
 import MUIDataTable from "mui-datatables";
 
-const Loans = () => {
+const AddWorkers = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [employeeName, setEmployeeName] = useState("");
   const [expenseReason, setExpenseReason] = useState("");
   const [amount, setAmount] = useState("");
 
-  const employees = ["أحمد", "محمد", "منى", "سارة"];
 
   function closeModal() {
     setIsOpen(false);
@@ -33,10 +32,8 @@ const Loans = () => {
     console.log("Delete clicked for row:", rowIndex);
   };
   const columns = [
-    "اسم الموظف",
-    "سبب الصرف",
-    "المبلغ",
-    "تاريخ العمليه",
+    "الاسم",
+    "السعر",    "تاريخ العمليه",
     "تاريخ التعديل",
     {
       name: "تنفيذ",
@@ -59,9 +56,9 @@ const Loans = () => {
   ];
 
   const data = [
-    ["أحمد", "مصروف نقدى", "3000","30-5-2024","30-6-2024"],
-    ["محمد", "خدمة تصوير", "2000","30-5-2024","30-6-2024"],
-    ["منى", "تنظيم حفلة", "4000","30-5-2024","30-6-2024"],
+    ["مونكير","30","30-5-2024","30-6-2024"],
+    ["مونكير","30","30-5-2024","30-6-2024"],
+    ["مونكير","30","30-5-2024","30-6-2024"],
   ];
 
   const options = {
@@ -117,7 +114,7 @@ const Loans = () => {
         onClick={openModal}
         className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
       >
-        <VscSaveAs className="ml-3" />  سلفه
+        <VscSaveAs className="ml-3" />   الشغل الاضافي
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -147,7 +144,7 @@ const Loans = () => {
               >
               <Dialog.Panel className="bg-white rounded-lg px-4 py-6 w-full max-w-md mx-auto overflow-y-auto shadow-xl">
                 <Dialog.Title className="text-lg font-medium leading-6 text-gray-900 text-start mb-4">
-                سلفه
+                الشغل الاضافي
                 </Dialog.Title>
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
                   <div>
@@ -155,34 +152,11 @@ const Loans = () => {
                       htmlFor="employeeName"
                       className="block text-gray-700 text-sm font-bold mb-2 text-start"
                     >
-                      اسم الموظف
-                    </label>
-                    <select
-                      id="employeeName"
-                      value={employeeName}
-                      onChange={(e) => setEmployeeName(e.target.value)}
-                      className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline"
-                    >
-                      <option value="">اختر اسم الموظف</option>
-                      {employees.map((employee) => (
-                        <option key={employee} value={employee}>
-                          {employee}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="expenseReason"
-                      className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                    >
-                      سبب السلف
+                      الاسم
                     </label>
                     <input
-                      id="expenseReason"
+                      id="employeeName"
                       type="text"
-                      value={expenseReason}
-                      onChange={(e) => setExpenseReason(e.target.value)}
                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     />
                   </div>
@@ -191,7 +165,7 @@ const Loans = () => {
                       htmlFor="amount"
                       className="block text-gray-700 text-sm font-bold mb-2 text-start"
                     >
-                      المبلغ
+                      السعر
                     </label>
                     <input
                       id="amount"
@@ -225,7 +199,7 @@ const Loans = () => {
       </Transition>
 
       <MUIDataTable
-        title={"تقارير السلف"}
+        title={"تقارير الشغل الاضافي"}
         data={data}
         columns={columns}
         options={options}
@@ -234,4 +208,4 @@ const Loans = () => {
   );
 };
 
-export default Loans;
+export default AddWorkers;

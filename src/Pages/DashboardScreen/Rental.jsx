@@ -1,11 +1,6 @@
 import React, { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import {
-  AiOutlineClose,
-  AiOutlineSave,
-  AiOutlineEdit,
-  AiOutlineDelete,
-} from "react-icons/ai";
+import { AiOutlineClose, AiOutlineSave, AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import { VscSaveAs } from "react-icons/vsc";
 import MUIDataTable from "mui-datatables";
 import Select from "react-select";
@@ -16,26 +11,15 @@ const Rental = () => {
   const [categories, setCategories] = useState([]);
   const [insuranceType, setInsuranceType] = useState("");
   const [status, setStatus] = useState("");
-  console.log(categories);
+
   const allCategories = [
-    "تاج",
-    "هيربيز",
-    "خاتم",
-    "توينز",
-    "طرحه",
-    "عقد",
-    "حلق",
+    "تاج", "هيربيز", "خاتم", "توينز", "طرحه", "عقد", "حلق"
   ];
-  const insuranceTypes = ["نوع التامين 1", "نوع التامين 2", "نوع التامين 3"];
+  const insuranceTypes = [ "بطاقه", "كاش"];
   const statuses = ["تم الاسترجاع", "لم يتم الاسترجاع"];
 
-  function closeModal() {
-    setIsOpen(false);
-  }
-
-  function openModal() {
-    setIsOpen(true);
-  }
+  const openModal = () => setIsOpen(true);
+  const closeModal = () => setIsOpen(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -51,15 +35,50 @@ const Rental = () => {
     console.log("Delete clicked for row:", rowIndex);
   };
 
+  const toggleStatus = (rowIndex) => {
+    const updatedData = [...data];
+    updatedData[rowIndex][4] =
+      data[rowIndex][4] === "تم الاسترجاع" ? "لم يتم الاسترجاع" : "تم الاسترجاع";
+    setData(updatedData); // Assuming you have a state variable 'data' and a setter function 'setData' to update it
+  };
+
   const columns = [
-    "الاسم",
-    "الانواع المعاره",
-    "نوع التامين",
-    "الحالة",
+    "الاسم", "الانواع المعاره", "نوع التامين", "قيمه التامين",
+    {
+      name: "الحاله",
+      options: {
+        customBodyRender: (value, tableMeta) => {
+          const rowIndex = tableMeta.rowIndex;
+          const currentStatus = data[rowIndex][4];
+
+          return (
+            <>
+              {currentStatus === "تم الاسترجاع" ? (
+                <button
+                  onClick={() => toggleStatus(rowIndex)}
+                  className="bg-black py-1 px-4 text-white font-semibold text-lg rounded-full"
+                >
+                  لم يتم الاسترجاع
+                </button>
+              ) : (
+                <button
+                  onClick={() => toggleStatus(rowIndex)}
+                  className="bg-[#f3c74d] py-1 px-4 text-black font-semibold text-lg rounded-full"
+                >
+                   تم الاسترجاع
+                </button>
+              )}
+            </>
+          );
+        },
+      },
+    },
+    "تاريخ الايجار",
+    "تاريخ التعديل",
     {
       name: "تنفيذ",
       options: {
-        customBodyRender: (value, tableMeta, updateValue) => {
+        customBodyRender: (value, tableMeta) => {
           const rowIndex = tableMeta.rowIndex;
           return (
             <>
@@ -76,23 +95,20 @@ const Rental = () => {
     },
   ];
 
-  const data = [
-    ["أحمد علي", " خاتم و عقد", "نوع التامين 1", "تم الاسترجاع"],
-    ["منى سعيد", "خاتم و هيربيز و توينز", "نوع التامين 2", "لم يتم الاسترجاع"],
-    ["محمد يوسف", "تاج", "نوع التامين 3", "تم الاسترجاع"],
-  ];
+  const [data, setData] = useState([
+    ["أحمد علي", " خاتم و عقد", "بطاقه", "305646460464034", "تم الاسترجاع","30-5-2024","30-6-2024"],
+    ["منى سعيد", "خاتم و هيربيز و توينز", "كاش","500", "لم يتم الاسترجاع","30-5-2024","30-6-2024"],
+    ["أحمد علي", " خاتم و عقد", "بطاقه", "305646460464034", "تم الاسترجاع","30-5-2024","30-6-2024"],
+  ]);
 
   const options = {
     filterType: "dropdown",
     selectableRows: 'none',
-    // elevation: false,
-    setRowProps: (row, dataIndex, rowIndex) => {
-      return {
-        style: {
-          backgroundColor: rowIndex % 2 === 0 ? "#f5f5f5" : "#ffffff",
-        },
-      };
-    },
+    setRowProps: (row, dataIndex, rowIndex) => ({
+      style: {
+        backgroundColor: rowIndex % 2 === 0 ? "#f5f5f5" : "#ffffff",
+      },
+    }),
     textLabels: {
       body: {
         noMatch: "لا توجد بيانات مطابقة",
@@ -128,6 +144,7 @@ const Rental = () => {
       },
     },
   };
+
   return (
     <div className="p-4">
       <button
@@ -237,6 +254,19 @@ const Rental = () => {
                             </option>
                           ))}
                         </select>
+                      </div>
+                      <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="deposit"
+                        >
+                          {insuranceType === "كاش" ? "المبلغ" : "رقم البطاقه"}
+                        </label>
+                        <input
+                          id="deposit"
+                          type="text"
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        />
                       </div>
                       <div className="mb-4">
                         <label

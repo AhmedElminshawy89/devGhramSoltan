@@ -11,9 +11,9 @@ const AddEmployee = () => {
   const [salary, setSalary] = useState("");
 
   const data = [
-    ["أحمد محمد", "0123456789", "5000 جنيه" ],
-    ["ابراهيم محمد", "0123456789", "4000 جنيه" ],
-    ["اسماعيل محمد", "0123456789", "6000 جنيه" ],
+    ["أحمد محمد", "201","0123456789", "5000 جنيه" ,"30-5-2024","30-6-2024"],
+    ["أحمد محمد", "201","0123456789", "5000 جنيه" ,"30-5-2024","30-6-2024"],
+    ["أحمد محمد", "201","0123456789", "5000 جنيه","30-5-2024","30-6-2024" ],
   ];
   const openModal = () => {
     setIsOpen(true);
@@ -53,6 +53,13 @@ const AddEmployee = () => {
       },
     },
     {
+      name: "رقم البصمه",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
       name: "رقم التليفون",
       options: {
         filter: true,
@@ -65,7 +72,8 @@ const AddEmployee = () => {
         filter: true,
         sort: true,
       },
-    },
+    },    "تاريخ العمليه",
+    "تاريخ التعديل",
     {
       name: "تنفيذ",
       options: {
@@ -188,6 +196,22 @@ const AddEmployee = () => {
                           type="text"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
+                          className="w-full"
+                          required
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="num"
+                        >
+                          رقم البصمه
+                        </label>
+                        <Input
+                          id="num"
+                          type="number"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
                           className="w-full"
                           required
                         />

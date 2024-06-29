@@ -3,9 +3,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { InputNumber } from "antd";
 import { VscSaveAs } from "react-icons/vsc";
+import Select from "react-select";
 import MUIDataTable from "mui-datatables";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
-
 const Studio = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [total, setTotal] = useState(0);
@@ -13,6 +13,10 @@ const Studio = () => {
   const [remaining, setRemaining] = useState(0);
   const [discountType, setDiscountType] = useState("");
   const [discountRate, setDiscountRate] = useState(0);
+  const [selectedPackage, setSelectedPackage] = useState("");
+  const [selectedPackageDetails, setSelectedPackageDetails] = useState([]);
+  const [additionalService, setAdditionalService] = useState("");
+  const [additionalServicePrice, setAdditionalServicePrice] = useState(0);
 
   function closeModal() {
     setIsOpen(false);
@@ -25,13 +29,59 @@ const Studio = () => {
   const handleTotalChange = (value) => {
     const newTotal = parseFloat(value) || 0;
     setTotal(newTotal);
-    setRemaining(newTotal - payment - (newTotal * discountRate) / 100);
+    setRemaining(newTotal - payment - discountRate);
   };
 
   const handlePaymentChange = (value) => {
     const newPayment = parseFloat(value) || 0;
     setPayment(newPayment);
-    setRemaining(total - newPayment - (total * discountRate) / 100);
+    setRemaining(total - newPayment - discountRate);
+  };
+
+  const fetchMakeupDetails = (selectedPackage) => {
+    const makeupPackages = {
+      12: {
+        ميكاب: "1صوره",
+        تسريحة: "2صوره",
+        اظافر: "3صوره",
+        جاكوزي: " 4صوره",
+      },
+      24: {
+        ميكاب: "4صوره",
+        تسريحة: "5صوره",
+        اظافر: "8صوره",
+        جاكوزي: " 12صوره",
+      },
+      8: {
+        ميكاب: "1صوره",
+        تسريحة: "2صوره",
+        اظافر: "3صوره",
+        جاكوزي: " 4صوره",
+      },
+      كامل: {
+        ميكاب: "12صوره",
+        تسريحة: "8صوره",
+        اظافر: "6صوره",
+        جاكوزي: " 4صوره",
+      },
+    };
+
+    setSelectedPackage(selectedPackage);
+    setSelectedPackageDetails(
+      Object.keys(makeupPackages[selectedPackage]).map((key) => ({
+        value: key,
+        label: makeupPackages[selectedPackage][key],
+      }))
+    );
+  };
+
+  const handleAdditionalServiceChange = (e) => {
+    setAdditionalService(e.target.value);
+  };
+
+  const handleAdditionalServicePriceChange = (value) => {
+    const price = parseFloat(value) || 0;
+    setAdditionalServicePrice(price);
   };
 
   const handleDiscountTypeChange = (e) => {
@@ -40,15 +90,15 @@ const Studio = () => {
 
     let discount = 0;
     if (selectedDiscountType === "خصم خاص") {
-      discount = 10;
+      discount = 100;
     } else if (selectedDiscountType === "خصم موسمي") {
-      discount = 15;
+      discount = 150;
     } else if (selectedDiscountType === "خصم تعاقد") {
-      discount = 20;
+      discount = 200;
     }
 
     setDiscountRate(discount);
-    setRemaining(total - payment - (total * discount) / 100);
+    setRemaining(total - payment - discount);
   };
 
   const handleSubmit = (e) => {
@@ -56,22 +106,14 @@ const Studio = () => {
     console.log("Form submitted!");
     closeModal();
   };
-
-  const handleEdit = (rowIndex) => {
-    console.log("Edit clicked for row:", rowIndex);
-  };
-
-  const handleDelete = (rowIndex) => {
-    console.log("Delete clicked for row:", rowIndex);
-  };
-
+    
   const columns = [
-    "معاد دخول",
-    "معاد خروج",
+    "نوع الباكدج",
     "اسم العميل",
     "رقم الهاتف",
+    "البلد",
     {
-      name: "تاريخ المناسبة",
+      name: "تاريخ المناسبه",
       options: {
         filter: true,
         customFilterListOptions: {
@@ -82,11 +124,13 @@ const Studio = () => {
         },
       },
     },
-    "تاريخ الحالي",
-    "اجمالي",
-    "دفع",
-    "باقي",
-    "سبب الخصم",
+    "الاجمالي",
+    "المدفوع",
+    "الباقي",
+    "نوع الخصم",
+    "قيمه الخصم",
+    "تاريخ الحجز",
+    "تاريخ التعديل",
     {
       name: "تنفيذ",
       options: {
@@ -109,67 +153,20 @@ const Studio = () => {
 
   const data = [
     [
-      "12:00",
-      "14:00",
+      "زفاف",
       "هاله محمد",
       "0123456789",
-      "2023-06-15",
-      "2023-06-01",
+      "دسوق",
+      "2025-06-15",
       "5000",
       "2500",
       "1750",
       "خصم موسمي",
-    ],
-    [
-      "13:00",
-      "15:00",
-      "مني محمد",
-      "0123456789",
-      "2023-06-5",
-      "2023-06-01",
-      "5000",
-      "2500",
-      "1750",
-      "خصم خاص",
-    ],
-    [
-      "14:00",
-      "16:00",
-      "شيماء محمد",
-      "0123456789",
-      "2023-06-25",
-      "2023-06-01",
-      "5000",
-      "2500",
-      "1750",
-      "خصم موسمي",
-    ],
-    [
-      "15:00",
-      "17:00",
-      "دعاء محمد",
-      "0123456789",
-      "2023-06-8",
-      "2023-06-01",
-      "5000",
-      "2500",
-      "1750",
-      "خصم موسمي",
-    ],
-    [
-      "16:00",
-      "18:00",
-      "هاله محمد",
-      "0123456789",
-      "2023-06-9",
-      "2023-06-01",
-      "5000",
-      "2500",
-      "1750",
-      "خصم موسمي",
+      "150",
+      "2024-06-15",
+      "2024-06-15",
     ],
   ];
-
   const options = {
     filterType: "dropdown",
     selectableRows: 'none',
@@ -216,7 +213,14 @@ const Studio = () => {
       },
     },
   };
+    
+  const handleEdit = (rowIndex) => {
+    console.log("Edit clicked for row:", rowIndex);
+  };
 
+  const handleDelete = (rowIndex) => {
+    console.log("Delete clicked for row:", rowIndex);
+  };
   return (
     <div className="p-4">
       <button
@@ -256,7 +260,7 @@ const Studio = () => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
                   >
-                    حجز استوديو
+                    حجز استوديو 
                   </Dialog.Title>
                   <div className="mt-2 overflow-y-auto h-full">
                     <form
@@ -273,48 +277,74 @@ const Studio = () => {
                         <select
                           id="category"
                           className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline"
+                          onChange={(e) => fetchMakeupDetails(e.target.value)}
                         >
-                          <option>البوم 12 صوره</option>
-                          <option>البوم 24 صوره</option>
-                          <option>البوم 8 صوره</option>
-                          <option>سيشن كامل</option>
+                          <option value="">اختر الباكدج</option>
+                          <option value="12">البوم 12 صوره</option>
+                          <option value="24">البوم 24 صوره</option>
+                          <option value="8">البوم 8 صوره</option>
+                          <option value="كامل">سيشن كامل</option>
                         </select>
                       </div>
+                      {selectedPackage && (
+                        <div className="mb-4">
+                          <label
+                            className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                            htmlFor="packageDetails"
+                          >
+                            تفاصيل الباكدج
+                          </label>
+                          <Select
+                            id="packageDetails"
+                            options={selectedPackageDetails}
+                            isMulti
+                            placeholder="اختر"
+                          />
+                        </div>
+                      )}
+                      {selectedPackage && (
+                        <>
+                          <div className="mb-4">
+                            <label
+                              className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                              htmlFor="additionalService"
+                            >
+                              خدمة إضافية
+                            </label>
+                            <input
+                              id="additionalService"
+                              type="text"
+                              value={additionalService}
+                              onChange={handleAdditionalServiceChange}
+                              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            />
+                          </div>
+                          <div className="mb-4">
+                            <label
+                              className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                              htmlFor="additionalServicePrice"
+                            >
+                              سعر الخدمة الإضافية
+                            </label>
+                            <InputNumber
+                              id="additionalServicePrice"
+                              value={additionalServicePrice}
+                              onChange={handleAdditionalServicePriceChange}
+                              min={0}
+                              className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            />
+                          </div>
+                        </>
+                      )}
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="entryTime"
-                        >
-                          معاد دخول
-                        </label>
-                        <input
-                          id="entryTime"
-                          type="time"
-                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="exitTime"
-                        >
-                          معاد خروج
-                        </label>
-                        <input
-                          id="exitTime"
-                          type="time"
-                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="customerName"
+                          htmlFor="brideName"
                         >
                           اسم العميل
                         </label>
                         <input
-                          id="customerName"
+                          id="brideName"
                           type="text"
                           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
@@ -335,6 +365,19 @@ const Studio = () => {
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="city"
+                        >
+                          البلد
+                        </label>
+                        <input
+                          id="city"
+                          type="text"
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="eventDate"
                         >
                           تاريخ المناسبة
@@ -348,22 +391,9 @@ const Studio = () => {
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="currentDate"
-                        >
-                          تاريخ الحالي
-                        </label>
-                        <input
-                          id="currentDate"
-                          type="date"
-                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="total"
                         >
-                          إجمالي
+                          إجمالي التكلفة
                         </label>
                         <InputNumber
                           id="total"
@@ -378,7 +408,7 @@ const Studio = () => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="payment"
                         >
-                          دفع
+                          المبلغ المدفوع
                         </label>
                         <InputNumber
                           id="payment"
@@ -393,7 +423,7 @@ const Studio = () => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="remaining"
                         >
-                          باقي
+                          المبلغ المتبقي
                         </label>
                         <InputNumber
                           id="remaining"
@@ -428,14 +458,14 @@ const Studio = () => {
                             className="block text-gray-700 text-sm font-bold mb-2 text-start"
                             htmlFor="discountRate"
                           >
-                            نسبة الخصم (%)
+                            قيمة الخصم
                           </label>
                           <InputNumber
                             id="discountRate"
                             value={discountRate}
                             readOnly
                             min={0}
-                            max={100}
+                            max={200}
                             className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                           />
                         </div>

@@ -8,14 +8,14 @@ import TextArea from "antd/es/input/TextArea";
 const AddPackage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [salary, setSalary] = useState("");
+  const [desc, setDesc] = useState("");
+  const [photo, setPhoto] = useState("");
+  const [data, setData] = useState([
+    ["باكدج 1", "صوره", "وصف1", "تم العرض","30-5-2024","30-6-2024"],
+    ["باكدج 1", "صوره", "وصف1", "لم يتم العرض","30-5-2024","30-6-2024"],
+    ["باكدج 1", "صوره", "وصف1", "تم العرض","30-5-2024","30-6-2024"],
+  ]);
 
-  const data = [
-    ["باكدج 1", "وصف1" ],
-    ["3 باكدج ", "وصف2"],
-    ["باكدج 2", "وصف3"],
-  ];
   const openModal = () => {
     setIsOpen(true);
   };
@@ -23,17 +23,19 @@ const AddPackage = () => {
   const closeModal = () => {
     setIsOpen(false);
     setName("");
-    setPhone("");
-    setSalary("");
+    setDesc("");
+    setPhoto("");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!name || !phone || !salary) {
+    if (!name || !desc || !photo) {
       alert("يرجى ملء جميع الحقول");
       return;
     }
-    
+
+    const newData = [name, photo, desc, "تم العرض"];
+    setData([...data, newData]);
     closeModal();
   };
 
@@ -45,6 +47,14 @@ const AddPackage = () => {
     console.log("Delete clicked for row:", rowIndex);
   };
 
+  const toggleStatus = (rowIndex) => {
+    const updatedData = [...data]; // نسخ قائمة البيانات الحالية
+    const currentStatus = updatedData[rowIndex][3]; // الحالة الحالية للصف
+    updatedData[rowIndex][3] = currentStatus === "تم العرض" ? "لم يتم العرض" : "تم العرض"; // تحديث الحالة
+    setData(updatedData); // تحديث البيانات بالحالة الجديدة
+  };
+  
+
   const columns = [
     {
       name: "اسم الباكدج",
@@ -54,12 +64,50 @@ const AddPackage = () => {
       },
     },
     {
+      name: "صوره الباكدج",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value, tableMeta) => {
+          const rowIndex = tableMeta.rowIndex;
+          return (
+            <img
+              src={'https://m.media-amazon.com/images/I/713cP4BUZmS._AC_SL1500_.jpg'}
+              alt="package"
+              style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "50%" }}
+            />
+          );
+        },
+      },
+    },
+    {
       name: "وصف الباكدج",
       options: {
         filter: true,
         sort: true,
       },
     },
+    {
+      name: "عرضها ف صفحه الهبوط",
+      options: {
+        customBodyRender: (value, tableMeta) => {
+          const rowIndex = tableMeta.rowIndex;
+          const currentStatus = data[rowIndex][3];
+
+          return (
+            <button
+              onClick={() => toggleStatus(rowIndex)}
+              className={`py-1 px-4 text-white font-semibold text-lg rounded-full ${
+                currentStatus === "لم يتم العرض" ? "bg-black" : "bg-[#f3c74d]"
+              }`}
+            >
+              {currentStatus}
+            </button>
+          );
+        },
+      },
+    },    "تاريخ العمليه",
+    "تاريخ التعديل",
     {
       name: "تنفيذ",
       options: {
@@ -83,7 +131,6 @@ const AddPackage = () => {
   const options = {
     filterType: "dropdown",
     selectableRows: 'none',
-    // elevation: false,
     setRowProps: (row, dataIndex, rowIndex) => {
       return {
         style: {
@@ -196,9 +243,25 @@ const AddPackage = () => {
                         <TextArea
                           id="desc"
                           type="text"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
+                          value={desc}
+                          onChange={(e) => setDesc(e.target.value)}
                           className="w-full"
+                          required
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="photo"
+                        >
+                          صوره الباكدج
+                        </label>
+                        <Input
+                          id="photo"
+                          type="file"
+                          className="w-full"
+                          accept="image/*" // Accept only image files
+                          onChange={(e) => setPhoto(e.target.files[0])}
                           required
                         />
                       </div>
@@ -221,7 +284,7 @@ const AddPackage = () => {
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
-              </div>
+            </div>
           </div>
         </Dialog>
       </Transition>

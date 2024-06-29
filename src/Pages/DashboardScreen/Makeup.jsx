@@ -3,8 +3,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { InputNumber } from "antd";
 import { VscSaveAs } from "react-icons/vsc";
-import MUIDataTable from "mui-datatables";
-import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
+import Select from "react-select";
+import MakeUpTable from "../../Components/tables/MakeUpTable";
+
 const Makeup = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [total, setTotal] = useState(0);
@@ -12,6 +13,10 @@ const Makeup = () => {
   const [remaining, setRemaining] = useState(0);
   const [discountType, setDiscountType] = useState("");
   const [discountRate, setDiscountRate] = useState(0);
+  const [selectedPackage, setSelectedPackage] = useState("");
+  const [selectedPackageDetails, setSelectedPackageDetails] = useState([]);
+  const [additionalService, setAdditionalService] = useState("");
+  const [additionalServicePrice, setAdditionalServicePrice] = useState(0);
 
   function closeModal() {
     setIsOpen(false);
@@ -24,13 +29,60 @@ const Makeup = () => {
   const handleTotalChange = (value) => {
     const newTotal = parseFloat(value) || 0;
     setTotal(newTotal);
-    setRemaining(newTotal - payment - (newTotal * discountRate) / 100);
+    setRemaining(newTotal - payment - discountRate);
   };
 
   const handlePaymentChange = (value) => {
     const newPayment = parseFloat(value) || 0;
     setPayment(newPayment);
-    setRemaining(total - newPayment - (total * discountRate) / 100);
+    setRemaining(total - newPayment - discountRate);
+  };
+
+  const fetchMakeupDetails = (selectedPackage) => {
+    const makeupPackages = {
+      زفاف: {
+        ميكاب: "ميكاب زفاف شامل",
+        تسريحة: "تسريحة شعر زفاف",
+        اظافر: "طلاء أظافر زفاف",
+        جاكوزي: "جلسة جاكوزي مريحة",
+        مساج: "جلسة مساج استرخائي",
+      },
+      حنة: {
+        ميكاب: "ميكاب حنة تقليدي",
+        تسريحة: "تسريحة شعر حنة",
+        حناء: "نقش حناء",
+      },
+      شبكة: {
+        ميكاب: "ميكاب شبكة بسيط",
+        تسريحة: "تسريحة شعر شبكة",
+        ايلانير: "تحديد عيون ايلانير",
+      },
+      زفاف_مميز: {
+        ميكاب: "ميكاب زفاف فاخر",
+        تسريحة: "تسريحة شعر زفاف مميز",
+        اظافر: "طلاء أظافر فاخر",
+        جاكوزي: "جلسة جاكوزي VIP",
+        مساج: "جلسة مساج مميز",
+        حناء: "نقش حناء فاخر",
+      },
+    };
+
+    setSelectedPackage(selectedPackage);
+    setSelectedPackageDetails(
+      Object.keys(makeupPackages[selectedPackage]).map((key) => ({
+        value: key,
+        label: makeupPackages[selectedPackage][key],
+      }))
+    );
+  };
+
+  const handleAdditionalServiceChange = (e) => {
+    setAdditionalService(e.target.value);
+  };
+
+  const handleAdditionalServicePriceChange = (value) => {
+    const price = parseFloat(value) || 0;
+    setAdditionalServicePrice(price);
   };
 
   const handleDiscountTypeChange = (e) => {
@@ -39,230 +91,21 @@ const Makeup = () => {
 
     let discount = 0;
     if (selectedDiscountType === "خصم خاص") {
-      discount = 10;
+      discount = 100;
     } else if (selectedDiscountType === "خصم موسمي") {
-      discount = 15;
+      discount = 150;
     } else if (selectedDiscountType === "خصم تعاقد") {
-      discount = 20;
+      discount = 200;
     }
 
     setDiscountRate(discount);
-    setRemaining(total - payment - (total * discount) / 100);
+    setRemaining(total - payment - discount);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted!");
     closeModal();
-  };
-
-  const handleEdit = (rowIndex) => {
-    console.log("Edit clicked for row:", rowIndex);
-  };
-
-  const handleDelete = (rowIndex) => {
-    console.log("Delete clicked for row:", rowIndex);
-  };
-
-  const columns = [
-    "نوع الباكدج",
-    "اسم العروسه",
-    "رقم الهاتف",
-    {
-      name: "تاريخ المناسبه",
-      options: {
-        filter: true,
-        customFilterListOptions: {
-          render: (value) => `تاريخ: ${value}`,
-        },
-        customFilterAndSearch: (filterValue, rowData) => {
-          return rowData[2].includes(filterValue);
-        },
-      },
-    },
-    "الاجمالي",
-    "المدفوع",
-    "الباقي",
-    "نوع الخصم",
-    "نسبه الخصم",
-    {
-      name: "تنفيذ",
-      options: {
-        customBodyRender: (value, tableMeta, updateValue) => {
-          const rowIndex = tableMeta.rowIndex;
-          return (
-            <>
-              <button onClick={() => handleEdit(rowIndex)} className="ml-5">
-                <AiOutlineEdit className="text-2xl text-black" />
-              </button>
-              <button onClick={() => handleDelete(rowIndex)}>
-                <AiOutlineDelete className="text-2xl text-[#ef4444]" />
-              </button>
-            </>
-          );
-        },
-      },
-    },
-  ];
-
-  const data = [
-    [
-      "زفاف",
-      "هاله محمد",
-      "0123456789",
-      "2023-06-15",
-      "5000",
-      "2500",
-      "1750",
-      "خصم موسمي",
-      "15 %",
-    ],
-    [
-      "زفاف مخصوص ",
-      "مني محمد",
-      "0123456789",
-      "2023-06-5",
-      "5000",
-      "2500",
-      "1750",
-      "خصم خاص",
-      "15 %",
-    ],
-    [
-      "زفاف",
-      "شيماء محمد",
-      "0123456789",
-      "2023-06-25",
-      "5000",
-      "2500",
-      "1750",
-      "خصم موسمي",
-      "15 %",
-    ],
-    [
-      "زفاف",
-      "دعاء محمد",
-      "0123456789",
-      "2023-06-8",
-      "5000",
-      "2500",
-      "1750",
-      "خصم موسمي",
-      "15 %",
-    ],
-    [
-      "زفاف",
-      "هاله محمد",
-      "0123456789",
-      "2023-06-9",
-      "5000",
-      "2500",
-      "1750",
-      "خصم موسمي",
-      "15 %",
-    ],
-    [
-      "زفاف",
-      "هاله محمد",
-      "0123456789",
-      "2023-06-15",
-      "5000",
-      "2500",
-      "1750",
-      "خصم موسمي",
-      "15 %",
-    ],
-    [
-      "زفاف",
-      "هاله محمد",
-      "0123456789",
-      "2023-06-20",
-      "5000",
-      "2500",
-      "1750",
-      "خصم موسمي",
-      "15 %",
-    ],
-    [
-      "زفاف",
-      "هاله محمد",
-      "0123456789",
-      "2023-06-25",
-      "5000",
-      "2500",
-      "1750",
-      "خصم موسمي",
-      "15 %",
-    ],
-    [
-      "زفاف",
-      "هاله محمد",
-      "0123456789",
-      "2023-06-30",
-      "5000",
-      "2500",
-      "1750",
-      "خصم موسمي",
-      "15 %",
-    ],
-    [
-      "زفاف",
-      "هاله محمد",
-      "0123456789",
-      "2023-06-16",
-      "5000",
-      "2500",
-      "1750",
-      "خصم موسمي",
-      "15 %",
-    ],
-  ];
-
-  const options = {
-    filterType: "dropdown",
-    selectableRows: 'none',
-    // elevation: false,
-    setRowProps: (row, dataIndex, rowIndex) => {
-      return {
-        style: {
-          backgroundColor: rowIndex % 2 === 0 ? "#f5f5f5" : "#ffffff",
-        },
-      };
-    },
-    textLabels: {
-      body: {
-        noMatch: "لا توجد بيانات مطابقة",
-        toolTip: "فرز",
-        columnHeaderTooltip: (column) => `فرز لـ ${column.label}`,
-      },
-      pagination: {
-        next: "الصفحة التالية",
-        previous: "الصفحة السابقة",
-        rowsPerPage: "عدد الصفوف لكل صفحة:",
-        displayRows: "من",
-      },
-      toolbar: {
-        search: "بحث",
-        downloadCsv: "تنزيل CSV",
-        print: "طباعة",
-        viewColumns: "عرض الأعمدة",
-        filterTable: "تصفية الجدول",
-      },
-      filter: {
-        all: "الكل",
-        title: "الفلاتر",
-        reset: "إعادة تعيين",
-      },
-      viewColumns: {
-        title: "عرض الأعمدة",
-        titleAria: "عرض/إخفاء أعمدة الجدول",
-      },
-      selectedRows: {
-        text: "صفوف محددة",
-        delete: "حذف",
-        deleteAria: "حذف الصفوف المحددة",
-      },
-    },
   };
 
   return (
@@ -321,19 +164,71 @@ const Makeup = () => {
                         <select
                           id="category"
                           className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline"
+                          onChange={(e) => fetchMakeupDetails(e.target.value)}
                         >
-                          <option>زفاف</option>
-                          <option>حنة</option>
-                          <option>شبكة</option>
-                          <option>زفاف مميز</option>
+                          <option value="">اختر الباكدج</option>
+                          <option value="زفاف">زفاف</option>
+                          <option value="حنة">حنة</option>
+                          <option value="شبكة">شبكة</option>
+                          <option value="زفاف_مميز">زفاف مميز</option>
                         </select>
                       </div>
+                      {selectedPackage && (
+                        <div className="mb-4">
+                          <label
+                            className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                            htmlFor="packageDetails"
+                          >
+                            تفاصيل الباكدج
+                          </label>
+                          <Select
+                            id="packageDetails"
+                            options={selectedPackageDetails}
+                            isMulti
+                            placeholder="اختر"
+                          />
+                        </div>
+                      )}
+                      {selectedPackage && (
+                        <>
+                          <div className="mb-4">
+                            <label
+                              className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                              htmlFor="additionalService"
+                            >
+                              خدمة إضافية
+                            </label>
+                            <input
+                              id="additionalService"
+                              type="text"
+                              value={additionalService}
+                              onChange={handleAdditionalServiceChange}
+                              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            />
+                          </div>
+                          <div className="mb-4">
+                            <label
+                              className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                              htmlFor="additionalServicePrice"
+                            >
+                              سعر الخدمة الإضافية
+                            </label>
+                            <InputNumber
+                              id="additionalServicePrice"
+                              value={additionalServicePrice}
+                              onChange={handleAdditionalServicePriceChange}
+                              min={0}
+                              className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            />
+                          </div>
+                        </>
+                      )}
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="brideName"
                         >
-                          اسم العروسه
+                          اسم العروسة
                         </label>
                         <input
                           id="brideName"
@@ -357,6 +252,19 @@ const Makeup = () => {
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="city"
+                        >
+                          البلد
+                        </label>
+                        <input
+                          id="city"
+                          type="text"
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="eventDate"
                         >
                           تاريخ المناسبة
@@ -372,7 +280,7 @@ const Makeup = () => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="total"
                         >
-                          إجمالي
+                          إجمالي التكلفة
                         </label>
                         <InputNumber
                           id="total"
@@ -387,7 +295,7 @@ const Makeup = () => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="payment"
                         >
-                          دفع
+                          المبلغ المدفوع
                         </label>
                         <InputNumber
                           id="payment"
@@ -402,7 +310,7 @@ const Makeup = () => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="remaining"
                         >
-                          باقي
+                          المبلغ المتبقي
                         </label>
                         <InputNumber
                           id="remaining"
@@ -437,31 +345,18 @@ const Makeup = () => {
                             className="block text-gray-700 text-sm font-bold mb-2 text-start"
                             htmlFor="discountRate"
                           >
-                            نسبة الخصم (%)
+                            قيمة الخصم
                           </label>
                           <InputNumber
                             id="discountRate"
                             value={discountRate}
                             readOnly
                             min={0}
-                            max={100}
+                            max={200}
                             className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                           />
                         </div>
                       )}
-                      {/* <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="discountReason"
-                        >
-                          سبب الخصم
-                        </label>
-                        <input
-                          id="discountReason"
-                          type="text"
-                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                      </div> */}
                     </form>
                   </div>
                   <div className="flex items-center justify-start gap-4 mt-4">
@@ -485,12 +380,7 @@ const Makeup = () => {
           </div>
         </Dialog>
       </Transition>
-      <MUIDataTable
-        title={"تقارير ميكاب"}
-        data={data}
-        columns={columns}
-        options={options}
-      />
+      <MakeUpTable />
     </div>
   );
 };

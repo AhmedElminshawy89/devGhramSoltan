@@ -1,14 +1,10 @@
 import React, { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import {
-  AiOutlineClose,
-  AiOutlineSave,
-  AiOutlineEdit,
-  AiOutlineDelete,
-} from "react-icons/ai";
+import { AiOutlineClose, AiOutlineSave, AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import { InputNumber } from "antd";
 import { VscSaveAs } from "react-icons/vsc";
 import MUIDataTable from "mui-datatables";
+import { Tab } from "@headlessui/react";
 
 const Daily = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +15,12 @@ const Daily = () => {
   const [exitTime, setExitTime] = useState("");
   const [arrivalTime, setArrivalTime] = useState("");
   const [paymentStatus, setPaymentStatus] = useState("");
+
+  const [data, setData] = useState([
+    ["أحمد علي", "ميكاب", "500", "12:00", "14:00", "11:45", "مدفوع","30-5-2024","30-6-2024"],
+    ["منى سعيد", "استوديو", "1000", "13:00", "15:00", "12:50", "غير مدفوع","30-5-2024","30-6-2024"],
+    ["محمد يوسف", "ميكاب", "750", "14:00", "16:00", "13:45", "مدفوع","30-5-2024","30-6-2024"],
+  ]);
 
   const categories = ["ميكاب", "استوديو"];
   const paymentStatuses = ["مدفوع", "غير مدفوع"];
@@ -37,6 +39,13 @@ const Daily = () => {
     closeModal();
   };
 
+  const toggleStatus = (rowIndex) => {
+    const newStatus = data[rowIndex][6] === "مدفوع" ? "غير مدفوع" : "مدفوع";
+    const newData = [...data];
+    newData[rowIndex][6] = newStatus;
+    setData(newData);
+  };
+
   const handleEdit = (rowIndex) => {
     console.log("Edit clicked for row:", rowIndex);
   };
@@ -52,11 +61,41 @@ const Daily = () => {
     "معاد دخول",
     "معاد خروج",
     "وصول",
-    "حالة الدفع",
+    {
+      name: "حالة الدفع",
+      options: {
+        customBodyRender: (value, tableMeta) => {
+          const rowIndex = tableMeta.rowIndex;
+          const currentStatus = data[rowIndex][6];
+          
+          return (
+            <>
+              {currentStatus === "مدفوع" ? (
+                <button
+                  onClick={() => toggleStatus(rowIndex)}
+                  className="bg-black py-1 px-4 text-white font-semibold text-lg rounded-full"
+                >
+                  لم يتم الدفع
+                </button>
+              ) : (
+                <button
+                  onClick={() => toggleStatus(rowIndex)}
+                  className="bg-[#f3c74d] py-1 px-4 text-black font-semibold text-lg rounded-full"
+                >
+                   تم الدفع
+                </button>
+              )}
+            </>
+          );
+        },
+      },
+    },
+    "تاريخ الحجز",
+    "تاريخ التعديل",
     {
       name: "تنفيذ",
       options: {
-        customBodyRender: (value, tableMeta, updateValue) => {
+        customBodyRender: (value, tableMeta) => {
           const rowIndex = tableMeta.rowIndex;
           return (
             <>
@@ -73,15 +112,9 @@ const Daily = () => {
     },
   ];
 
-  const data = [
-    ["أحمد علي", "ميكاب", "500", "12:00", "14:00", "11:45", "مدفوع"],
-    ["منى سعيد", "استوديو", "1000", "13:00", "15:00", "12:50", "غير مدفوع"],
-    ["محمد يوسف", "ميكاب", "750", "14:00", "16:00", "13:45", "مدفوع"],
-  ];
-
   const options = {
     filterType: "dropdown",
-    selectableRows: 'none',
+    selectableRows: "none",
     // elevation: false,
     setRowProps: (row, dataIndex, rowIndex) => {
       return {
@@ -165,7 +198,7 @@ const Daily = () => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
                   >
-                     الحجز اليومي
+                    الحجز اليومي
                   </Dialog.Title>
                   <div className="mt-2 overflow-y-auto h-full">
                     <form
@@ -302,6 +335,7 @@ const Daily = () => {
                     <button
                       type="submit"
                       className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
+                      onClick={handleSubmit}
                     >
                       <AiOutlineSave className="ml-3" /> حفظ
                     </button>
@@ -312,12 +346,54 @@ const Daily = () => {
           </div>
         </Dialog>
       </Transition>
-      <MUIDataTable
-        title={"تقارير حجوزات اليوم"}
-        data={data}
-        columns={columns}
-        options={options}
-      />
+      <Tab.Group>
+        <Tab.List className="flex p-1 space-x-1 bg-[#f3c74d] rounded-xl">
+          <Tab as={Fragment}>
+            {({ selected }) => (
+              <button
+                className={`w-full py-2.5 text-sm leading-5 font-medium text-black rounded-lg ${
+                  selected
+                    ? "bg-white shadow"
+                    : "text-black hover:bg-white/[0.12] hover:text-black"
+                }`}
+              >
+                حجوزات استوديو
+              </button>
+            )}
+          </Tab>
+          <Tab as={Fragment}>
+            {({ selected }) => (
+              <button
+                className={`w-full py-2.5 text-sm leading-5 font-medium text-black rounded-lg ${
+                  selected
+                    ? "bg-white shadow"
+                    : "text-black hover:bg-white/[0.12] hover:text-black"
+                }`}
+              >
+                حجوزات ميكاب
+              </button>
+            )}
+          </Tab>
+        </Tab.List>
+        <Tab.Panels className="mt-2">
+          <Tab.Panel>
+            <MUIDataTable
+              title={"حجوزات استوديو"}
+              data={data}
+              columns={columns}
+              options={options}
+            />
+          </Tab.Panel>
+          <Tab.Panel>
+            <MUIDataTable
+              title={"حجوزات الميكاب"}
+              data={data}
+              columns={columns}
+              options={options}
+            />
+          </Tab.Panel>
+        </Tab.Panels>
+      </Tab.Group>
     </div>
   );
 };

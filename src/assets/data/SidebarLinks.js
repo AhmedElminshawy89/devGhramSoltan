@@ -13,6 +13,7 @@ import {
   FaHandHoldingUsd,
   FaUserPlus,
 } from "react-icons/fa";
+import { MdOutlineAddBusiness } from "react-icons/md";
 
 const links = [
   { to: "/moderator", icon: <FaHome />, label: "الصفحة الرئيسية" },
@@ -45,6 +46,7 @@ const links = [
   { to: "/moderator/Loans", icon: <FaHandHoldingUsd />, label: "سلفة الموظف" },
   { to: "/moderator/add-admin", icon: <RiAdminFill />, label: "إضافة أدمن" },
   { to: "/moderator/add-employee", icon: <FaUserPlus />, label: "إضافة موظف" },
+  { to: "/moderator/add-work", icon: <MdOutlineAddBusiness />, label: "الشغل الاضافي" },
   {
     to: "/moderator/add-discount",
     icon: <RiDiscountPercentFill />,

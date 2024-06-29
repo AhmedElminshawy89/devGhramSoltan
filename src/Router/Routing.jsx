@@ -15,6 +15,7 @@ import AddPackage from "../Pages/DashboardScreen/AddPackage";
 import AddSubPackage from "../Pages/DashboardScreen/AddSubPackage";
 import Reports from "../Pages/DashboardScreen/Reports";
 import Login from "../Pages/DashboardScreen/Login";
+import AddWorkers from "../Pages/DashboardScreen/AddWorkers";
 const Routing = () => {
   return (
     <>
@@ -30,6 +31,7 @@ const Routing = () => {
           <Route path="Loans" element={<Loans />} />
           <Route path="add-admin" element={<AddAdmin />} />
           <Route path="add-employee" element={<AddEmployee />} />
+          <Route path="add-work" element={<AddWorkers />} />
           <Route path="add-discount" element={<AddDiscount />} />
           <Route path="add-package" element={<AddPackage />} />
           <Route path="add-subpackage" element={<AddSubPackage />} />
