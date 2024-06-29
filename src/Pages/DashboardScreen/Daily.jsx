@@ -161,6 +161,7 @@ const Daily = () => {
 
   return (
     <div className="p-4">
+{/*       
       <button
         onClick={openModal}
         className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
@@ -345,7 +346,7 @@ const Daily = () => {
             </div>
           </div>
         </Dialog>
-      </Transition>
+      </Transition> */}
       <Tab.Group>
         <Tab.List className="flex p-1 space-x-1 bg-[#f3c74d] rounded-xl">
           <Tab as={Fragment}>
