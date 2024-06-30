@@ -1,6 +1,45 @@
+import React, { useState } from "react";
 import logo from "../../assets/Img/logo.png";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let valid = true;
+
+    if (!email) {
+      setEmailError("يرجى ملء البريد الالكتروني");
+      valid = false;
+    } else {
+      setEmailError("");
+    }
+
+    if (!password) {
+      setPasswordError("يرجى ملء كلمة المرور");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (!valid) {
+      toast.error("يرجى ملء جميع الحقول");
+      return;
+    }
+
+    const loginData = { email, password };
+
+    setTimeout(() => {
+      toast.success("تم تسجيل الدخول بنجاح");
+      console.log("Login Data:", loginData);
+    }, 1000);
+  };
+
   return (
     <section className="bg-white h-[100vh]">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -12,22 +51,24 @@ const Login = () => {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center">
               تسجيل الدخول
             </h1>
-            <form className="space-y-4 md:space-y-6" action="#">
+            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label
                   htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   البريد الالكتروني
                 </label>
                 <input
-                  type="email"
+                  type="text"
                   name="email"
                   id="email"
-                  className="bg-white border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
+                  className={`bg-white border ${emailError ? 'border-red-500' : 'border-gray-300'} text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5`}
                   placeholder="البريد الالكتروني"
-                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
+                {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
               </div>
               <div>
                 <label
@@ -41,9 +82,11 @@ const Login = () => {
                   name="password"
                   id="password"
                   placeholder="••••••••"
-                  className="bg-white border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-                  required
+                  className={`bg-white border ${passwordError ? 'border-red-500' : 'border-gray-300'} text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5`}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
+                {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
               </div>
               <button
                 type="submit"

@@ -236,6 +236,37 @@ const AddPackage = () => {
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="name"
+                        >
+                          سعر الباكدج 
+                        </label>
+                        <Input
+                          id="name"
+                          type="number"
+                          min={0}
+                          className="w-full"
+                          required
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="category"
+                        >
+                          نوع الباكدج
+                        </label>
+                        <select
+                          id="category"
+                          className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline"
+                        >
+                          <option value="">اختر الباكدج</option>
+                          <option value="زفاف">ميكاب</option>
+                          <option value="حنة">استوديو</option>
+                        </select>
+                      </div>
+                      <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="desc"
                         >
                           وصف الباكدج
