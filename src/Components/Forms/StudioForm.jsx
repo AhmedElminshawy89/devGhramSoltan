@@ -331,6 +331,19 @@ const StudioForm = ({ isOpen, closeModal }) => {
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="ٌRecieveDate"
+                        >
+                          تاريخ الاستلام
+                        </label>
+                        <input
+                          id="ٌRecieveDate"
+                          type="date"
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="total"
                         >
                           إجمالي التكلفة
