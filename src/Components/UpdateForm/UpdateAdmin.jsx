@@ -1,84 +1,91 @@
 import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { Input } from "antd";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useSaveEmployeeMutation } from "../../app/Feature/API/Emplyee";
+import { Input } from "antd";
+import { useUpdateAdminMutation } from "../../app/Feature/API/Admin";
 import Spinner from "../../Shared/Spinner";
 
-const EmployeeForm = ({ isOpen, closeModal }) => {
-  const [name, setName] = useState("");
-  const [fingerprintNumber, setFingerprintNumber] = useState("");
-  const [phone, setPhone] = useState("");
-  const [salary, setSalary] = useState("");
+const UpdateAdmin = ({ isOpen, closeModal, initialValues }) => {
+  const [name, setName] = useState(initialValues.name || "");
+  const [email, setEmail] = useState(initialValues.email || "");
+  const [phone, setPhone] = useState(initialValues.phone || "");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [adminType, setAdminType] = useState(initialValues.type || "");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
 
-  const [saveEmployee, { isLoading }] = useSaveEmployeeMutation();
+  const [updateAdmin, { isLoading }] = useUpdateAdminMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
 
     const phoneRegex = /^(\+?\d{1,3}[- ]?)?\d{10}$/;
-    const salaryRegex = /^\d+(\.\d{1,2})?$/;
-
-    if (name && fingerprintNumber && phone && salary) {
+    if (
+      name &&
+      email &&
+      phone &&
+      adminType &&
+      password &&
+      password === confirmPassword
+    ) {
       if (!phone.match(phoneRegex)) {
         setNotification({
           type: "error",
-          message: "يرجى إدخال رقم هاتف صالح.",
+          message: "يرجى إدخال رقم هاتف صحيح.",
         });
         return;
       }
 
-      if (!salary.match(salaryRegex)) {
-        setNotification({
-          type: "error",
-          message: "يرجى إدخال راتب صالح.",
-        });
-        return;
-      }
+      // Validate other fields as needed
 
-      const newEmployee = {
-        employee_name:name,
-        num:fingerprintNumber,
+      const updatedAdmin = {
+        id: initialValues.id,
+        name,
+        email,
         phone,
-        salary: parseFloat(salary),
+        type: adminType,
+        password,
       };
 
       try {
-        const { data } = await saveEmployee(newEmployee).unwrap();
-        console.log("تمت إضافة الموظف بنجاح:", data);
+        const { data } = await updateAdmin({
+          id: initialValues.id,
+          adminData: updatedAdmin,
+        });
 
         setNotification({
           type: "success",
-          message: "تم إضافة الموظف بنجاح!",
+          message: "تم تحديث بيانات الأدمن بنجاح!",
         });
-        toast.success("تم إضافة الموظف بنجاح!");
+        toast.success("تم تحديث بيانات الأدمن بنجاح!");
         closeModal();
         resetForm();
       } catch (error) {
-        console.error("حدث خطأ أثناء إضافة الموظف:", error);
+        console.error("حدث خطأ أثناء تحديث بيانات الأدمن:", error);
         setNotification({
           type: "error",
-          message: "حدث خطأ أثناء إضافة الموظف.",
+          message: "حدث خطأ أثناء تحديث بيانات الأدمن.",
         });
       }
     } else {
       setNotification({
         type: "error",
-        message: "الرجاء ملء جميع الحقول!",
+        message: "الرجاء ملء جميع الحقول بشكل صحيح!",
       });
     }
   };
 
   const resetForm = () => {
-    setName("");
-    setFingerprintNumber("");
-    setPhone("");
-    setSalary("");
+    setName(initialValues.name || "");
+    setEmail(initialValues.email || "");
+    setPhone(initialValues.phone || "");
+    setAdminType(initialValues.type || "");
+    setPassword("");
+    setConfirmPassword("");
     setFormSubmitted(false);
     setNotification(null);
   };
@@ -115,12 +122,12 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
                   >
-                    إضافة موظف جديد
+                    تعديل بيانات {initialValues.name}
                   </Dialog.Title>
                   <div className="mt-2">
                     {notification && (
                       <div
-                        className={`mb-4 p-2 text-center ${
+                        className={`mt-2 mb-2 p-2 text-center ${
                           notification.type === "success"
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
@@ -135,7 +142,7 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="name"
                         >
-                          اسم الموظف
+                          الاسم
                         </label>
                         <Input
                           id="name"
@@ -143,29 +150,24 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           className={`w-full ${
-                            formSubmitted && !name
-                              ? "border-red-500"
-                              : "border-gray-400"
+                            formSubmitted && !name ? "border-red-500" : ""
                           }`}
                         />
                       </div>
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="fingerprintNumber"
+                          htmlFor="email"
                         >
-                          رقم البصمة
+                          البريد الإلكتروني
                         </label>
                         <Input
-                          id="fingerprintNumber"
-                          type="number"
-                          min={0}
-                          value={fingerprintNumber}
-                          onChange={(e) => setFingerprintNumber(e.target.value)}
+                          id="email"
+                          type="text"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
                           className={`w-full ${
-                            formSubmitted && !fingerprintNumber
-                              ? "border-red-500"
-                              : "border-gray-400"
+                            formSubmitted && !email ? "border-red-500" : ""
                           }`}
                         />
                       </div>
@@ -182,29 +184,67 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           className={`w-full ${
-                            formSubmitted && !phone
-                              ? "border-red-500"
-                              : "border-gray-400"
+                            formSubmitted && !phone ? "border-red-500" : ""
                           }`}
                         />
                       </div>
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="salary"
+                          htmlFor="adminType"
                         >
-                          الراتب
+                          نوع الأدمن
                         </label>
-                        <Input
-                          id="salary"
-                          type="number"
-                          min={0}
-                          value={salary}
-                          onChange={(e) => setSalary(e.target.value)}
+                        <select
+                          id="adminType"
+                          value={adminType}
+                          onChange={(e) => setAdminType(e.target.value)}
+                          className={`block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline ${
+                            formSubmitted && !adminType ? "border-red-500" : ""
+                          }`}
+                        >
+                          <option value="">اختر نوع الأدمن</option>
+                          <option value="admin">تحكم جزئي</option>
+                          <option value="super_admin">تحكم كامل</option>
+                        </select>
+                      </div>
+                      <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="password"
+                        >
+                          كلمة المرور
+                        </label>
+                        <Input.Password
+                          id="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
                           className={`w-full ${
-                            formSubmitted && !salary
+                            formSubmitted &&
+                            password &&
+                            password !== confirmPassword
                               ? "border-red-500"
-                              : "border-gray-400"
+                              : ""
+                          }`}
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="confirmPassword"
+                        >
+                          تأكيد كلمة المرور
+                        </label>
+                        <Input.Password
+                          id="confirmPassword"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          className={`w-full ${
+                            formSubmitted &&
+                            confirmPassword &&
+                            password !== confirmPassword
+                              ? "border-red-500"
+                              : ""
                           }`}
                         />
                       </div>
@@ -219,6 +259,7 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
                         <button
                           type="submit"
                           className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
+                          disabled={isLoading}
                         >
                           {!isLoading ? (
                             <AiOutlineSave className="ml-3" />
@@ -240,4 +281,4 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
   );
 };
 
-export default EmployeeForm;
+export default UpdateAdmin;

@@ -1,51 +1,66 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useSaveDiscountMutation } from "../../app/Feature/API/Discount";
 import Spinner from "../../Shared/Spinner";
+import { useUpdateWorkerMutation } from "../../app/Feature/API/Workers";
 
-const DiscountForm = ({ isOpen, closeModal }) => {
-  const [name, setName] = useState("");
-  const [discount, setDiscount] = useState("");
+const UpdateWorker = ({ isOpen, closeModal, initialValues }) => {
+  const [employeeName, setEmployeeName] = useState(initialValues.name || "");
+  const [amount, setAmount] = useState(initialValues.price || "");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
 
-  const [saveDiscount, { isLoading }] = useSaveDiscountMutation();
+  const [updateWorker, { isLoading }] = useUpdateWorkerMutation();
+
+  useEffect(() => {
+    setEmployeeName(initialValues.name || "");
+    setAmount(initialValues.price || "");
+  }, [initialValues]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
 
-    if (name && discount) {
-      try {
-        await saveDiscount({ discount: name, price: discount }).unwrap();
-        setNotification({
-          type: "success",
-          message: "تم حفظ البيانات بنجاح!",
-        });
-        toast.success("تم حفظ البيانات بنجاح!");
-        resetForm();
-        closeModal();
-      } catch (error) {
-        setNotification({
-          type: "error",
-          message: "حدث خطأ أثناء حفظ البيانات.",
-        });
-        toast.error("حدث خطأ أثناء حفظ البيانات.");
-      }
-    } else {
+    if (!employeeName || !amount) {
       setNotification({
         type: "error",
         message: "الرجاء ملء جميع الحقول!",
+      });
+      return;
+    }
+
+    const updatedWorker = {
+      id: initialValues.id,
+      name: employeeName,
+      price: amount,
+    };
+
+    try {
+      const { data } = await updateWorker({
+        id: initialValues.id,
+        workerData: updatedWorker,
+      }).unwrap();
+
+      setNotification({
+        type: "success",
+        message: "تم تحديث بيانات الموظف بنجاح!",
+      });
+      toast.success("تم تحديث بيانات الموظف بنجاح!");
+      closeModal();
+      resetForm();
+    } catch (error) {
+      setNotification({
+        type: "error",
+        message: "حدث خطأ أثناء تحديث بيانات الموظف.",
       });
     }
   };
 
   const resetForm = () => {
-    setName("");
-    setDiscount("");
+    setEmployeeName(initialValues.name || "");
+    setAmount(initialValues.price || "");
     setFormSubmitted(false);
     setNotification(null);
   };
@@ -79,7 +94,7 @@ const DiscountForm = ({ isOpen, closeModal }) => {
               >
                 <Dialog.Panel className="bg-white rounded-lg px-4 py-6 w-full max-w-md mx-auto overflow-y-auto shadow-xl">
                   <Dialog.Title className="text-lg font-medium leading-6 text-gray-900 text-start mb-4">
-                    إضافة شغل إضافي
+                    تعديل بيانات الموظف
                   </Dialog.Title>
                   {notification && (
                     <div
@@ -92,38 +107,42 @@ const DiscountForm = ({ isOpen, closeModal }) => {
                       {notification.message}
                     </div>
                   )}
-                  <form onSubmit={handleSubmit} className="mt-4">
-                    <div className="mb-4">
+                  <form
+                    onSubmit={handleSubmit}
+                    className="mt-4 grid grid-cols-1 gap-4"
+                  >
+                    <div>
                       <label
-                        htmlFor="typeDiscount"
+                        htmlFor="employeeName"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        نوع الخصم
+                        الاسم
                       </label>
                       <input
-                        id="typeDiscount"
+                        id="employeeName"
                         type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        value={employeeName}
+                        onChange={(e) => setEmployeeName(e.target.value)}
                         className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                          formSubmitted && !name ? "border-red-500" : ""
+                          formSubmitted && !employeeName ? "border-red-500" : ""
                         }`}
                       />
                     </div>
                     <div className="mb-4">
                       <label
-                        htmlFor="discount"
+                        htmlFor="amount"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        نسبة الخصم
+                        السعر
                       </label>
                       <input
-                        id="discount"
+                        id="amount"
                         type="number"
-                        value={discount}
-                        onChange={(e) => setDiscount(e.target.value)}
+                        min={0}
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
                         className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                          formSubmitted && !discount ? "border-red-500" : ""
+                          formSubmitted && !amount ? "border-red-500" : ""
                         }`}
                       />
                     </div>
@@ -139,10 +158,10 @@ const DiscountForm = ({ isOpen, closeModal }) => {
                         type="submit"
                         className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
                       >
-                        {isLoading ? (
-                          <Spinner />
-                        ) : (
+                        {!isLoading ? (
                           <AiOutlineSave className="ml-3" />
+                        ) : (
+                          <Spinner />
                         )}
                         حفظ
                       </button>
@@ -158,4 +177,4 @@ const DiscountForm = ({ isOpen, closeModal }) => {
   );
 };
 
-export default DiscountForm;
+export default UpdateWorker;

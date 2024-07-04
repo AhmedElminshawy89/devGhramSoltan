@@ -1,15 +1,10 @@
 import React, { useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { Input } from "antd";
-import { AiOutlineClose, AiOutlineSave, AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
-import { VscSaveAs } from "react-icons/vsc";
-import MUIDataTable from "mui-datatables";
+import { AiOutlineSave } from "react-icons/ai";
 import AdminTable from "../../Components/tables/AdminTable";
 import AdminForm from "../../Components/Forms/AdminForm";
 
 const AddAdmin = () => {
   const [isOpen, setIsOpen] = useState(false);
-
 
   const openModal = () => {
     setIsOpen(true);
@@ -19,12 +14,6 @@ const AddAdmin = () => {
     setIsOpen(false);
   };
 
-
-
-
-
-
-
   return (
     <div className="p-4">
       <button
@@ -33,9 +22,7 @@ const AddAdmin = () => {
       >
         <AiOutlineSave className="ml-3" /> إضافة أدمن جديد
       </button>
-
       <AdminForm closeModal={closeModal} isOpen={isOpen} />
-
       <AdminTable />
     </div>
   );

@@ -1,10 +1,31 @@
-import { configureStore } from '@reduxjs/toolkit';
-import tabReducer from './Feature/TabSlice'; 
+import { configureStore } from "@reduxjs/toolkit";
+import tabReducer from "./Feature/TabSlice";
+import { AdminApi } from "./Feature/API/Admin";
+import { EmployeeApi } from "./Feature/API/Emplyee";
+import { WorkerApi } from "./Feature/API/Workers";
+import { DiscountApi } from "./Feature/API/Discount";
+import { CategoryApi } from "./Feature/API/Package";
+import { SubCategoryApi } from "./Feature/API/SubPackage";
 
 const store = configureStore({
   reducer: {
-    tab: tabReducer, 
+    tab: tabReducer,
+    [AdminApi.reducerPath]: AdminApi.reducer,
+    [EmployeeApi.reducerPath]: EmployeeApi.reducer,
+    [WorkerApi.reducerPath]: WorkerApi.reducer,
+    [DiscountApi.reducerPath]: DiscountApi.reducer,
+    [CategoryApi.reducerPath]: CategoryApi.reducer,
+    [SubCategoryApi.reducerPath]: SubCategoryApi.reducer,
   },
+  middleware: (gDM) =>
+    gDM().concat(
+      AdminApi.middleware,
+      EmployeeApi.middleware,
+      WorkerApi.middleware,
+      DiscountApi.middleware,
+      CategoryApi.middleware,
+      SubCategoryApi.middleware,
+    ),
 });
 
 export default store;

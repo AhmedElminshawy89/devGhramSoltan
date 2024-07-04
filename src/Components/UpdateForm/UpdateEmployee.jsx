@@ -4,18 +4,18 @@ import { Input } from "antd";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useSaveEmployeeMutation } from "../../app/Feature/API/Emplyee";
+import { useUpdateEmployeeMutation } from "../../app/Feature/API/Emplyee";
 import Spinner from "../../Shared/Spinner";
 
-const EmployeeForm = ({ isOpen, closeModal }) => {
-  const [name, setName] = useState("");
-  const [fingerprintNumber, setFingerprintNumber] = useState("");
-  const [phone, setPhone] = useState("");
-  const [salary, setSalary] = useState("");
+const UpdateEmployee = ({ isOpen, closeModal, initialValues }) => {
+  const [name, setName] = useState(initialValues.employee_name);
+  const [fingerprintNumber, setFingerprintNumber] = useState(initialValues.num);
+  const [phone, setPhone] = useState(initialValues.phone);
+  const [salary, setSalary] = useState(initialValues.salary.toString());
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
 
-  const [saveEmployee, { isLoading }] = useSaveEmployeeMutation();
+  const [updateEmployee, { isLoading }] = useUpdateEmployeeMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +28,7 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
       if (!phone.match(phoneRegex)) {
         setNotification({
           type: "error",
-          message: "يرجى إدخال رقم هاتف صالح.",
+          message: "يرجى إدخال رقم هاتف صحيح.",
         });
         return;
       }
@@ -36,34 +36,38 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
       if (!salary.match(salaryRegex)) {
         setNotification({
           type: "error",
-          message: "يرجى إدخال راتب صالح.",
+          message: "يرجى إدخال راتب صحيح.",
         });
         return;
       }
 
-      const newEmployee = {
-        employee_name:name,
-        num:fingerprintNumber,
+      const updatedEmployee = {
+        id: initialValues.id,
+        employee_name: name,
+        num: fingerprintNumber,
         phone,
         salary: parseFloat(salary),
       };
 
       try {
-        const { data } = await saveEmployee(newEmployee).unwrap();
-        console.log("تمت إضافة الموظف بنجاح:", data);
+        const { data } = await updateEmployee({
+          id: initialValues.id,
+          employeeData: updatedEmployee,
+        }).unwrap();
+        // console.log("تم تحديث بيانات الموظف بنجاح:", data);
 
         setNotification({
           type: "success",
-          message: "تم إضافة الموظف بنجاح!",
+          message: "تم تحديث بيانات الموظف بنجاح!",
         });
-        toast.success("تم إضافة الموظف بنجاح!");
+        toast.success("تم تحديث بيانات الموظف بنجاح!");
         closeModal();
         resetForm();
       } catch (error) {
-        console.error("حدث خطأ أثناء إضافة الموظف:", error);
+        // console.error("حدث خطأ أثناء تحديث بيانات الموظف:", error);
         setNotification({
           type: "error",
-          message: "حدث خطأ أثناء إضافة الموظف.",
+          message: "حدث خطأ أثناء تحديث بيانات الموظف.",
         });
       }
     } else {
@@ -75,10 +79,10 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
   };
 
   const resetForm = () => {
-    setName("");
-    setFingerprintNumber("");
-    setPhone("");
-    setSalary("");
+    setName(initialValues.employee_name);
+    setFingerprintNumber(initialValues.num);
+    setPhone(initialValues.phone);
+    setSalary(initialValues.salary.toString());
     setFormSubmitted(false);
     setNotification(null);
   };
@@ -115,7 +119,7 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
                   >
-                    إضافة موظف جديد
+                    تحديث بيانات موظف
                   </Dialog.Title>
                   <div className="mt-2">
                     {notification && (
@@ -240,4 +244,4 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
   );
 };
 
-export default EmployeeForm;
+export default UpdateEmployee;

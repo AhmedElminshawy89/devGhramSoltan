@@ -3,6 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useSaveCategoryMutation } from "../../app/Feature/API/Package";
 
 const PackageForm = ({ isOpen, closeModal }) => {
   const [name, setName] = useState("");
@@ -13,27 +14,48 @@ const PackageForm = ({ isOpen, closeModal }) => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
 
-  const handleSubmit = (e) => {
+  const [saveCategory, { isLoading }] = useSaveCategoryMutation();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
 
     if (name && price && category && desc && photo) {
-      console.log("Form submitted!");
-      console.log({
-        name,
-        price,
-        category,
-        desc,
-        photo,
-      });
+      try {
+        const formData = new FormData();
+        formData.append("name", name);
+        // formData.append("price", price);
+        formData.append("type", category);
+        formData.append("desc", desc);
+        formData.append("photo", photo);
+        formData.append("status", "off");
 
-      closeModal();
-      setNotification({
-        type: "success",
-        message: "تم حفظ البيانات بنجاح!",
-      });
-      toast.success("تم حفظ البيانات بنجاح!");
-      resetForm();
+        await saveCategory(formData);
+
+        console.log("Form submitted!");
+        console.log({
+          name,
+          price,
+          category,
+          desc,
+          photo,
+        });
+
+        closeModal();
+        setNotification({
+          type: "success",
+          message: "تم حفظ البيانات بنجاح!",
+        });
+        toast.success("تم حفظ البيانات بنجاح!");
+        resetForm();
+      } catch (error) {
+        console.error("Error saving package:", error);
+        setNotification({
+          type: "error",
+          message: "حدث خطأ أثناء حفظ البيانات!",
+        });
+        toast.error("حدث خطأ أثناء حفظ البيانات!");
+      }
     } else {
       setNotification({
         type: "error",

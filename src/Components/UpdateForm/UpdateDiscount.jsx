@@ -1,70 +1,51 @@
 import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { Input } from "antd";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useSaveEmployeeMutation } from "../../app/Feature/API/Emplyee";
 import Spinner from "../../Shared/Spinner";
+import { useUpdateDiscountMutation } from "../../app/Feature/API/Discount";
 
-const EmployeeForm = ({ isOpen, closeModal }) => {
-  const [name, setName] = useState("");
-  const [fingerprintNumber, setFingerprintNumber] = useState("");
-  const [phone, setPhone] = useState("");
-  const [salary, setSalary] = useState("");
+const UpdateDiscount = ({ isOpen, closeModal, initialValues }) => {
+  const [name, setName] = useState(initialValues.discount || "");
+  const [discount, setDiscount] = useState(initialValues.price || "");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
 
-  const [saveEmployee, { isLoading }] = useSaveEmployeeMutation();
+  const [updateDiscount, { isLoading }] = useUpdateDiscountMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
 
-    const phoneRegex = /^(\+?\d{1,3}[- ]?)?\d{10}$/;
-    const salaryRegex = /^\d+(\.\d{1,2})?$/;
-
-    if (name && fingerprintNumber && phone && salary) {
-      if (!phone.match(phoneRegex)) {
-        setNotification({
-          type: "error",
-          message: "يرجى إدخال رقم هاتف صالح.",
-        });
-        return;
-      }
-
-      if (!salary.match(salaryRegex)) {
-        setNotification({
-          type: "error",
-          message: "يرجى إدخال راتب صالح.",
-        });
-        return;
-      }
-
-      const newEmployee = {
-        employee_name:name,
-        num:fingerprintNumber,
-        phone,
-        salary: parseFloat(salary),
+    if (name && discount) {
+      const updatedDiscount = {
+        id: initialValues.id,
+        discount: name,
+        price: discount,
       };
 
       try {
-        const { data } = await saveEmployee(newEmployee).unwrap();
-        console.log("تمت إضافة الموظف بنجاح:", data);
+        const { data } = await updateDiscount({
+          id: initialValues.id,
+          discountData: updatedDiscount,
+        }).unwrap();
 
         setNotification({
           type: "success",
-          message: "تم إضافة الموظف بنجاح!",
+          message: "تم تحديث بيانات الخصم بنجاح!",
         });
-        toast.success("تم إضافة الموظف بنجاح!");
+
+        toast.success("تم تحديث بيانات الخصم بنجاح!");
         closeModal();
         resetForm();
       } catch (error) {
-        console.error("حدث خطأ أثناء إضافة الموظف:", error);
+        console.error("حدث خطأ أثناء تحديث بيانات الخصم:", error);
         setNotification({
           type: "error",
-          message: "حدث خطأ أثناء إضافة الموظف.",
+          message: "حدث خطأ أثناء تحديث بيانات الخصم.",
         });
+        toast.error("حدث خطأ أثناء تحديث بيانات الخصم.");
       }
     } else {
       setNotification({
@@ -75,10 +56,8 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
   };
 
   const resetForm = () => {
-    setName("");
-    setFingerprintNumber("");
-    setPhone("");
-    setSalary("");
+    setName(initialValues.discount);
+    setDiscount(initialValues.price);
     setFormSubmitted(false);
     setNotification(null);
   };
@@ -115,12 +94,12 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
                   >
-                    إضافة موظف جديد
+                    تعديل بيانات {initialValues.name}
                   </Dialog.Title>
                   <div className="mt-2">
                     {notification && (
                       <div
-                        className={`mb-4 p-2 text-center ${
+                        className={`mt-2 mb-2 p-2 text-center ${
                           notification.type === "success"
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
@@ -129,82 +108,38 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
                         {notification.message}
                       </div>
                     )}
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} className="mt-4">
                       <div className="mb-4">
                         <label
+                          htmlFor="typeDiscount"
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="name"
                         >
-                          اسم الموظف
+                          نوع الخصم
                         </label>
-                        <Input
-                          id="name"
+                        <input
+                          id="typeDiscount"
                           type="text"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className={`w-full ${
-                            formSubmitted && !name
-                              ? "border-red-500"
-                              : "border-gray-400"
+                          className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                            formSubmitted && !name ? "border-red-500" : ""
                           }`}
                         />
                       </div>
                       <div className="mb-4">
                         <label
+                          htmlFor="discount"
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="fingerprintNumber"
                         >
-                          رقم البصمة
+                          نسبة الخصم
                         </label>
-                        <Input
-                          id="fingerprintNumber"
+                        <input
+                          id="discount"
                           type="number"
-                          min={0}
-                          value={fingerprintNumber}
-                          onChange={(e) => setFingerprintNumber(e.target.value)}
-                          className={`w-full ${
-                            formSubmitted && !fingerprintNumber
-                              ? "border-red-500"
-                              : "border-gray-400"
-                          }`}
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="phone"
-                        >
-                          رقم التليفون
-                        </label>
-                        <Input
-                          id="phone"
-                          type="text"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          className={`w-full ${
-                            formSubmitted && !phone
-                              ? "border-red-500"
-                              : "border-gray-400"
-                          }`}
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="salary"
-                        >
-                          الراتب
-                        </label>
-                        <Input
-                          id="salary"
-                          type="number"
-                          min={0}
-                          value={salary}
-                          onChange={(e) => setSalary(e.target.value)}
-                          className={`w-full ${
-                            formSubmitted && !salary
-                              ? "border-red-500"
-                              : "border-gray-400"
+                          value={discount}
+                          onChange={(e) => setDiscount(e.target.value)}
+                          className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                            formSubmitted && !discount ? "border-red-500" : ""
                           }`}
                         />
                       </div>
@@ -220,10 +155,10 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
                           type="submit"
                           className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
                         >
-                          {!isLoading ? (
-                            <AiOutlineSave className="ml-3" />
-                          ) : (
+                          {isLoading ? (
                             <Spinner />
+                          ) : (
+                            <AiOutlineSave className="ml-3" />
                           )}
                           حفظ
                         </button>
@@ -240,4 +175,4 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
   );
 };
 
-export default EmployeeForm;
+export default UpdateDiscount;

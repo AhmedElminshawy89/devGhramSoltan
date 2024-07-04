@@ -4,52 +4,63 @@ import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Input } from "antd";
-import { useSaveSubCategoryMutation } from "../../app/Feature/API/SubPackage";
+import {
+  useSaveSubCategoryMutation,
+  useUpdateSubCategoryMutation,
+} from "../../app/Feature/API/SubPackage";
 import { useGetCategoriesQuery } from "../../app/Feature/API/Package";
 
-const SubPackageForm = ({ isOpen, closeModal }) => {
+const UpdateSubPackage = ({ isOpen, closeModal, initialValues }) => {
   const {
     data: packageOptions,
     isLoading: packageLoading,
     error: packageError,
   } = useGetCategoriesQuery();
 
-  const [packageName, setPackageName] = useState("");
-  const [item, setItem] = useState("");
-  const [price, setPrice] = useState("");
+  const [packageName, setPackageName] = useState(
+    initialValues.category_id || ""
+  );
+  const [item, setItem] = useState(initialValues.item || "");
+  const [price, setPrice] = useState(initialValues.price || "");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
 
-  const [saveSubCategory, { isLoading }] = useSaveSubCategoryMutation();
+  const [updateSubCategory, { isLoading: isUpdating }] =
+    useUpdateSubCategoryMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
 
     if (packageName && item && price) {
+      const updatedSubCategory = {
+        id: initialValues.id,
+        category_id: packageName,
+        item,
+        price,
+      };
+
       try {
-        const result = await saveSubCategory({
-          category_id: packageName,
-          item,
-          price,
+        const { data } = await updateSubCategory({
+          id: initialValues.id,
+          subCategoryData: updatedSubCategory,
         });
 
-        console.log("Form submitted!");
-        console.log(result.data);
-
-        closeModal();
         setNotification({
           type: "success",
-          message: "تم حفظ البيانات بنجاح!",
+          message: "تم تحديث بيانات الخصم بنجاح!",
         });
-        toast.success("تم حفظ البيانات بنجاح!");
+
+        toast.success("تم تحديث بيانات الخصم بنجاح!");
+        closeModal();
         resetForm();
       } catch (error) {
-        console.error("Error saving subcategory:", error);
+        console.error("حدث خطأ أثناء تحديث بيانات الخصم:", error);
         setNotification({
           type: "error",
-          message: "حدث خطأ أثناء حفظ البيانات. الرجاء المحاولة مرة أخرى!",
+          message: "حدث خطأ أثناء تحديث بيانات الخصم.",
         });
+        toast.error("حدث خطأ أثناء تحديث بيانات الخصم.");
       }
     } else {
       setNotification({
@@ -60,9 +71,9 @@ const SubPackageForm = ({ isOpen, closeModal }) => {
   };
 
   const resetForm = () => {
-    setPackageName("");
-    setItem("");
-    setPrice("");
+    setPackageName(initialValues.category_id || "");
+    setItem(initialValues.item || "");
+    setPrice(initialValues.price || "");
     setFormSubmitted(false);
     setNotification(null);
   };
@@ -106,7 +117,7 @@ const SubPackageForm = ({ isOpen, closeModal }) => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
                   >
-                    إضافة باكدج
+                    تحديث باكدج
                   </Dialog.Title>
                   {notification && (
                     <div
@@ -188,7 +199,7 @@ const SubPackageForm = ({ isOpen, closeModal }) => {
                       <button
                         type="submit"
                         className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
-                        disabled={isLoading}
+                        disabled={isUpdating}
                       >
                         <AiOutlineSave className="ml-3" /> حفظ
                       </button>
@@ -204,4 +215,4 @@ const SubPackageForm = ({ isOpen, closeModal }) => {
   );
 };
 
-export default SubPackageForm;
+export default UpdateSubPackage;

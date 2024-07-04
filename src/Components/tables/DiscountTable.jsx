@@ -1,50 +1,104 @@
+import React, { useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import MUIDataTable from "mui-datatables";
+import DeleteDialog from "../../Shared/DeleteDialog";
+import {
+  useDeleteDiscountMutation,
+  useGetDiscountsQuery,
+} from "../../app/Feature/API/Discount";
+import Spinner from "../../Shared/Spinner";
+import UpdateDiscount from "../UpdateForm/UpdateDiscount";
 
 const DiscountTable = () => {
+  const { data: discounts, refetch } = useGetDiscountsQuery();
+  const [deleteDiscountId, setDeleteDiscountId] = useState(null);
+  const [deleteDiscount, { isLoading: isDeleting }] =
+    useDeleteDiscountMutation();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [editDiscount, setEditDiscount] = useState(null);
 
-  const data = [
-    ["خصم خاص", "10" ,"30-5-2024","30-6-2024"],
-    ["خصم موسمي", "15","30-5-2024","30-6-2024"],
-    ["خصم تعاقد", "20","30-5-2024","30-6-2024"],
-  ];
-
-  const handleEdit = (rowIndex) => {
-    console.log("Edit clicked for row:", rowIndex);
+  const handleEdit = (discountId) => {
+    const discountToEdit = discounts.find(
+      (discount) => discount.id === discountId
+    );
+    setEditDiscount(discountToEdit);
   };
 
-  const handleDelete = (rowIndex) => {
-    console.log("Delete clicked for row:", rowIndex);
+  const handleDelete = (discountId) => {
+    setDeleteDiscountId(discountId);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    try {
+      await deleteDiscount(deleteDiscountId).unwrap();
+      setDeleteDiscountId(null);
+      setIsDeleteDialogOpen(false);
+      refetch();
+    } catch (error) {
+      console.error("Error deleting discount:", error);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteDiscountId(null);
+    setIsDeleteDialogOpen(false);
+  };
+
+  const handleCloseEdit = () => {
+    setEditDiscount(null);
   };
 
   const columns = [
     {
-      name: "نوع الخصم",
+      name: "discount",
+      label: "نوع الخصم",
+    },
+    {
+      name: "price",
+      label: "نسبه الخصم",
       options: {
-        filter: true,
-        sort: true,
+        customBodyRender: (value) => {
+          const formattedPrice = `${new Intl.NumberFormat("ar-EG").format(
+            value
+          )} جنيه`;
+          return formattedPrice;
+        },
       },
     },
     {
-      name: "نسبه الخصم",
+      name: "created_at",
+      label: "تاريخ العمليه",
       options: {
-        filter: true,
-        sort: true,
+        customBodyRender: (value) =>
+          new Date(value).toLocaleDateString("ar-EG"),
       },
-    },    "تاريخ العمليه",
-    "تاريخ التعديل",
+    },
     {
-      name: "تنفيذ",
+      name: "updated_at",
+      label: "تاريخ التحديث",
       options: {
-        customBodyRender: (value, tableMeta, updateValue) => {
-          const rowIndex = tableMeta.rowIndex;
+        customBodyRender: (value) =>
+          new Date(value).toLocaleDateString("ar-EG"),
+      },
+    },
+    {
+      name: "actions",
+      label: "تنفيذ",
+      options: {
+        customBodyRender: (value, tableMeta) => {
+          const discountId = discounts[tableMeta.rowIndex].id;
           return (
             <>
-              <button onClick={() => handleEdit(rowIndex)} className="ml-5">
+              <button onClick={() => handleEdit(discountId)} className="ml-5">
                 <AiOutlineEdit className="text-2xl text-black" />
               </button>
-              <button onClick={() => handleDelete(rowIndex)}>
-                <AiOutlineDelete className="text-2xl text-[#ef4444]" />
+              <button onClick={() => handleDelete(discountId)}>
+                {isDeleting && deleteDiscountId === discountId ? (
+                  <Spinner />
+                ) : (
+                  <AiOutlineDelete className="text-2xl text-[#ef4444]" />
+                )}
               </button>
             </>
           );
@@ -55,8 +109,8 @@ const DiscountTable = () => {
 
   const options = {
     filterType: "dropdown",
-    selectableRows: 'none',
-    // elevation: false,
+    selectableRows: "none",
+    sort: false, 
     setRowProps: (row, dataIndex, rowIndex) => {
       return {
         style: {
@@ -101,12 +155,27 @@ const DiscountTable = () => {
   };
 
   return (
+    <>
       <MUIDataTable
-        title={"تقارير الخصومات الحاليه"}
-        data={data}
+        title={"تقارير الخصومات الحالية"}
+        data={discounts || []}
         columns={columns}
         options={options}
       />
+      {editDiscount && (
+        <UpdateDiscount
+          isOpen={true}
+          closeModal={handleCloseEdit}
+          initialValues={editDiscount}
+        />
+      )}
+      <DeleteDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={handleCancelDelete}
+        onDeleteConfirmed={handleDeleteConfirmed}
+        loading={isDeleting}
+      />
+    </>
   );
 };
 
