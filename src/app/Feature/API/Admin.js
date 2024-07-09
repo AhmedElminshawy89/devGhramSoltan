@@ -6,8 +6,8 @@ export const AdminApi = createApi({
   reducerPath: "AdminApi",
   endpoints: (build) => ({
     getAdmins: build.query({
-      query: () => `/show`,
-      transformResponse: (response) => response.users.data,
+      query: (page) => `/show?page=${page}`,
+      transformResponse: (response) => response.users,
       providesTags: ["Admin"],
     }),
     saveAdmin: build.mutation({
@@ -15,6 +15,14 @@ export const AdminApi = createApi({
         url: `/save`,
         method: "POST",
         body: adminData,
+      }),
+      invalidatesTags: ["Admin"],
+    }),
+    updatePasswordAdmin: build.mutation({
+      query: (updatePassadmin) => ({
+        url: `/forgetPassword`,
+        method: "POST",
+        body: updatePassadmin,
       }),
       invalidatesTags: ["Admin"],
     }),
@@ -40,5 +48,6 @@ export const {
   useGetAdminsQuery,
   useSaveAdminMutation,
   useUpdateAdminMutation,
+  useUpdatePasswordAdminMutation,
   useDeleteAdminMutation,
 } = AdminApi;

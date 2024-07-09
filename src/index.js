@@ -9,6 +9,8 @@ import store from "./app/Store";
 import { StyledEngineProvider } from "@mui/material/styles";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import NetworkStatus from "./Services/NetworkStatus";
+import { OnlineStatusProvider } from "./Provider/OnlineStatusProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -16,7 +18,10 @@ root.render(
     <Provider store={store}>
       <BrowserRouter>
         <React.StrictMode>
+          {/* <NetworkStatus> */}
+          <OnlineStatusProvider>
           <App />
+          </OnlineStatusProvider>
           <ToastContainer
             position="bottom-right"
             autoClose={5000}
@@ -28,6 +33,7 @@ root.render(
             draggable
             pauseOnHover
           />
+          {/* </NetworkStatus> */}
         </React.StrictMode>
       </BrowserRouter>
     </Provider>

@@ -1,29 +1,44 @@
-import React, { useState } from "react";
-import {
-  AiOutlineEdit,
-  AiOutlineDelete,
-  AiOutlineLoading,
-} from "react-icons/ai";
+import React, { useEffect, useState } from "react";
+import { AiOutlineEdit, AiOutlineDelete, AiOutlineLoading } from "react-icons/ai";
 import MUIDataTable from "mui-datatables";
+import Spinner from "../../Shared/Spinner";
 import DeleteDialog from "../../Shared/DeleteDialog";
-import {
-  useDeleteEmployeeMutation,
-  useGetEmployeesQuery,
-} from "../../app/Feature/API/Emplyee";
-import UpdateEmployee from "../UpdateForm/UpdateEmployee";
+import { Pagination } from "antd";
+import { useSearchEmployeeQuery } from "../../app/Feature/API/Search";
+import UpdateEmployee from "./../UpdateForm/UpdateEmployee"; // Corrected path
+import { useDeleteEmployeeMutation, useGetEmployeesQuery } from "../../app/Feature/API/Emplyee";
 
 const EmployeeTable = () => {
-  const { data: employees, refetch } = useGetEmployeesQuery();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { data: employees, refetch: refetchEmployees } = useGetEmployeesQuery(currentPage); // Renamed from packages to employees for clarity
+  const {
+    data: searchedEmployees,
+    isLoading: loadingSearch,
+    refetch: refetchSearchResults,
+  } = useSearchEmployeeQuery(searchQuery);
   const [deleteEmployeeId, setDeleteEmployeeId] = useState(null);
-  const [deleteEmployee, { isLoading: isDeleting }] =
-    useDeleteEmployeeMutation();
+  const [deleteEmployee, { isLoading: isDeleting }] = useDeleteEmployeeMutation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [editEmployee, setEditEmployee] = useState(null);
+  const [editEmployee, setEditEmployee] = useState(null); // Renamed from editPackage to editEmployee for clarity
 
-  const handleEdit = (employeeId) => {
-    const employeeToEdit = employees.find(
-      (employee) => employee.id === employeeId
-    );
+  useEffect(() => {
+    if (employees?.data?.length === 0 && currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  }, [employees, currentPage]);
+
+  const handlePageChange = (page, pageSize) => {
+    setCurrentPage(page);
+    setPerPage(pageSize);
+  };
+
+  const handleEdit = async (employeeId) => {
+    const employeeToEdit =
+      searchQuery === ""
+        ? employees.data.find((emp) => emp.id === employeeId)
+        : searchedEmployees.employee.find((emp) => emp.id === employeeId);
     setEditEmployee(employeeToEdit);
   };
 
@@ -37,7 +52,8 @@ const EmployeeTable = () => {
       await deleteEmployee(deleteEmployeeId);
       setDeleteEmployeeId(null);
       setIsDeleteDialogOpen(false);
-      refetch();
+      refetchEmployees(); // Renamed from refetch to refetchEmployees for clarity
+      refetchSearchResults(); // Renamed from refetchData to refetchSearchResults for clarity
     } catch (error) {
       console.error("Error deleting employee:", error);
     }
@@ -52,6 +68,13 @@ const EmployeeTable = () => {
     setEditEmployee(null);
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
+    setEditEmployee(null);
+    refetchSearchResults(); // Renamed from refetchData to refetchSearchResults for clarity
+  };
+
   const columns = [
     {
       name: "employee_name",
@@ -61,11 +84,8 @@ const EmployeeTable = () => {
       name: "num",
       label: "رقم البصمة",
       options: {
-        customBodyRender: (value, tableMeta, updateValue) => {
-          const formattedSalary = `${new Intl.NumberFormat("ar-EG").format(
-            value
-          )}`;
-          return formattedSalary;
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)}`;
         },
       },
     },
@@ -77,33 +97,38 @@ const EmployeeTable = () => {
       name: "salary",
       label: "الراتب",
       options: {
-        customBodyRender: (value, tableMeta, updateValue) => {
-          const formattedSalary = `${new Intl.NumberFormat("ar-EG").format(
-            value
-          )} جنيه`;
-          return formattedSalary;
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
         },
       },
     },
     {
       name: "created_at",
-      label: "تاريخ البدء",
+      label: "تاريخ العملية",
       options: {
-        customBodyRender: (value, tableMeta, updateValue) => {
-          const startDate = new Date(value);
-          const formattedDate = startDate.toLocaleDateString("ar-EG");
-          return formattedDate;
+        customBodyRender: (value) => {
+          const date = new Date(value);
+          const formattedDate = date.toLocaleDateString("ar-EG");
+          const formattedTime = date.toLocaleTimeString("ar-EG", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          return `${formattedDate}(${formattedTime})`;
         },
       },
     },
     {
       name: "updated_at",
-      label: "تاريخ الانتهاء",
+      label: "تاريخ التحديث",
       options: {
-        customBodyRender: (value, tableMeta, updateValue) => {
-          const endDate = new Date(value);
-          const formattedDate = endDate.toLocaleDateString("ar-EG"); 
-          return formattedDate;
+        customBodyRender: (value) => {
+          const date = new Date(value);
+          const formattedDate = date.toLocaleDateString("ar-EG");
+          const formattedTime = date.toLocaleTimeString("ar-EG", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          return `${formattedDate}(${formattedTime})`;
         },
       },
     },
@@ -111,22 +136,27 @@ const EmployeeTable = () => {
       name: "actions",
       label: "تنفيذ",
       options: {
-        customBodyRender: (value, tableMeta, updateValue) => {
-          const employeeId = employees[tableMeta.rowIndex].id;
-          return (
-            <>
-              <button onClick={() => handleEdit(employeeId)} className="ml-5">
-                <AiOutlineEdit className="text-2xl text-black" />
-              </button>
-              <button onClick={() => handleDelete(employeeId)}>
-                {isDeleting && deleteEmployeeId === employeeId ? (
-                  <AiOutlineLoading className="text-2xl animate-spin" />
-                ) : (
-                  <AiOutlineDelete className="text-2xl text-[#ef4444]" />
-                )}
-              </button>
-            </>
-          );
+        customBodyRender: (value, tableMeta) => {
+          const employee = (employees?.data || searchedEmployees?.employee)?.[
+            tableMeta.rowIndex
+          ]?.id;
+          if (employee) {
+            return (
+              <>
+                <button onClick={() => handleEdit(employee)} className="ml-5">
+                  <AiOutlineEdit className="text-2xl text-black" />
+                </button>
+                <button onClick={() => handleDelete(employee)}>
+                  {isDeleting && deleteEmployeeId === employee ? (
+                    <AiOutlineLoading className="text-2xl animate-spin" />
+                  ) : (
+                    <AiOutlineDelete className="text-2xl text-[#ef4444]" />
+                  )}
+                </button>
+              </>
+            );
+          }
+          return null;
         },
       },
     },
@@ -136,16 +166,16 @@ const EmployeeTable = () => {
     filterType: "dropdown",
     selectableRows: "none",
     sort: false,
-    setRowProps: (row, dataIndex, rowIndex) => {
-      return {
-        style: {
-          backgroundColor: rowIndex % 2 === 0 ? "#f5f5f5" : "#ffffff",
-        },
-      };
-    },
+    pagination: false,
+    search: false,
+    setRowProps: (row, dataIndex, rowIndex) => ({
+      style: {
+        backgroundColor: rowIndex % 2 === 0 ? "#f5f5f5" : "#ffffff",
+      },
+    }),
     textLabels: {
       body: {
-        noMatch: "لا توجد بيانات مطابقة",
+        noMatch: loadingSearch ? "جاري البحث..." : "لا توجد بيانات مطابقة",
         toolTip: "فرز",
         columnHeaderTooltip: (column) => `فرز لـ ${column.label}`,
       },
@@ -172,32 +202,65 @@ const EmployeeTable = () => {
         titleAria: "عرض/إخفاء أعمدة الجدول",
       },
       selectedRows: {
-        text: "صفوف محددة",
+        text: "الصفوف المحددة",
         delete: "حذف",
         deleteAria: "حذف الصفوف المحددة",
       },
     },
   };
 
+  const dataToDisplay = searchQuery ? searchedEmployees?.employee : employees?.data;
+
   return (
     <>
-      <MUIDataTable
-        title={"تقارير الموظفين"}
-        data={employees}
-        columns={columns}
-        options={options}
-      />
+      <div className="mb-4 flex justify-between items-center w-[100%]">
+        <input
+          type="text"
+          placeholder="ابحث اسم الموظف"
+          className="w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
+      </div>
+
+      {employees ? (
+        <>
+          <MUIDataTable
+            title={"الموظفين الحاليين"}
+            data={dataToDisplay}
+            columns={columns}
+            options={options}
+          />
+          <Pagination
+            current={currentPage}
+            pageSize={perPage}
+            total={employees.total}
+            onChange={handlePageChange}
+            onShowSizeChange={(current, size) => {
+              setCurrentPage(current);
+              setPerPage(size);
+            }}
+          />
+        </>
+      ) : (
+        <div className="mt-[200px] mb-[200px] text-center">
+          <Spinner />
+        </div>
+      )}
+
       {editEmployee && (
         <UpdateEmployee
           isOpen={true}
-          closeModal={handleCloseEdit}
           initialValues={editEmployee}
+          closeModal={handleCloseEdit}
+          refetchSearch={refetchSearchResults}
         />
       )}
+
       <DeleteDialog
         isOpen={isDeleteDialogOpen}
-        onClose={handleCancelDelete}
         onDeleteConfirmed={handleDeleteConfirmed}
+        onClose={handleCancelDelete}
         loading={isDeleting}
       />
     </>

@@ -6,7 +6,8 @@ import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../../Shared/Spinner";
 import { useUpdateCategoryMutation } from "../../app/Feature/API/Package";
 
-const UpdatePackage = ({ isOpen, closeModal, initialValues }) => {
+const UpdatePackage = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
+  const nameEdit = initialValues.name;
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
@@ -26,7 +27,7 @@ const UpdatePackage = ({ isOpen, closeModal, initialValues }) => {
       setCategory(initialValues.type);
       setDesc(initialValues.desc);
       setPhoto(initialValues.photo);
-      setPhotoURL(initialValues.photo); // Assuming initialValues.photo is a URL
+      setPhotoURL(initialValues.photo);
       setStatus(initialValues.status);
     }
   }, [initialValues]);
@@ -39,7 +40,7 @@ const UpdatePackage = ({ isOpen, closeModal, initialValues }) => {
       const updatedPackage = {
         id: initialValues.id,
         name,
-        // price,
+        price,
         type: category,
         desc,
         photo,
@@ -52,6 +53,7 @@ const UpdatePackage = ({ isOpen, closeModal, initialValues }) => {
         toast.success("تم تحديث بيانات الباكدج بنجاح!");
         closeModal();
         resetForm();
+        refetchSearch();
       } catch (error) {
         console.error("حدث خطأ أثناء تحديث بيانات الباكدج:", error);
         toast.error("حدث خطأ أثناء تحديث بيانات الباكدج.");
@@ -107,7 +109,7 @@ const UpdatePackage = ({ isOpen, closeModal, initialValues }) => {
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900 text-start"
                 >
-                  إضافة باكدج
+                  إضافة باكدج {nameEdit}
                 </Dialog.Title>
                 {notification && (
                   <div
@@ -126,7 +128,7 @@ const UpdatePackage = ({ isOpen, closeModal, initialValues }) => {
                       className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       htmlFor="name"
                     >
-                      اسم الباكدج
+                      اسم الباكدج 
                     </label>
                     <input
                       id="name"

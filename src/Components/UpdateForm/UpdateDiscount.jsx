@@ -6,8 +6,9 @@ import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../../Shared/Spinner";
 import { useUpdateDiscountMutation } from "../../app/Feature/API/Discount";
 
-const UpdateDiscount = ({ isOpen, closeModal, initialValues }) => {
+const UpdateDiscount = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
   const [name, setName] = useState(initialValues.discount || "");
+  const nameEdit = initialValues.discount
   const [discount, setDiscount] = useState(initialValues.price || "");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
@@ -39,6 +40,7 @@ const UpdateDiscount = ({ isOpen, closeModal, initialValues }) => {
         toast.success("تم تحديث بيانات الخصم بنجاح!");
         closeModal();
         resetForm();
+        refetchSearch();
       } catch (error) {
         console.error("حدث خطأ أثناء تحديث بيانات الخصم:", error);
         setNotification({
@@ -94,7 +96,7 @@ const UpdateDiscount = ({ isOpen, closeModal, initialValues }) => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
                   >
-                    تعديل بيانات {initialValues.name}
+                    تعديل بيانات {nameEdit}
                   </Dialog.Title>
                   <div className="mt-2">
                     {notification && (

@@ -6,8 +6,8 @@ export const EmployeeApi = createApi({
   reducerPath: "EmployeeApi",
   endpoints: (build) => ({
     getEmployees: build.query({
-      query: () => `/show`,
-      transformResponse: (response) => response.employee.data,
+      query: (page) => `/show?page=${page}`,
+      transformResponse: (response) => response.employee,
       providesTags: ["Employee"],
     }),
     saveEmployee: build.mutation({
@@ -19,14 +19,14 @@ export const EmployeeApi = createApi({
       invalidatesTags: ["Employee"],
     }),
     updateEmployee: build.mutation({
-        query: ({ id, employeeData }) => ({
-          url: `/update/${id}`,
-          method: "POST",
-          body: employeeData,
-        }),
-        invalidatesTags: ["Employee"],
+      query: ({ id, employeeData }) => ({
+        url: `/update/${id}`,
+        method: "POST",
+        body: employeeData,
       }),
-    
+      invalidatesTags: ["Employee"],
+    }),
+
     deleteEmployee: build.mutation({
       query: (id) => ({
         url: `/delete/${id}`,

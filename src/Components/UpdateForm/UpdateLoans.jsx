@@ -1,81 +1,69 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../../Shared/Spinner";
-import { useSaveLoansMutation } from "../../app/Feature/API/Loans";
+import { useUpdateLoanMutation } from "../../app/Feature/API/Loans";
 
-const LoansForm = ({ isOpen, closeModal,setLoansOffline }) => {
-  const [employeeName, setEmployeeName] = useState("");
-  const [expenseReason, setExpenseReason] = useState("");
-  const [amount, setAmount] = useState("");
+const UpdateLoans = ({
+  isOpen,
+  closeModal,
+  initialValues,
+  refetchSearch,
+  setLoansOffline,
+  loansOffline
+}) => {
+  const [employeeName, setEmployeeName] = useState(
+    initialValues.employee_name || ""
+  );
+  const [expenseReason, setExpenseReason] = useState(
+    initialValues.reason || ""
+  );
+  const [amount, setAmount] = useState(initialValues.price || "");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
-  const [offlineData, setOfflineData] = useState([]);
 
-  const [saveLoan, { isLoading }] = useSaveLoansMutation();
-
-  useEffect(() => {
-    const handleOnline = () => {
-      if (offlineData.length > 0) {
-        syncOfflineData();
-      }
-    };
-
-    const handleOffline = () => {
-      const savedData = JSON.parse(localStorage.getItem("backuploans"));
-      if (savedData) {
-        setOfflineData(savedData);
-        toast.info(
-          "أنت حاليا غير متصل بالإنترنت! عرض البيانات المحفوظة محليًا."
-        );
-      }
-    };
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, [offlineData]);
+  const [updateLoan, { isLoading }] = useUpdateLoanMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
 
     if (employeeName && expenseReason && amount) {
+      const updatedPackage = {
+        id: initialValues.id,
+        employee_name: employeeName,
+        reason: expenseReason,
+        price: amount,
+      };
       try {
-        await saveLoan({
-          employee_name: employeeName,
-          reason: expenseReason,
-          price: amount,
+        await updateLoan({
+          id: initialValues.id,
+          loanData: updatedPackage,
         }).unwrap();
         closeModal();
-        setNotification({ type: "success", message: "تم حفظ البيانات بنجاح!" });
-        toast.success("تم حفظ البيانات بنجاح!");
+        toast.success("تم تحديث البيانات بنجاح!");
         resetForm();
+        refetchSearch();
       } catch (error) {
         console.error("Error saving loan:", error);
-
         saveOfflineDataLocally({
-          id: Date.now(), 
+          id: initialValues.id,
           employee_name: employeeName,
           reason: expenseReason,
           price: amount,
         });
         const offlineData =
-        JSON.parse(localStorage.getItem("backuploans")) || [];
-      setLoansOffline(offlineData);
+          JSON.parse(localStorage.getItem("backuploans")) || [];
+        setLoansOffline(offlineData);
         setNotification({
           type: "error",
-          message: " تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.",
+          message: "تم تحديثها محليًا وستتم مزامنتها عند استعادة الاتصال.",
         });
         closeModal();
         resetForm();
-        toast.error(" تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.");
+        toast.error("تم تحديثها محليًا وستتم مزامنتها عند استعادة الاتصال.");
       }
     } else {
       setNotification({ type: "error", message: "الرجاء ملء جميع الحقول!" });
@@ -83,32 +71,16 @@ const LoansForm = ({ isOpen, closeModal,setLoansOffline }) => {
   };
 
   const saveOfflineDataLocally = (data) => {
-    const updatedOfflineData = [...offlineData, data];
-    setOfflineData(updatedOfflineData);
+    const offlineData = JSON.parse(localStorage.getItem("offlineData")) || [];
+    const updatedOfflineData = loansOffline.map((loan) =>
+      loan.id === data.id ? { ...data } : loan
+    );
+    setLoansOffline(updatedOfflineData);
+  
     localStorage.setItem("backuploans", JSON.stringify(updatedOfflineData));
   };
-
-  const syncOfflineData = async () => {
-    try {
-      const savedData = JSON.parse(localStorage.getItem("backuploans"));
-      if (!savedData || savedData.length === 0) {
-        toast.info("لا توجد بيانات محلية لمزامنتها مع الخادم.");
-        return;
-      }
-      for (let data of savedData) {
-        const { id, ...dataWithoutId } = data;
-        await saveLoan(dataWithoutId).unwrap();
-      }
-      localStorage.removeItem("backuploans");
-      setOfflineData([]);
-      toast.success("تمت مزامنة البيانات المحلية مع الخادم بنجاح!");
-    } catch (error) {
-      console.error("Error syncing offline data:", error);
-      toast.error("حدث خطأ أثناء مزامنة البيانات المحلية مع الخادم!");
-    }
-  };
   
-
+  
   const resetForm = () => {
     setEmployeeName("");
     setExpenseReason("");
@@ -146,7 +118,7 @@ const LoansForm = ({ isOpen, closeModal,setLoansOffline }) => {
               >
                 <Dialog.Panel className="bg-white rounded-lg px-4 py-6 w-full max-w-md mx-auto overflow-y-auto shadow-xl">
                   <Dialog.Title className="text-lg font-medium leading-6 text-gray-900 text-start mb-4">
-                    سلفة
+                    تعديل سلفة {initialValues.employee_name}
                   </Dialog.Title>
                   {notification && (
                     <div
@@ -252,4 +224,4 @@ const LoansForm = ({ isOpen, closeModal,setLoansOffline }) => {
   );
 };
 
-export default LoansForm;
+export default UpdateLoans;

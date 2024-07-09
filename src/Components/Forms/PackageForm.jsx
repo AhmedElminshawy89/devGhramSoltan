@@ -4,6 +4,7 @@ import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSaveCategoryMutation } from "../../app/Feature/API/Package";
+import Spinner from "../../Shared/Spinner";
 
 const PackageForm = ({ isOpen, closeModal }) => {
   const [name, setName] = useState("");
@@ -24,7 +25,7 @@ const PackageForm = ({ isOpen, closeModal }) => {
       try {
         const formData = new FormData();
         formData.append("name", name);
-        // formData.append("price", price);
+        formData.append("price", price);
         formData.append("type", category);
         formData.append("desc", desc);
         formData.append("photo", photo);
@@ -220,7 +221,12 @@ const PackageForm = ({ isOpen, closeModal }) => {
                         type="submit"
                         className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
                       >
-                        <AiOutlineSave className="ml-3" /> حفظ
+                        {isLoading ? (
+                          <Spinner />
+                        ) : (
+                          <AiOutlineSave className="ml-3" />
+                        )}
+                        حفظ
                       </button>
                     </div>
                   </form>

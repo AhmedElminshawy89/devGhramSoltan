@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Input } from "antd";
 import { useSaveSubCategoryMutation } from "../../app/Feature/API/SubPackage";
 import { useGetCategoriesQuery } from "../../app/Feature/API/Package";
+import Spinner from "../../Shared/Spinner";
 
 const SubPackageForm = ({ isOpen, closeModal }) => {
   const {
@@ -71,8 +72,8 @@ const SubPackageForm = ({ isOpen, closeModal }) => {
   if (packageError) return <div>Error: {packageError.message}</div>;
 
   const uniquePackageOptions = Array.from(
-    new Set(packageOptions.map((pkg) => pkg.name))
-  ).map((name) => packageOptions.find((pkg) => pkg.name === name));
+    new Set(packageOptions.data?.map((pkg) => pkg.name))
+  ).map((name) => packageOptions.data?.find((pkg) => pkg.name === name));
 
   return (
     <>
@@ -106,7 +107,7 @@ const SubPackageForm = ({ isOpen, closeModal }) => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
                   >
-                    إضافة باكدج
+                    إضافة باكدج فرعي
                   </Dialog.Title>
                   {notification && (
                     <div
@@ -190,7 +191,12 @@ const SubPackageForm = ({ isOpen, closeModal }) => {
                         className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
                         disabled={isLoading}
                       >
-                        <AiOutlineSave className="ml-3" /> حفظ
+                        {isLoading?(
+                          <Spinner/>
+                        ):(
+                          <AiOutlineSave className="ml-3" />
+                        )}
+                         حفظ
                       </button>
                     </div>
                   </form>

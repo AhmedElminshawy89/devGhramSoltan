@@ -6,8 +6,8 @@ export const WorkerApi = createApi({
   reducerPath: "WorkerApi",
   endpoints: (build) => ({
     getWorkers: build.query({
-      query: () => `/show`,
-      transformResponse: (response) => response.jobs.data,
+      query: (page) => `/show?page=${page}`,
+      transformResponse: (response) => response.jobs,
       providesTags: ["Worker"],
     }),
     saveWorker: build.mutation({

@@ -6,8 +6,9 @@ import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../../Shared/Spinner";
 import { useUpdateWorkerMutation } from "../../app/Feature/API/Workers";
 
-const UpdateWorker = ({ isOpen, closeModal, initialValues }) => {
+const UpdateWorker = ({ isOpen, closeModal, initialValues ,refetchSearch}) => {
   const [employeeName, setEmployeeName] = useState(initialValues.name || "");
+  const nameEdit = initialValues.name
   const [amount, setAmount] = useState(initialValues.price || "");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
@@ -50,6 +51,7 @@ const UpdateWorker = ({ isOpen, closeModal, initialValues }) => {
       toast.success("تم تحديث بيانات الموظف بنجاح!");
       closeModal();
       resetForm();
+      refetchSearch()
     } catch (error) {
       setNotification({
         type: "error",
@@ -94,8 +96,8 @@ const UpdateWorker = ({ isOpen, closeModal, initialValues }) => {
               >
                 <Dialog.Panel className="bg-white rounded-lg px-4 py-6 w-full max-w-md mx-auto overflow-y-auto shadow-xl">
                   <Dialog.Title className="text-lg font-medium leading-6 text-gray-900 text-start mb-4">
-                    تعديل بيانات الموظف
-                  </Dialog.Title>
+                    تعديل بيانات {nameEdit}
+                                      </Dialog.Title>
                   {notification && (
                     <div
                       className={`mt-3 p-2 text-center ${

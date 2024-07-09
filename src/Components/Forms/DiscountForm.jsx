@@ -79,7 +79,7 @@ const DiscountForm = ({ isOpen, closeModal }) => {
               >
                 <Dialog.Panel className="bg-white rounded-lg px-4 py-6 w-full max-w-md mx-auto overflow-y-auto shadow-xl">
                   <Dialog.Title className="text-lg font-medium leading-6 text-gray-900 text-start mb-4">
-                    إضافة شغل إضافي
+                    إضافة خصم جديد
                   </Dialog.Title>
                   {notification && (
                     <div
@@ -120,6 +120,7 @@ const DiscountForm = ({ isOpen, closeModal }) => {
                       <input
                         id="discount"
                         type="number"
+                        min={0}
                         value={discount}
                         onChange={(e) => setDiscount(e.target.value)}
                         className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${

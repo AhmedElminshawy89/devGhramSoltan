@@ -9,14 +9,20 @@ import {
   useUpdateSubCategoryMutation,
 } from "../../app/Feature/API/SubPackage";
 import { useGetCategoriesQuery } from "../../app/Feature/API/Package";
+import Spinner from "../../Shared/Spinner";
 
-const UpdateSubPackage = ({ isOpen, closeModal, initialValues }) => {
+const UpdateSubPackage = ({
+  isOpen,
+  closeModal,
+  initialValues,
+  refetchSearch,
+}) => {
   const {
     data: packageOptions,
     isLoading: packageLoading,
     error: packageError,
   } = useGetCategoriesQuery();
-
+  const nameEdit = initialValues.item
   const [packageName, setPackageName] = useState(
     initialValues.category_id || ""
   );
@@ -54,6 +60,7 @@ const UpdateSubPackage = ({ isOpen, closeModal, initialValues }) => {
         toast.success("تم تحديث بيانات الخصم بنجاح!");
         closeModal();
         resetForm();
+        refetchSearch();
       } catch (error) {
         console.error("حدث خطأ أثناء تحديث بيانات الخصم:", error);
         setNotification({
@@ -82,8 +89,8 @@ const UpdateSubPackage = ({ isOpen, closeModal, initialValues }) => {
   if (packageError) return <div>Error: {packageError.message}</div>;
 
   const uniquePackageOptions = Array.from(
-    new Set(packageOptions.map((pkg) => pkg.name))
-  ).map((name) => packageOptions.find((pkg) => pkg.name === name));
+    new Set(packageOptions.data?.map((pkg) => pkg.name))
+  ).map((name) => packageOptions.data?.find((pkg) => pkg.name === name));
 
   return (
     <>
@@ -117,7 +124,7 @@ const UpdateSubPackage = ({ isOpen, closeModal, initialValues }) => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
                   >
-                    تحديث باكدج
+                    تعديل باكدج {nameEdit}
                   </Dialog.Title>
                   {notification && (
                     <div
@@ -201,7 +208,12 @@ const UpdateSubPackage = ({ isOpen, closeModal, initialValues }) => {
                         className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
                         disabled={isUpdating}
                       >
-                        <AiOutlineSave className="ml-3" /> حفظ
+                        {isUpdating ? (
+                          <Spinner />
+                        ) : (
+                          <AiOutlineSave className="ml-3" />
+                        )}
+                        حفظ
                       </button>
                     </div>
                   </form>

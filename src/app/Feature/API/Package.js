@@ -6,8 +6,8 @@ export const CategoryApi = createApi({
   reducerPath: "CategoryApi",
   endpoints: (build) => ({
     getCategories: build.query({
-      query: () => `/show`,
-      transformResponse: (response) => response.categories.data,
+      query: (page) => `/show?page=${page}`,
+      transformResponse: (response) => response.categories,
       providesTags: ["Category"],
     }),
     saveCategory: build.mutation({

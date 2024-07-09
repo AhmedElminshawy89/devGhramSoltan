@@ -341,3 +341,24 @@ li {
   font-size: 18px !important;
   font-weight: 500 !important;
 }
+
+.ant-pagination-next,
+.ant-pagination-prev {
+  transform: rotate(180deg);
+}
+
+.ant-pagination {
+  margin-top: 20px !important;
+}
+.ant-pagination-item-link{
+  font-size: 16px !important;
+  /* color: #000 !important; */
+}
+.ant-pagination-item-active{
+  font-weight: 600 !important;
+  border-color: #f3c74d !important;
+  background-color: #f3c74d !important;
+}
+.ant-pagination-item-active>a{
+  color: #000 !important;
+}

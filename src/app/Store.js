@@ -6,6 +6,9 @@ import { WorkerApi } from "./Feature/API/Workers";
 import { DiscountApi } from "./Feature/API/Discount";
 import { CategoryApi } from "./Feature/API/Package";
 import { SubCategoryApi } from "./Feature/API/SubPackage";
+import { LoanEmployeeApi } from "./Feature/API/Loans";
+import { ExpenseApi } from "./Feature/API/Expenses";
+import { SearchApi } from "./Feature/API/Search";
 
 const store = configureStore({
   reducer: {
@@ -16,6 +19,9 @@ const store = configureStore({
     [DiscountApi.reducerPath]: DiscountApi.reducer,
     [CategoryApi.reducerPath]: CategoryApi.reducer,
     [SubCategoryApi.reducerPath]: SubCategoryApi.reducer,
+    [LoanEmployeeApi.reducerPath]: LoanEmployeeApi.reducer,
+    [ExpenseApi.reducerPath]: ExpenseApi.reducer,
+    [SearchApi.reducerPath]: SearchApi.reducer,
   },
   middleware: (gDM) =>
     gDM().concat(
@@ -25,6 +31,9 @@ const store = configureStore({
       DiscountApi.middleware,
       CategoryApi.middleware,
       SubCategoryApi.middleware,
+      LoanEmployeeApi.middleware,
+      ExpenseApi.middleware,
+      SearchApi.middleware,
     ),
 });
 
