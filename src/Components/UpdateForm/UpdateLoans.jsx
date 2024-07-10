@@ -5,14 +5,14 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../../Shared/Spinner";
 import { useUpdateLoanMutation } from "../../app/Feature/API/Loans";
+import { useDispatch } from "react-redux";
+import { updateOfflineLoan } from "../../app/Feature/offlineSlice";
 
 const UpdateLoans = ({
   isOpen,
   closeModal,
   initialValues,
   refetchSearch,
-  setLoansOffline,
-  loansOffline
 }) => {
   const [employeeName, setEmployeeName] = useState(
     initialValues.employee_name || ""
@@ -25,6 +25,7 @@ const UpdateLoans = ({
   const [notification, setNotification] = useState(null);
 
   const [updateLoan, { isLoading }] = useUpdateLoanMutation();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,15 +49,7 @@ const UpdateLoans = ({
         refetchSearch();
       } catch (error) {
         console.error("Error saving loan:", error);
-        saveOfflineDataLocally({
-          id: initialValues.id,
-          employee_name: employeeName,
-          reason: expenseReason,
-          price: amount,
-        });
-        const offlineData =
-          JSON.parse(localStorage.getItem("backuploans")) || [];
-        setLoansOffline(offlineData);
+        dispatch(updateOfflineLoan(updatedPackage));
         setNotification({
           type: "error",
           message: "تم تحديثها محليًا وستتم مزامنتها عند استعادة الاتصال.",
@@ -70,17 +63,6 @@ const UpdateLoans = ({
     }
   };
 
-  const saveOfflineDataLocally = (data) => {
-    const offlineData = JSON.parse(localStorage.getItem("offlineData")) || [];
-    const updatedOfflineData = loansOffline.map((loan) =>
-      loan.id === data.id ? { ...data } : loan
-    );
-    setLoansOffline(updatedOfflineData);
-  
-    localStorage.setItem("backuploans", JSON.stringify(updatedOfflineData));
-  };
-  
-  
   const resetForm = () => {
     setEmployeeName("");
     setExpenseReason("");

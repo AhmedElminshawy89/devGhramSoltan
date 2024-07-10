@@ -1,17 +1,19 @@
-// db.js
-import { openDB } from 'idb';
+import { openDB } from "idb";
 
-const dbPromise = openDB('loan-database', 1, {
+const dbPromise = openDB("loans-db", 1, {
   upgrade(db) {
-    db.createObjectStore('loans', {
-      keyPath: 'id',
-      autoIncrement: true,
-    });
-    db.createObjectStore('offline-operations', {
-      keyPath: 'id',
-      autoIncrement: true,
-    });
+    db.createObjectStore("loans", { keyPath: "id" });
   },
 });
 
-export const getDb = () => dbPromise;
+export const saveData = async (data) => {
+  const db = await dbPromise;
+  const tx = db.transaction("loans", "readwrite");
+  await tx.store.put({ id: 1, data });
+  await tx.done;
+};
+
+export const getData = async () => {
+  const db = await dbPromise;
+  return (await db.transaction("loans").store.get(1))?.data;
+};

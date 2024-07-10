@@ -1,24 +1,35 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment, useContext } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../../Shared/Spinner";
 import { useSaveLoansMutation } from "../../app/Feature/API/Loans";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addOfflineLoan,
+  updateOfflineLoan,
+  clearOfflineLoans,
+  setOfflineLoans,
+} from "../../app/Feature/offlineSlice";
+import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
 
-const LoansForm = ({ isOpen, closeModal,setLoansOffline }) => {
+const LoansForm = ({ isOpen, closeModal }) => {
   const [employeeName, setEmployeeName] = useState("");
   const [expenseReason, setExpenseReason] = useState("");
   const [amount, setAmount] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
-  const [offlineData, setOfflineData] = useState([]);
 
   const [saveLoan, { isLoading }] = useSaveLoansMutation();
+  const isOnline = useContext(OnlineStatusContext);
+
+  const dispatch = useDispatch();
+  const offlineLoans = useSelector((state) => state.offlineLoans.loans) || [];
 
   useEffect(() => {
     const handleOnline = () => {
-      if (offlineData.length > 0) {
+      if (offlineLoans.length > 0) {
         syncOfflineData();
       }
     };
@@ -26,7 +37,7 @@ const LoansForm = ({ isOpen, closeModal,setLoansOffline }) => {
     const handleOffline = () => {
       const savedData = JSON.parse(localStorage.getItem("backuploans"));
       if (savedData) {
-        setOfflineData(savedData);
+        setOfflineLoans(savedData);
         toast.info(
           "أنت حاليا غير متصل بالإنترنت! عرض البيانات المحفوظة محليًا."
         );
@@ -40,53 +51,66 @@ const LoansForm = ({ isOpen, closeModal,setLoansOffline }) => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
-  }, [offlineData]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
-
+  
     if (employeeName && expenseReason && amount) {
       try {
-        await saveLoan({
-          employee_name: employeeName,
-          reason: expenseReason,
-          price: amount,
-        }).unwrap();
-        closeModal();
-        setNotification({ type: "success", message: "تم حفظ البيانات بنجاح!" });
-        toast.success("تم حفظ البيانات بنجاح!");
-        resetForm();
+        if (isOnline) {
+          const response = await saveLoan({
+            employee_name: employeeName,
+            reason: expenseReason,
+            price: amount,
+          });
+          closeModal();
+          setNotification({
+            type: "success",
+            message: "تم حفظ البيانات بنجاح!",
+          });
+          toast.success("تم حفظ البيانات بنجاح!");
+          resetForm();
+        } else {
+          const newOfflineData = {
+            id: Date.now(),
+            employee_name: employeeName,
+            reason: expenseReason,
+            price: amount,
+          };
+          dispatch(addOfflineLoan(newOfflineData));
+          setNotification({
+            type: "error",
+            message: "تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.",
+          });
+          closeModal();
+          resetForm();
+          toast.error("تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.");
+          console.log(offlineLoans)
+        }
       } catch (error) {
         console.error("Error saving loan:", error);
-
-        saveOfflineDataLocally({
-          id: Date.now(), 
+        const newOfflineData = {
+          id: Date.now(),
           employee_name: employeeName,
           reason: expenseReason,
           price: amount,
-        });
-        const offlineData =
-        JSON.parse(localStorage.getItem("backuploans")) || [];
-      setLoansOffline(offlineData);
+        };
+        dispatch(addOfflineLoan(newOfflineData));
         setNotification({
           type: "error",
-          message: " تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.",
+          message: "تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.",
         });
         closeModal();
         resetForm();
-        toast.error(" تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.");
+        toast.error("تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.");
       }
     } else {
       setNotification({ type: "error", message: "الرجاء ملء جميع الحقول!" });
     }
   };
-
-  const saveOfflineDataLocally = (data) => {
-    const updatedOfflineData = [...offlineData, data];
-    setOfflineData(updatedOfflineData);
-    localStorage.setItem("backuploans", JSON.stringify(updatedOfflineData));
-  };
+  
 
   const syncOfflineData = async () => {
     try {
@@ -98,16 +122,15 @@ const LoansForm = ({ isOpen, closeModal,setLoansOffline }) => {
       for (let data of savedData) {
         const { id, ...dataWithoutId } = data;
         await saveLoan(dataWithoutId).unwrap();
+        dispatch(updateOfflineLoan({ id, ...dataWithoutId }));
       }
-      localStorage.removeItem("backuploans");
-      setOfflineData([]);
+      dispatch(clearOfflineLoans());
       toast.success("تمت مزامنة البيانات المحلية مع الخادم بنجاح!");
     } catch (error) {
       console.error("Error syncing offline data:", error);
       toast.error("حدث خطأ أثناء مزامنة البيانات المحلية مع الخادم!");
     }
   };
-  
 
   const resetForm = () => {
     setEmployeeName("");
@@ -236,9 +259,10 @@ const LoansForm = ({ isOpen, closeModal,setLoansOffline }) => {
                         {isLoading ? (
                           <Spinner />
                         ) : (
-                          <AiOutlineSave className="ml-3" />
+                          <>
+                            <AiOutlineSave className="ml-3" /> حفظ
+                          </>
                         )}
-                        حفظ
                       </button>
                     </div>
                   </form>

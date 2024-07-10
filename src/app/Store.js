@@ -9,10 +9,12 @@ import { SubCategoryApi } from "./Feature/API/SubPackage";
 import { LoanEmployeeApi } from "./Feature/API/Loans";
 import { ExpenseApi } from "./Feature/API/Expenses";
 import { SearchApi } from "./Feature/API/Search";
+import offlineReducer from '../app/Feature/offlineSlice';
 
 const store = configureStore({
   reducer: {
     tab: tabReducer,
+    offlineLoans: offlineReducer,
     [AdminApi.reducerPath]: AdminApi.reducer,
     [EmployeeApi.reducerPath]: EmployeeApi.reducer,
     [WorkerApi.reducerPath]: WorkerApi.reducer,
