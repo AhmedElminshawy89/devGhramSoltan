@@ -10,11 +10,13 @@ import { LoanEmployeeApi } from "./Feature/API/Loans";
 import { ExpenseApi } from "./Feature/API/Expenses";
 import { SearchApi } from "./Feature/API/Search";
 import offlineReducer from '../app/Feature/offlineSlice';
+import offlineExpensesReducer from '../app/Feature/offlineExpensesSlice';
 
 const store = configureStore({
   reducer: {
     tab: tabReducer,
     offlineLoans: offlineReducer,
+    offlineExpenses: offlineExpensesReducer,
     [AdminApi.reducerPath]: AdminApi.reducer,
     [EmployeeApi.reducerPath]: EmployeeApi.reducer,
     [WorkerApi.reducerPath]: WorkerApi.reducer,

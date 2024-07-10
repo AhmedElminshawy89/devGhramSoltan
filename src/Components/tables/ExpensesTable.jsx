@@ -1,19 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import MUIDataTable from "mui-datatables";
 import Spinner from "../../Shared/Spinner";
 import DeleteDialog from "../../Shared/DeleteDialog";
 import { Pagination } from "antd";
 import { useSearchExpenseQuery } from "../../app/Feature/API/Search";
-import { useDeleteExpenseMutation, useGetExpensesQuery } from "../../app/Feature/API/Expenses";
+import {
+  useDeleteExpenseMutation,
+  useGetExpensesQuery,
+} from "../../app/Feature/API/Expenses";
 import UpdateExpenses from "../UpdateForm/UpdateExpense";
+import { OnlineStatusContext } from "./../../Provider/OnlineStatusProvider";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { setOfflineExpenses } from "../../app/Feature/offlineExpensesSlice";
 
-const ExpensesTable = ({ ExpensesOffline, setExpensesOffline }) => {
+const ExpensesTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
   const { data: loansOnline, refetch: refetchLoansOnline } =
-  useGetExpensesQuery(currentPage);
+    useGetExpensesQuery(currentPage);
   const {
     data: searchedLoansOnline,
     isLoading: loadingSearchOnline,
@@ -23,56 +30,16 @@ const ExpensesTable = ({ ExpensesOffline, setExpensesOffline }) => {
   const [deleteLoan, { isLoading: isDeleting }] = useDeleteExpenseMutation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editLoan, setEditLoan] = useState(null);
-  const [isOnline, setIsOnline] = useState(true);
 
-  useEffect(() => {
-    const handleConnectionChange = () => {
-      const condition = navigator.onLine ? true : false;
-      setIsOnline(condition);
-    };
+  const isOnline = useContext(OnlineStatusContext);
 
-    window.addEventListener("online", handleConnectionChange);
-    window.addEventListener("offline", handleConnectionChange);
-
-    return () => {
-      window.removeEventListener("online", handleConnectionChange);
-      window.removeEventListener("offline", handleConnectionChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isOnline && ExpensesOffline.length === 0) {
-      const offlineData = JSON.parse(localStorage.getItem("backupExpenses")) || [];
-      setExpensesOffline(offlineData);
-    } else if (isOnline && ExpensesOffline.length > 0) {
-      ExpensesOffline.forEach(async (loan) => {
-        try {
-          await saveLoan(loan);
-          const updatedLoans = ExpensesOffline.filter(
-            (item) => item.id !== loan.id
-          );
-          setExpensesOffline(updatedLoans);
-          localStorage.setItem("backupExpenses", JSON.stringify(updatedLoans));
-        } catch (error) {
-          console.error("Failed to sync loan:", error);
-        }
-      });
-    }
-  }, [isOnline, ExpensesOffline]);
+  const dispatch = useDispatch();
+  const offlineExpenses =
+    useSelector((state) => state.offlineExpenses.expenses) || [];
 
   const handlePageChange = (page, pageSize) => {
     setCurrentPage(page);
     setPerPage(pageSize);
-  };
-  const saveLoan = async (loan) => {
-    try {
-      await saveLoan(loan);
-      const updatedLoans = ExpensesOffline.filter((item) => item.id !== loan.id);
-      setExpensesOffline(updatedLoans);
-      localStorage.setItem("loansOffline", JSON.stringify(updatedLoans));
-    } catch (error) {
-      console.error("Failed to sync loan:", error);
-    }
   };
   const handleEdit = async (loanId) => {
     let loanToEdit;
@@ -82,7 +49,7 @@ const ExpensesTable = ({ ExpensesOffline, setExpensesOffline }) => {
           ? loansOnline.data.find((loan) => loan.id === loanId)
           : searchedLoansOnline?.expense.find((loan) => loan.id === loanId);
     } else {
-      loanToEdit = ExpensesOffline.find((loan) => loan.id === loanId);
+      loanToEdit = offlineExpenses.find((loan) => loan.id === loanId);
     }
     setEditLoan(loanToEdit);
   };
@@ -99,11 +66,11 @@ const ExpensesTable = ({ ExpensesOffline, setExpensesOffline }) => {
         refetchLoansOnline();
         refetchSearchResultsOnline();
       } else {
-        const updatedLoans = ExpensesOffline.filter(
+        const updatedLoans = offlineExpenses.filter(
           (loan) => loan.id !== deleteLoanId
         );
-        setExpensesOffline(updatedLoans);
-        localStorage.setItem("backupExpenses", JSON.stringify(updatedLoans));
+        dispatch(setOfflineExpenses(updatedLoans));
+        localStorage.setItem("backupexpenses", JSON.stringify(updatedLoans));
       }
       setDeleteLoanId(null);
       setIsDeleteDialogOpen(false);
@@ -182,7 +149,7 @@ const ExpensesTable = ({ ExpensesOffline, setExpensesOffline }) => {
             ? searchQuery
               ? searchedLoansOnline?.expense?.[tableMeta.rowIndex]?.id
               : loansOnline?.data?.[tableMeta.rowIndex]?.id
-            : ExpensesOffline?.[tableMeta.rowIndex]?.id;
+            : offlineExpenses?.[tableMeta.rowIndex]?.id;
           return (
             <>
               <button onClick={() => handleEdit(loanId)} className="ml-5">
@@ -308,7 +275,7 @@ const ExpensesTable = ({ ExpensesOffline, setExpensesOffline }) => {
 
   const dataToDisplay = searchQuery
     ? searchedLoansOnline?.expense
-    : loansOnline?.data || ExpensesOffline;
+    : loansOnline?.data || offlineExpenses;
 
   return (
     <>
@@ -323,52 +290,45 @@ const ExpensesTable = ({ ExpensesOffline, setExpensesOffline }) => {
           />
         </div>
       )}
-{isOnline ? (
-  loansOnline ? (
-    <>
-      <MUIDataTable
-        title={"المصروفات"}
-        data={dataToDisplay}
-        columns={columns}
-        options={options}
-      />
-      <Pagination
-        current={currentPage}
-        pageSize={perPage}
-        total={loansOnline.total}
-        onChange={handlePageChange}
-        onShowSizeChange={(current, size) => {
-          setCurrentPage(current);
-          setPerPage(size);
-        }}
-      />
-    </>
-  ) : (
-    <MUIDataTable
-      title={"المصروفات"}
-      data={ExpensesOffline}
-      columns={columns}
-      options={optionsOffline}
-    />
-  )
-) : (
-  <MUIDataTable
-    title={"المصروفات"}
-    data={ExpensesOffline}
-    columns={columns}
-    options={optionsOffline}
-  />
-)}
-
-
+      {isOnline ? (
+        loansOnline ? (
+          <>
+            <MUIDataTable
+              title={"المصروفات"}
+              data={dataToDisplay}
+              columns={columns}
+              options={options}
+            />
+            <Pagination
+              current={currentPage}
+              pageSize={perPage}
+              total={loansOnline.total}
+              onChange={handlePageChange}
+              onShowSizeChange={(current, size) => {
+                setCurrentPage(current);
+                setPerPage(size);
+              }}
+            />
+          </>
+        ) : (
+          <div className="mt-[200px] mb-[200px] text-center">
+            <Spinner />
+          </div>
+        )
+      ) : (
+        <MUIDataTable
+          title={"المصروفات"}
+          data={offlineExpenses}
+          columns={columns}
+          options={optionsOffline}
+        />
+      )}
       {editLoan && (
         <UpdateExpenses
           isOpen={true}
           initialValues={editLoan}
           closeModal={handleCloseEdit}
           refetchSearch={refetchSearchResultsOnline}
-          setLoansOffline={setExpensesOffline}
-          loansOffline={ExpensesOffline}
         />
       )}
       <DeleteDialog

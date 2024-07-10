@@ -1,19 +1,15 @@
-import { openDB } from "idb";
+// dexieService.js
+import Dexie from "dexie";
 
-const dbPromise = openDB("loans-db", 1, {
-  upgrade(db) {
-    db.createObjectStore("loans", { keyPath: "id" });
-  },
+const db = new Dexie("LoanDatabase");
+db.version(1).stores({
+  loans: "++id, employee_name, reason, price, created_at, updated_at",
 });
 
 export const saveData = async (data) => {
-  const db = await dbPromise;
-  const tx = db.transaction("loans", "readwrite");
-  await tx.store.put({ id: 1, data });
-  await tx.done;
+  await db.loans.bulkPut(data);
 };
 
 export const getData = async () => {
-  const db = await dbPromise;
-  return (await db.transaction("loans").store.get(1))?.data;
+  return await db.loans.toArray();
 };

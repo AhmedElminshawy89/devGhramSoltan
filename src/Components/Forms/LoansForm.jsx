@@ -6,12 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../../Shared/Spinner";
 import { useSaveLoansMutation } from "../../app/Feature/API/Loans";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addOfflineLoan,
-  updateOfflineLoan,
-  clearOfflineLoans,
-  setOfflineLoans,
-} from "../../app/Feature/offlineSlice";
+import { addOfflineLoan } from "../../app/Feature/offlineSlice";
 import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
 
 const LoansForm = ({ isOpen, closeModal }) => {
@@ -27,36 +22,36 @@ const LoansForm = ({ isOpen, closeModal }) => {
   const dispatch = useDispatch();
   const offlineLoans = useSelector((state) => state.offlineLoans.loans) || [];
 
-  useEffect(() => {
-    const handleOnline = () => {
-      if (offlineLoans.length > 0) {
-        syncOfflineData();
-      }
-    };
+  // useEffect(() => {
+  //   const handleOnline = () => {
+  //     if (offlineLoans.length > 0) {
+  //       syncOfflineData();
+  //     }
+  //   };
 
-    const handleOffline = () => {
-      const savedData = JSON.parse(localStorage.getItem("backuploans"));
-      if (savedData) {
-        setOfflineLoans(savedData);
-        toast.info(
-          "أنت حاليا غير متصل بالإنترنت! عرض البيانات المحفوظة محليًا."
-        );
-      }
-    };
+  //   const handleOffline = () => {
+  //     const savedData = JSON.parse(localStorage.getItem("backuploans"));
+  //     if (savedData) {
+  //       setOfflineLoans(savedData);
+  //       toast.info(
+  //         "أنت حاليا غير متصل بالإنترنت! عرض البيانات المحفوظة محليًا."
+  //       );
+  //     }
+  //   };
 
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
+  //   window.addEventListener("online", handleOnline);
+  //   window.addEventListener("offline", handleOffline);
 
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("online", handleOnline);
+  //     window.removeEventListener("offline", handleOffline);
+  //   };
+  // }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
-  
+
     if (employeeName && expenseReason && amount) {
       try {
         if (isOnline) {
@@ -87,7 +82,7 @@ const LoansForm = ({ isOpen, closeModal }) => {
           closeModal();
           resetForm();
           toast.error("تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.");
-          console.log(offlineLoans)
+          console.log(offlineLoans);
         }
       } catch (error) {
         console.error("Error saving loan:", error);
@@ -110,27 +105,26 @@ const LoansForm = ({ isOpen, closeModal }) => {
       setNotification({ type: "error", message: "الرجاء ملء جميع الحقول!" });
     }
   };
-  
 
-  const syncOfflineData = async () => {
-    try {
-      const savedData = JSON.parse(localStorage.getItem("backuploans"));
-      if (!savedData || savedData.length === 0) {
-        toast.info("لا توجد بيانات محلية لمزامنتها مع الخادم.");
-        return;
-      }
-      for (let data of savedData) {
-        const { id, ...dataWithoutId } = data;
-        await saveLoan(dataWithoutId).unwrap();
-        dispatch(updateOfflineLoan({ id, ...dataWithoutId }));
-      }
-      dispatch(clearOfflineLoans());
-      toast.success("تمت مزامنة البيانات المحلية مع الخادم بنجاح!");
-    } catch (error) {
-      console.error("Error syncing offline data:", error);
-      toast.error("حدث خطأ أثناء مزامنة البيانات المحلية مع الخادم!");
-    }
-  };
+  // const syncOfflineData = async () => {
+  //   try {
+  //     const savedData = JSON.parse(localStorage.getItem("backuploans"));
+  //     if (!savedData || savedData.length === 0) {
+  //       toast.info("لا توجد بيانات محلية لمزامنتها مع الخادم.");
+  //       return;
+  //     }
+  //     for (let data of savedData) {
+  //       const { id, ...dataWithoutId } = data;
+  //       await saveLoan(dataWithoutId).unwrap();
+  //       dispatch(updateOfflineLoan({ id, ...dataWithoutId }));
+  //     }
+  //     dispatch(clearOfflineLoans());
+  //     toast.success("تمت مزامنة البيانات المحلية مع الخادم بنجاح!");
+  //   } catch (error) {
+  //     console.error("Error syncing offline data:", error);
+  //     toast.error("حدث خطأ أثناء مزامنة البيانات المحلية مع الخادم!");
+  //   }
+  // };
 
   const resetForm = () => {
     setEmployeeName("");

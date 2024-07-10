@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import MUIDataTable from "mui-datatables";
 import Spinner from "../../Shared/Spinner";
@@ -35,43 +35,43 @@ const LoansTable = () => {
   const dispatch = useDispatch();
 
 
-  useEffect(() => {
-    const syncOfflineLoans = async () => {
-      if (!isOnline && loansOffline.length === 0) {
-        const offlineData = JSON.parse(localStorage.getItem("backuploans")) || [];
-        dispatch(setOfflineLoans(offlineData));
-      } else if (isOnline && loansOffline.length > 0) {
-        const updatedLoans = [];
-        for (const loan of loansOffline) {
-          try {
-            await saveLoan(loan);
-            updatedLoans.push(loan.id);
-          } catch (error) {
-            console.error("Failed to sync loan:", error);
-          }
-        }
-        const remainingLoans = loansOffline.filter(
-          (item) => !updatedLoans.includes(item.id)
-        );
-        dispatch(setOfflineLoans(remainingLoans));
-        localStorage.setItem("backuploans", JSON.stringify(remainingLoans));
-      }
-    };
+  // useEffect(() => {
+  //   const syncOfflineLoans = async () => {
+  //     if (!isOnline && loansOffline.length === 0) {
+  //       const offlineData = JSON.parse(localStorage.getItem("backuploans")) || [];
+  //       dispatch(setOfflineLoans(offlineData));
+  //     } else if (isOnline && loansOffline.length > 0) {
+  //       const updatedLoans = [];
+  //       for (const loan of loansOffline) {
+  //         try {
+  //           await saveLoan(loan);
+  //           updatedLoans.push(loan.id);
+  //         } catch (error) {
+  //           console.error("Failed to sync loan:", error);
+  //         }
+  //       }
+  //       const remainingLoans = loansOffline.filter(
+  //         (item) => !updatedLoans.includes(item.id)
+  //       );
+  //       dispatch(setOfflineLoans(remainingLoans));
+  //       localStorage.setItem("backuploans", JSON.stringify(remainingLoans));
+  //     }
+  //   };
 
-    syncOfflineLoans();
-  }, [isOnline]);
+  //   syncOfflineLoans();
+  // }, [isOnline]);
   
 
-  const saveLoan = async (loan) => {
-    try {
-      await saveLoan(loan);
-      const updatedLoans = loansOffline.filter((item) => item.id !== loan.id);
-      dispatch(setOfflineLoans(updatedLoans));
-      localStorage.setItem("backuploans", JSON.stringify(updatedLoans));
-    } catch (error) {
-      console.error("Failed to sync loan:", error);
-    }
-  };
+  // const saveLoan = async (loan) => {
+  //   try {
+  //     await saveLoan(loan);
+  //     const updatedLoans = loansOffline.filter((item) => item.id !== loan.id);
+  //     dispatch(setOfflineLoans(updatedLoans));
+  //     localStorage.setItem("backuploans", JSON.stringify(updatedLoans));
+  //   } catch (error) {
+  //     console.error("Failed to sync loan:", error);
+  //   }
+  // };
 
   const handlePageChange = (page, pageSize) => {
     setCurrentPage(page);
@@ -89,9 +89,6 @@ const LoansTable = () => {
       loanToEdit = loansOffline.find((loan) => loan.id === loanId);
     }
     setEditLoan(loanToEdit);
-    // console.log('loans_offline',loansOffline.id)
-    // console.log('offline',loanToEdit)
-    // console.log('offlineId',loanId)
   };
 
   const handleDelete = (loanId) => {
@@ -118,6 +115,7 @@ const LoansTable = () => {
       console.error("Error deleting loan:", error);
     }
   };
+
   const handleCancelDelete = () => {
     setDeleteLoanId(null);
     setIsDeleteDialogOpen(false);
@@ -132,6 +130,7 @@ const LoansTable = () => {
     setCurrentPage(1);
     refetchSearchResultsOnline();
   };
+  
   const columns = [
     {
       name: "employee_name",

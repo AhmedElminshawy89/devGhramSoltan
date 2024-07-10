@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useContext } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { toast } from "react-toastify";
@@ -7,6 +7,7 @@ import Spinner from "../../Shared/Spinner";
 import { useUpdateLoanMutation } from "../../app/Feature/API/Loans";
 import { useDispatch } from "react-redux";
 import { updateOfflineLoan } from "../../app/Feature/offlineSlice";
+import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
 
 const UpdateLoans = ({
   isOpen,
@@ -23,6 +24,8 @@ const UpdateLoans = ({
   const [amount, setAmount] = useState(initialValues.price || "");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
+
+  const isOnline = useContext(OnlineStatusContext);
 
   const [updateLoan, { isLoading }] = useUpdateLoanMutation();
   const dispatch = useDispatch();

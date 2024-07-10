@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useGetLoansQuery } from "../app/Feature/API/Loans";
+import { useGetLoansQuery } from "../../app/Feature/API/Loans";
 import MUIDataTable from "mui-datatables";
-import { saveData, getData } from "../Services/dexieService";
+import { saveData, getData } from "../../Services/dexieService";
 
-const ExpensesAllData = () => {
-  const { data: loansOnline } = useGetLoansQuery();
+const LoansAllData = () => {
+  const { data: loansOnline, refetch } = useGetLoansQuery();
   const [loansOffline, setLoansOffline] = useState([]);
+  console.log("ExpensesAllData", loansOffline);
 
   useEffect(() => {
     if (loansOnline && loansOnline.data) {
@@ -17,6 +18,14 @@ const ExpensesAllData = () => {
       });
     }
   }, [loansOnline]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      refetch();
+    }, 500000); 
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   const columns = [
     {
@@ -125,4 +134,4 @@ const ExpensesAllData = () => {
   );
 };
 
-export default ExpensesAllData;
+export default LoansAllData;

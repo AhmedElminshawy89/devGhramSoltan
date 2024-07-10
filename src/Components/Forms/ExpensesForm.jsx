@@ -1,10 +1,13 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useContext } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {useSaveExpenseMutation } from "../../app/Feature/API/Expenses";
 import Spinner from "../../Shared/Spinner";
+import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
+import { useDispatch, useSelector } from "react-redux";
+import { addOfflineExpense } from "../../app/Feature/offlineExpensesSlice";
 
 const ExpensesForm = ({ isOpen, closeModal }) => {
     const [employeeName, setEmployeeName] = useState("");
@@ -15,31 +18,59 @@ const ExpensesForm = ({ isOpen, closeModal }) => {
   
     const [saveExpense, { isLoading }] = useSaveExpenseMutation();
   
+    const isOnline = useContext(OnlineStatusContext);
+
+    const dispatch = useDispatch();
+    const offlineLoans = useSelector((state) => state.offlineExpenses.expenses) || [];
+
     const handleSubmit = async (e) => {
       e.preventDefault();
       setFormSubmitted(true);
   
       if (employeeName && expenseReason && amount) {
         try {
-          const response = await saveExpense({
+          if (isOnline) {
+            const response = await saveExpense({
+              side:employeeName,
+              reason:expenseReason,
+              price:amount,
+            });
+            closeModal();
+            setNotification({ type: "success", message: "تم حفظ البيانات بنجاح!" });
+            toast.success("تم حفظ البيانات بنجاح!");
+            resetForm();
+          } else {
+            const newOfflineData = {
+              id: Date.now(),
+              side:employeeName,
+              reason:expenseReason,
+              price:amount,
+            };
+            dispatch(addOfflineExpense(newOfflineData));
+            setNotification({
+              type: "error",
+              message: "تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.",
+            });
+            closeModal();
+            resetForm();
+            toast.error("تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.");
+            console.log(offlineLoans);
+          }
+        } catch (error) {
+          const newOfflineData = {
+            id: Date.now(),
             side:employeeName,
             reason:expenseReason,
             price:amount,
-          });
-  
-          console.log("Expense added successfully:", response);
-  
-          closeModal();
-          setNotification({ type: "success", message: "تم حفظ البيانات بنجاح!" });
-          toast.success("تم حفظ البيانات بنجاح!");
-          resetForm();
-        } catch (error) {
-          console.error("Error adding expense:", error);
+          };
+          dispatch(addOfflineExpense(newOfflineData));
           setNotification({
             type: "error",
-            message: "حدث خطأ أثناء حفظ البيانات!",
+            message: "تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.",
           });
-          toast.error("حدث خطأ أثناء حفظ البيانات!");
+          closeModal();
+          resetForm();
+          toast.error("تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.");
         }
       } else {
         setNotification({ type: "error", message: "الرجاء ملء جميع الحقول!" });

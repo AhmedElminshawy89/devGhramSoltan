@@ -1,21 +1,16 @@
-import React, { useState, Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import {
-  AiOutlineClose,
-  AiOutlineSave,
-  AiOutlineEdit,
-  AiOutlineDelete,
-} from "react-icons/ai";
+import React, { useState, useContext } from "react";
 import { VscSaveAs } from "react-icons/vsc";
-import MUIDataTable from "mui-datatables";
 import ExpensesTable from "../../Components/tables/ExpensesTable";
 import ExpensesForm from "../../Components/Forms/ExpensesForm";
+import { Link } from "react-router-dom";
+import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
 
 const Expenses = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [ExpensesOffline, setExpensesOffline] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);  
+  const isOnline = useContext(OnlineStatusContext);
+
   const backupExpenses =
-    JSON.parse(localStorage.getItem("backupExpenses")) || [];
+    JSON.parse(localStorage.getItem("backupexpenses")) || [];
   const Number_of_data_offline = backupExpenses.length;
 
   function closeModal() {
@@ -37,17 +32,19 @@ const Expenses = () => {
         </button>
         <span className="text-lg font-semibold">
           البيانات الغير متصله({Number_of_data_offline})
+          <br />
+          {!isOnline && (
+            <Link
+              to="/moderator/expenses/all-data"
+              className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
+            >
+              الداتا الاحتياطيه
+            </Link>
+          )}
         </span>{" "}
       </div>
-      <ExpensesForm
-        closeModal={closeModal}
-        isOpen={isOpen}
-        setExpensesOffline={setExpensesOffline}
-      />
-      <ExpensesTable
-        ExpensesOffline={ExpensesOffline}
-        setExpensesOffline={setExpensesOffline}
-      />
+      <ExpensesForm closeModal={closeModal} isOpen={isOpen} />
+      <ExpensesTable />
     </div>
   );
 };

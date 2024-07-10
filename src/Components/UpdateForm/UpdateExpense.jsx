@@ -5,20 +5,24 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../../Shared/Spinner";
 import { useUpdateExpenseMutation } from "../../app/Feature/API/Expenses";
+import { useDispatch } from "react-redux";
+import { updateOfflineExpense } from "../../app/Feature/offlineExpensesSlice";
 
 const UpdateExpenses = ({
   isOpen,
   closeModal,
   initialValues,
   refetchSearch,
-  setLoansOffline,
-  loansOffline
 }) => {
-    const [employeeName, setEmployeeName] = useState(initialValues.side||"");
-    const [expenseReason, setExpenseReason] = useState(initialValues.reason||"");
-    const [amount, setAmount] = useState(initialValues.price||"");
-    const [formSubmitted, setFormSubmitted] = useState(false);
-    const [notification, setNotification] = useState(null);
+  const [employeeName, setEmployeeName] = useState(initialValues.side || "");
+  const [expenseReason, setExpenseReason] = useState(
+    initialValues.reason || ""
+  );
+  const [amount, setAmount] = useState(initialValues.price || "");
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [notification, setNotification] = useState(null);
+
+  const dispatch = useDispatch();
 
   const [updateExpenses, { isLoading }] = useUpdateExpenseMutation();
 
@@ -44,15 +48,7 @@ const UpdateExpenses = ({
         refetchSearch();
       } catch (error) {
         console.error("Error saving loan:", error);
-        saveOfflineDataLocally({
-          id: initialValues.id,
-          side: employeeName,
-          reason: expenseReason,
-          price: amount,
-        });
-        const offlineData =
-          JSON.parse(localStorage.getItem("backupExpenses")) || [];
-        setLoansOffline(offlineData);
+        dispatch(updateOfflineExpense(UpdateExpenses));
         setNotification({
           type: "error",
           message: "تم تحديثها محليًا وستتم مزامنتها عند استعادة الاتصال.",
@@ -66,17 +62,6 @@ const UpdateExpenses = ({
     }
   };
 
-  const saveOfflineDataLocally = (data) => {
-    const offlineData = JSON.parse(localStorage.getItem("offlineData")) || [];
-    const updatedOfflineData = loansOffline.map((loan) =>
-      loan.id === data.id ? { ...data } : loan
-    );
-    setLoansOffline(updatedOfflineData);
-  
-    localStorage.setItem("backupExpenses", JSON.stringify(updatedOfflineData));
-  };
-  
-  
   const resetForm = () => {
     setEmployeeName("");
     setExpenseReason("");
@@ -200,12 +185,12 @@ const UpdateExpenses = ({
                         type="submit"
                         className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
                       >
-                        {isLoading?(
-                            <Spinner/>
-                        ):(
-                            <AiOutlineSave className="ml-3" />
+                        {isLoading ? (
+                          <Spinner />
+                        ) : (
+                          <AiOutlineSave className="ml-3" />
                         )}
-                         حفظ
+                        حفظ
                       </button>
                     </div>
                   </form>
