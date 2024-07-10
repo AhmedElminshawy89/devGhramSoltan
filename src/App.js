@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import Routing from "./Router/Routing";
-import useSyncLoans from "./Components/Syncronization/useSyncLoans";
+import useSyncLoans from "./Syncronization/useSyncLoans";
 
 function App() {
   const dispatch = useDispatch();
