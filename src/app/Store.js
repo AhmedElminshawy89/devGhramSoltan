@@ -11,7 +11,7 @@ import { ExpenseApi } from "./Feature/API/Expenses";
 import { SearchApi } from "./Feature/API/Search";
 import offlineReducer from '../app/Feature/offlineSlice';
 import offlineExpensesReducer from '../app/Feature/offlineExpensesSlice';
-import { RentsApi } from "./Feature/API/Rents";
+// import { RentsApi } from "./Feature/API/Rents";
 
 const store = configureStore({
   reducer: {
@@ -27,7 +27,7 @@ const store = configureStore({
     [LoanEmployeeApi.reducerPath]: LoanEmployeeApi.reducer,
     [ExpenseApi.reducerPath]: ExpenseApi.reducer,
     [SearchApi.reducerPath]: SearchApi.reducer,
-    [RentsApi.reducerPath]: RentsApi.reducer,
+    // [RentsApi.reducerPath]: RentsApi.reducer,
   },
   middleware: (gDM) =>
     gDM().concat(
@@ -40,8 +40,7 @@ const store = configureStore({
       LoanEmployeeApi.middleware,
       ExpenseApi.middleware,
       SearchApi.middleware,
-      RentsApi.middleware,
-      
+      // RentsApi.middleware,
     ),
 });
 
