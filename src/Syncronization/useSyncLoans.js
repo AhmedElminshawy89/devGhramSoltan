@@ -1,11 +1,11 @@
 import { useEffect, useContext } from "react";
-import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
-import { setOfflineLoans } from "../../app/Feature/offlineSlice";
 import { useSelector } from "react-redux";
-import { useSaveLoansMutation } from "../../app/Feature/API/Loans";
 import { toast } from "react-toastify";
-import { useSaveExpenseMutation } from "../../app/Feature/API/Expenses";
-import { setOfflineExpenses } from "../../app/Feature/offlineExpensesSlice";
+import { OnlineStatusContext } from "../Provider/OnlineStatusProvider";
+import { useSaveLoansMutation } from "../app/Feature/API/Loans";
+import { useSaveExpenseMutation } from "../app/Feature/API/Expenses";
+import { setOfflineLoans } from "../app/Feature/offlineSlice";
+import { setOfflineExpenses } from "../app/Feature/offlineExpensesSlice";
 
 const useSyncLoans = (dispatch) => {
   const isOnline = useContext(OnlineStatusContext);
@@ -42,7 +42,7 @@ const useSyncLoans = (dispatch) => {
             dispatch(setOfflineLoans(remainingLoans));
             localStorage.setItem("backuploans", JSON.stringify(remainingLoans));
             toast.success(
-              "تم استعادة جميع البيانات المخزنة دون اتصال ودمجها بنجاح مع قاعدة البيانات الأساسية الآن."
+              "تم استعادة جميع بيانات السلف المخزنة دون اتصال ودمجها بنجاح مع قاعدة البيانات الأساسية الآن."
             );
           }
         }
@@ -72,7 +72,7 @@ const useSyncLoans = (dispatch) => {
               JSON.stringify(remainingExpenses)
             );
             toast.success(
-              "تم استعادة جميع البيانات المخزنة دون اتصال ودمجها بنجاح مع قاعدة البيانات الأساسية الآن."
+              "تم استعادة جميع بيانات مصروفات المخزنة دون اتصال ودمجها بنجاح مع قاعدة البيانات الأساسية الآن."
             );
           }
         }
