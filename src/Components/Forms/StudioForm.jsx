@@ -36,6 +36,7 @@ const Invoice = React.forwardRef((props, ref) => {
         width: "80mm",
         padding: "10mm",
         fontFamily: "Arial, sans-serif",
+        direction:'rtl'
       }}
     >
       <div style={{ textAlign: "center" }}>
