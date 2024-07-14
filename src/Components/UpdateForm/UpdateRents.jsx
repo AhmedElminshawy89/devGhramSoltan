@@ -4,27 +4,36 @@ import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import Select from "react-select";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useSaveRentsMutation } from "../../app/Feature/API/Rents";
+import {
+  useSaveRentsMutation,
+  useUpdateRentsMutation,
+} from "../../app/Feature/API/Rents";
 import Spinner from "../../Shared/Spinner";
 import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
-import { useDispatch, useSelector } from "react-redux";
-import { addOfflineRent } from "../../app/Feature/offlineRentsSlice";
+import { useDispatch } from "react-redux";
+import {
+  addOfflineRent,
+  updateOfflineRent,
+} from "../../app/Feature/offlineRentsSlice";
 
-const RentalForm = ({ isOpen, closeModal }) => {
-  const [name, setName] = useState("");
-  const [categories, setCategories] = useState([]);
-  const [insuranceType, setInsuranceType] = useState("");
-  const [deposit, setDeposit] = useState("");
-  const [status, setStatus] = useState("");
+const UpdateRental = ({ isOpen, closeModal, initialValues }) => {
+  const [name, setName] = useState(initialValues.name || "");
+  const [categories, setCategories] = useState(
+    initialValues.category ? initialValues.category.split(" و ") : []
+  );
+  const [insuranceType, setInsuranceType] = useState(
+    initialValues.type_insurance || ""
+  );
+  const [deposit, setDeposit] = useState(initialValues.insurance || "");
+  const [status, setStatus] = useState(initialValues.status || "");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
 
-  const [saveRent, { isLoading }] = useSaveRentsMutation();
+  const [updateRent, { isLoading }] = useUpdateRentsMutation();
 
   const isOnline = useContext(OnlineStatusContext);
 
   const dispatch = useDispatch();
-  const offlineRents = useSelector((state) => state.offlineRents.rents) || [];
 
   const allCategories = [
     "تاج",
@@ -35,57 +44,67 @@ const RentalForm = ({ isOpen, closeModal }) => {
     "عقد",
     "حلق",
   ];
-  const insuranceTypes = ["بطاقه", "كاش"];
+
   const statuses = ["تم الاسترجاع", "لم يتم الاسترجاع"];
+  const insuranceTypes = ["بطاقه", "كاش"];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
 
-    if (name && categories.length > 0 && insuranceType && deposit) {
+    if (
+      name &&
+      categories.length > 0 &&
+      insuranceType &&
+      deposit &&
+      (isOnline || status)
+    ) {
       const categoryString = categories.join(" و ");
       const newOfflineData = {
-        id: Date.now(),
+        id: initialValues.id || Date.now(),
         name,
         category: categoryString,
         type_insurance: insuranceType,
         insurance: deposit,
-        status: isOnline ? "لم يتم الاسترجاع" : status,
+        status,
       };
-
       try {
         if (isOnline) {
-          await saveRent({
+          const updatedRents = {
+            id: initialValues.id,
             name,
             category: categoryString,
             type_insurance: insuranceType,
             insurance: deposit,
-            status: "لم يتم الاسترجاع",
+            status,
+          };
+          await updateRent({
+            id: initialValues.id,
+            rentData: updatedRents,
           }).unwrap();
-
           setNotification({
             type: "success",
-            message: "تم حفظ البيانات بنجاح!",
+            message: "تم تحديث البيانات بنجاح!",
           });
-          toast.success("تم حفظ البيانات بنجاح!");
+          toast.success("تم تحديث البيانات بنجاح!");
         } else {
-          dispatch(addOfflineRent(newOfflineData));
+          dispatch(updateOfflineRent(newOfflineData));
           setNotification({
             type: "info",
-            message: "تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.",
+            message: "تم تحديثها محليًا وستتم مزامنتها عند استعادة الاتصال.",
           });
-          toast.info("تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.");
+          toast.info("تم تحديثها محليًا وستتم مزامنتها عند استعادة الاتصال.");
         }
 
         closeModal();
         resetForm();
       } catch (error) {
-        dispatch(addOfflineRent(newOfflineData));
+        dispatch(updateOfflineRent(newOfflineData));
         setNotification({
           type: "error",
-          message: "تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.",
+          message: "تم تحديثها محليًا وستتم مزامنتها عند استعادة الاتصال.",
         });
-        toast.error("تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.");
+        toast.error("تم تحديثها محليًا وستتم مزامنتها عند استعادة الاتصال.");
         closeModal();
         resetForm();
       }
@@ -278,27 +297,27 @@ const RentalForm = ({ isOpen, closeModal }) => {
                           </select>
                         </div>
                       )}
-                    <div className="flex justify-between mt-4">
-                      <button
-                        type="button"
-                        onClick={closeModal}
-                        className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center"
-                      >
-                        <AiOutlineClose className="ml-3" /> إلغاء
-                      </button>
-                      <button
-                        type="submit"
-                        className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
-                        disabled={isLoading}
-                      >
-                        {isLoading ? (
-                          <Spinner />
-                        ) : (
-                          <AiOutlineSave className="ml-3" />
-                        )}
-                        حفظ
-                      </button>
-                    </div>
+                      <div className="flex justify-between mt-4">
+                        <button
+                          type="button"
+                          onClick={closeModal}
+                          className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center"
+                        >
+                          <AiOutlineClose className="ml-3" /> إلغاء
+                        </button>
+                        <button
+                          type="submit"
+                          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? (
+                            <Spinner />
+                          ) : (
+                            <AiOutlineSave className="ml-3" />
+                          )}
+                          حفظ
+                        </button>
+                      </div>
                     </form>
                   </div>
                 </Dialog.Panel>
@@ -311,4 +330,4 @@ const RentalForm = ({ isOpen, closeModal }) => {
   );
 };
 
-export default RentalForm;
+export default UpdateRental;

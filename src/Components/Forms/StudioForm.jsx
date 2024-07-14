@@ -1,8 +1,126 @@
-import { useState, Fragment } from "react";
+import React, { useState, Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { InputNumber } from "antd";
 import Select from "react-select";
+import { useReactToPrint } from "react-to-print";
+import logo from "../../assets/Img/logo.png";
+
+const Invoice = React.forwardRef((props, ref) => {
+  const {
+    total,
+    payment,
+    remaining,
+    discountType,
+    discountRate,
+    packageType,
+    selectedPackage,
+    brideName,
+    phone,
+    city,
+    eventDate,
+    receiveDate,
+    additionalService,
+    additionalServicePrice,
+    selectedDetailPrice,
+    selectedDetailName,
+    date,
+    time,
+    logo,
+  } = props;
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        width: "80mm",
+        padding: "10mm",
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
+      <div style={{ textAlign: "center" }}>
+        <img
+          src={logo}
+          alt="Logo"
+          style={{ width: "30mm", height: "auto", margin: "0 auto" }}
+        />
+      </div>
+      <div>
+        <div
+          style={{
+            borderBottom: "1px solid #eee",
+            padding: "4mm 0",
+          }}
+        >
+          <p className="mb-1 text-lg">
+            <strong>اسم العميل:</strong> {brideName}
+          </p>
+          <p className="mb-1 text-lg">
+            <strong>رقم التليفون:</strong> {phone}
+          </p>
+          <p className="mb-1 text-lg">
+            <strong>البلد:</strong> {city}
+          </p>
+          <p className="mb-1 text-lg">
+            <strong>تاريخ اليوم:</strong>{" "}
+            {new Date().toLocaleDateString("ar-EG")}
+          </p>
+          <p className="mb-1 text-lg">
+            <strong>تاريخ المناسبة:</strong> {eventDate}
+          </p>
+          <p className="mb-1 text-lg">
+            <strong>تاريخ الاستلام:</strong> {receiveDate}
+          </p>
+        </div>
+        <div
+          style={{
+            // borderBottom: "1px solid #eee",
+            padding: "4mm 0",
+            // marginBottom: "5px",
+            // marginTop: "5px",
+          }}
+        >
+          <p className="mb-1">
+            <strong>نوع الباكدج:</strong> {packageType}
+          </p>
+          <p className="mb-1">
+            <strong>مرتجع من الباكدج:</strong> {selectedDetailName}
+          </p>
+          <p className="mb-1">
+            <strong>خدمة إضافية:</strong> {additionalService}
+          </p>
+          <p className="mb-1">
+            <strong>سعر الخدمة الإضافية:</strong> {additionalServicePrice}
+          </p>
+          <p className="mb-1">
+            <strong>إجمالي :</strong> {total}
+          </p>
+          <p className="mb-1">
+            <strong>المبلغ المدفوع:</strong> {payment}
+          </p>
+          <p className="mb-1">
+            <strong>المبلغ المتبقي:</strong> {remaining}
+          </p>
+          <p className="mb-1">
+            <strong>نوع الخصم:</strong> {discountType}
+          </p>
+          <p className="mb-1">
+            <strong>قيمة الخصم:</strong> {discountRate}
+          </p>
+        </div>
+      </div>
+      <p className="mb-1 text-md text-center">
+        <strong>في حاله الالغاء لا يسترد المبلغ المدفوع</strong>
+      </p>
+      <p className="mb-1 text-md text-center">
+        <strong>يرجي الاحتفاظ بالايصال للمراجعه</strong>
+      </p>
+      <p className="mb-1 text-md text-center">
+        <strong>العنوان:دسوق - شارع الجيش م:0106853310</strong>
+      </p>
+    </div>
+  );
+});
 
 const StudioForm = ({ isOpen, closeModal }) => {
   const [total, setTotal] = useState(0);
@@ -10,11 +128,21 @@ const StudioForm = ({ isOpen, closeModal }) => {
   const [remaining, setRemaining] = useState(0);
   const [discountType, setDiscountType] = useState("");
   const [discountRate, setDiscountRate] = useState(0);
+  const [packageType, setPackageType] = useState("");
   const [selectedPackage, setSelectedPackage] = useState("");
+  const [brideName, setBrideName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [city, setCity] = useState("");
+  const [eventDate, setEventDate] = useState("");
+  const [receiveDate, setReceiveDate] = useState("");
   const [selectedPackageDetails, setSelectedPackageDetails] = useState([]);
   const [additionalService, setAdditionalService] = useState("");
   const [additionalServicePrice, setAdditionalServicePrice] = useState(0);
   const [selectedDetailPrice, setSelectedDetailPrice] = useState(0);
+  const [selectedDetailName, setSelectedDetailName] = useState([]);
+
+  const invoiceRef = useRef();
+
   const makeupPackages = {
     زفاف: {
       price: 2000,
@@ -99,6 +227,7 @@ const StudioForm = ({ isOpen, closeModal }) => {
       selectedDetails.forEach((detail) => {
         const packageDetails = makeupPackages[selectedPackage];
         detailPrice += packageDetails.details[detail].price;
+        selectedDetailName.push(packageDetails.details[detail].name);
       });
 
       setSelectedDetailPrice(detailPrice);
@@ -161,11 +290,52 @@ const StudioForm = ({ isOpen, closeModal }) => {
     setRemaining(currentTotal - payment - discount);
   };
 
+  const handleBrideNameChange = (event) => {
+    setBrideName(event.target.value);
+  };
+
+  const handlePhoneChange = (event) => {
+    setPhone(event.target.value);
+  };
+
+  const handleCityChange = (event) => {
+    setCity(event.target.value);
+  };
+
+  const handleEventDateChange = (event) => {
+    setEventDate(event.target.value);
+  };
+
+  const handleReceiveDateChange = (event) => {
+    setReceiveDate(event.target.value);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted!");
-    closeModal();
+    console.log(
+      `total: ${total}`,
+      `\npayment: ${payment}`,
+      `\nremaining: ${remaining}`,
+      `\ndiscountType: ${discountType}`,
+      `\ndiscountRate: ${discountRate}`,
+      `\npackageType: ${packageType}`,
+      `\nselectedPackage: ${selectedPackage}`,
+      `\nbrideName: ${brideName}`,
+      `\nphone: ${phone}`,
+      `\ncity: ${city}`,
+      `\neventDate: ${eventDate}`,
+      `\nreceiveDate: ${receiveDate}`,
+      `\nselectedPackageName: ${selectedDetailName}`,
+      `\nadditionalService: ${additionalService}`,
+      `\nadditionalServicePrice: ${additionalServicePrice}`,
+      `\nselectedDetailPrice: ${selectedDetailPrice}`
+    );
+    handlePrint();
+    // closeModal();
   };
+  const handlePrint = useReactToPrint({
+    content: () => invoiceRef.current,
+  });
   return (
     <div>
       <Transition appear show={isOpen} as={Fragment}>
@@ -215,7 +385,11 @@ const StudioForm = ({ isOpen, closeModal }) => {
                         <select
                           id="category"
                           className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline"
-                          onChange={(e) => fetchMakeupDetails(e.target.value)}
+                          onChange={(e) => {
+                            fetchMakeupDetails(e.target.value);
+                            setPackageType(e.target.value);
+                          }}
+                          value={packageType}
                         >
                           <option value="">اختر الباكدج</option>
                           <option value="زفاف">زفاف</option>
@@ -286,6 +460,8 @@ const StudioForm = ({ isOpen, closeModal }) => {
                         <input
                           id="brideName"
                           type="text"
+                          value={brideName}
+                          onChange={handleBrideNameChange}
                           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                       </div>
@@ -299,6 +475,8 @@ const StudioForm = ({ isOpen, closeModal }) => {
                         <input
                           id="phone"
                           type="text"
+                          value={phone}
+                          onChange={handlePhoneChange}
                           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                       </div>
@@ -312,6 +490,8 @@ const StudioForm = ({ isOpen, closeModal }) => {
                         <input
                           id="city"
                           type="text"
+                          value={city}
+                          onChange={handleCityChange}
                           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                       </div>
@@ -325,19 +505,23 @@ const StudioForm = ({ isOpen, closeModal }) => {
                         <input
                           id="eventDate"
                           type="date"
+                          value={eventDate}
+                          onChange={handleEventDateChange}
                           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                       </div>
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="ٌRecieveDate"
+                          htmlFor="receiveDate"
                         >
                           تاريخ الاستلام
                         </label>
                         <input
-                          id="ٌRecieveDate"
+                          id="receiveDate"
                           type="date"
+                          value={receiveDate}
+                          onChange={handleReceiveDateChange}
                           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                       </div>
@@ -423,22 +607,22 @@ const StudioForm = ({ isOpen, closeModal }) => {
                           />
                         </div>
                       )}
+                      <div className="flex items-center justify-start gap-4 mt-4">
+                        <button
+                          type="button"
+                          onClick={closeModal}
+                          className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center"
+                        >
+                          <AiOutlineClose className="ml-3" /> إلغاء
+                        </button>
+                        <button
+                          type="submit"
+                          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
+                        >
+                          <AiOutlineSave className="ml-3" /> حفظ
+                        </button>
+                      </div>
                     </form>
-                  </div>
-                  <div className="flex items-center justify-start gap-4 mt-4">
-                    <button
-                      type="button"
-                      onClick={closeModal}
-                      className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center"
-                    >
-                      <AiOutlineClose className="ml-3" /> إلغاء
-                    </button>
-                    <button
-                      type="submit"
-                      className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
-                    >
-                      <AiOutlineSave className="ml-3" /> حفظ
-                    </button>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
@@ -446,6 +630,30 @@ const StudioForm = ({ isOpen, closeModal }) => {
           </div>
         </Dialog>
       </Transition>
+      <div style={{ display: "none" }}>
+        <Invoice
+          ref={invoiceRef}
+          total={total}
+          payment={payment}
+          remaining={remaining}
+          discountType={discountType}
+          discountRate={discountRate}
+          packageType={packageType}
+          selectedPackage={selectedPackage}
+          brideName={brideName}
+          phone={phone}
+          city={city}
+          eventDate={eventDate}
+          receiveDate={receiveDate}
+          selectedDetailName={selectedDetailName}
+          additionalService={additionalService}
+          additionalServicePrice={additionalServicePrice}
+          selectedDetailPrice={selectedDetailPrice}
+          date={new Date().toLocaleDateString()}
+          time={new Date().toLocaleTimeString()}
+          logo={logo}
+        />
+      </div>
     </div>
   );
 };

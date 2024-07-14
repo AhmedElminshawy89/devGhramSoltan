@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
 
 const Expenses = () => {
-  const [isOpen, setIsOpen] = useState(false);  
+  const [isOpen, setIsOpen] = useState(false);
   const isOnline = useContext(OnlineStatusContext);
 
   const backupExpenses =
@@ -32,15 +32,6 @@ const Expenses = () => {
         </button>
         <span className="text-lg font-semibold">
           البيانات الغير متصله({Number_of_data_offline})
-          <br />
-          {!isOnline && (
-            <Link
-              to="/moderator/expenses/all-data"
-              className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
-            >
-              الداتا الاحتياطيه
-            </Link>
-          )}
         </span>{" "}
       </div>
       <ExpensesForm closeModal={closeModal} isOpen={isOpen} />

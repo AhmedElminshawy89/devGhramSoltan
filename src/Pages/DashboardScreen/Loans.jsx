@@ -29,15 +29,6 @@ const Loans = () => {
         </button>
         <span className="text-lg font-semibold">
           البيانات الغير متصله({Number_of_data_offline})
-          <br />
-          {!isOnline && (
-            <Link
-              to="/moderator/Loans/all-data"
-              className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
-            >
-              الداتا الاحتياطيه
-            </Link>
-          )}
         </span>{" "}
       </div>
 

@@ -20,8 +20,8 @@ const Studio = () => {
         className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
       >
         <VscSaveAs className="ml-3" /> حجز استوديو
-        <StudioForm closeModal={closeModal} isOpen={isOpen}/>
       </button>
+        <StudioForm closeModal={closeModal} isOpen={isOpen}/>
       <StudioTable />
     </div>
   );

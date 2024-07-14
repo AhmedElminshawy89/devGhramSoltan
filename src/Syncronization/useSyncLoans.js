@@ -6,6 +6,8 @@ import { useSaveLoansMutation } from "../app/Feature/API/Loans";
 import { useSaveExpenseMutation } from "../app/Feature/API/Expenses";
 import { setOfflineLoans } from "../app/Feature/offlineSlice";
 import { setOfflineExpenses } from "../app/Feature/offlineExpensesSlice";
+import { useSaveRentsMutation } from "../app/Feature/API/Rents";
+import { setOfflineRents } from "../app/Feature/offlineRentsSlice";
 
 const useSyncLoans = (dispatch) => {
   const isOnline = useContext(OnlineStatusContext);
@@ -15,7 +17,12 @@ const useSyncLoans = (dispatch) => {
 
   const expensesOffline =
     useSelector((state) => state.offlineExpenses.expenses) || [];
+
+    const rentsOffline =
+    useSelector((state) => state.offlineRents.rents) || [];
   const [saveExpense] = useSaveExpenseMutation();
+
+  const [saveRents] = useSaveRentsMutation();
 
   useEffect(() => {
     const syncOfflineData = async () => {
@@ -73,6 +80,36 @@ const useSyncLoans = (dispatch) => {
             );
             toast.success(
               "تم استعادة جميع بيانات مصروفات المخزنة دون اتصال ودمجها بنجاح مع قاعدة البيانات الأساسية الآن."
+            );
+          }
+        }
+
+        // Sync Rents
+        if (!isOnline && rentsOffline.length === 0) {
+          const offlineExpensesData =
+            JSON.parse(localStorage.getItem("backuprents")) || [];
+          dispatch(setOfflineExpenses(offlineExpensesData));
+        } else if (isOnline && rentsOffline.length > 0) {
+          const updatedExpenses = [];
+          for (const rents of rentsOffline) {
+            try {
+              await saveRents(rents).unwrap();
+              updatedExpenses.push(rents.id);
+            } catch (error) {
+              console.error("Failed to sync expense:", error);
+            }
+          }
+          if (updatedExpenses.length > 0) {
+            const remainingExpenses = rentsOffline.filter(
+              (item) => !updatedExpenses.includes(item.id)
+            );
+            dispatch(setOfflineRents(remainingExpenses));
+            localStorage.setItem(
+              "backuprents",
+              JSON.stringify(remainingExpenses)
+            );
+            toast.success(
+              "تم استعادة جميع بيانات الايجارات المخزنة دون اتصال ودمجها بنجاح مع قاعدة البيانات الأساسية الآن."
             );
           }
         }
