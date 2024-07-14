@@ -247,21 +247,21 @@ const QuicklyForm = ({ isOpen, closeModal }) => {
                           className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                       </div>
-                      <button
-                        type="submit"
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                      >
-                        <AiOutlineSave className="inline-block mr-1" />
-                        حفظ
-                      </button>
-                      <button
-                        type="button"
-                        onClick={closeModal}
-                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                      >
-                        <AiOutlineClose className="inline-block mr-1" />
-                        إغلاق
-                      </button>
+                      <div className="flex items-center justify-start gap-4 mt-4">
+                        <button
+                          type="button"
+                          onClick={closeModal}
+                          className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center"
+                        >
+                          <AiOutlineClose className="ml-3" /> إلغاء
+                        </button>
+                        <button
+                          type="submit"
+                          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
+                        >
+                          <AiOutlineSave className="ml-3" /> حفظ
+                        </button>
+                      </div>
                     </form>
                   </div>
                 </Dialog.Panel>
