@@ -16,6 +16,9 @@ export const SearchApi = createApi({
     searchLoans: build.query({
       query: (searchTerm) => `/SearchLoans?search=${searchTerm}`,
     }),
+    searchWorkers: build.query({
+      query: (searchTerm) => `/SearchWorks?search=${searchTerm}`,
+    }),
     searchAdmin: build.query({
       query: (searchTerm) => `/SearchAdmin?search=${searchTerm}`,
     }),
@@ -31,6 +34,15 @@ export const SearchApi = createApi({
     searchCategory: build.query({
       query: (searchTerm) => `/SearchCategory?search=${searchTerm}`,
     }),
+    searchRents: build.query({
+      query: (searchTerm) => `/SearchRents?search=${searchTerm}`,
+    }),
+    searchStudio: build.query({
+      query: (searchTerm) => `/SearchStudio?search=${searchTerm}`,
+    }),
+    searchMakeUp: build.query({
+      query: (searchTerm) => `/SearchMakeup?search=${searchTerm}`,
+    }),
   }),
 });
 
@@ -43,4 +55,8 @@ export const {
   useSearchJobQuery,
   useSearchDiscountQuery,
   useSearchCategoryQuery,
+  useSearchWorkersQuery,
+  useSearchRentsQuery,
+  useSearchStudioQuery,
+  useSearchMakeUpQuery
 } = SearchApi;

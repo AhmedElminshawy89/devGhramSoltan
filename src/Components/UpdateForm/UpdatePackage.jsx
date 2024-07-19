@@ -6,7 +6,13 @@ import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../../Shared/Spinner";
 import { useUpdateCategoryMutation } from "../../app/Feature/API/Package";
 
-const UpdatePackage = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
+const UpdatePackage = ({
+  isOpen,
+  closeModal,
+  initialValues,
+  refetchSearch,
+  refetchSubPackage
+}) => {
   const nameEdit = initialValues.name;
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
@@ -26,7 +32,7 @@ const UpdatePackage = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
       setPrice(initialValues.price);
       setCategory(initialValues.type);
       setDesc(initialValues.desc);
-      setPhoto(initialValues.photo);
+      setPhoto(null); // Reset photo to null when initialValues change
       setPhotoURL(initialValues.photo);
       setStatus(initialValues.status);
     }
@@ -37,23 +43,28 @@ const UpdatePackage = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
     setFormSubmitted(true);
 
     if (name && price && category && desc) {
-      const updatedPackage = {
-        id: initialValues.id,
-        name,
-        price,
-        type: category,
-        desc,
-        photo,
-        status,
-      };
+      const formData = new FormData();
+      formData.append("id", String(initialValues.id));
+      formData.append("name", name);
+      formData.append("price", price);
+      formData.append("type", category);
+      formData.append("desc", desc);
+      if (photo) {
+        formData.append("photo", photo);
+      }
+      formData.append("status", status);
 
       try {
-        await updateCategory({ id: initialValues.id, categoryData: updatedPackage }).unwrap();
+        await updateCategory({
+          id: initialValues.id,
+          categoryData: formData,
+        }).unwrap();
 
         toast.success("تم تحديث بيانات الباكدج بنجاح!");
         closeModal();
         resetForm();
         refetchSearch();
+        refetchSubPackage();
       } catch (error) {
         console.error("حدث خطأ أثناء تحديث بيانات الباكدج:", error);
         toast.error("حدث خطأ أثناء تحديث بيانات الباكدج.");
@@ -109,7 +120,7 @@ const UpdatePackage = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900 text-start"
                 >
-                  إضافة باكدج {nameEdit}
+                  تحديث باكدج {nameEdit}
                 </Dialog.Title>
                 {notification && (
                   <div
@@ -128,7 +139,7 @@ const UpdatePackage = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
                       className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       htmlFor="name"
                     >
-                      اسم الباكدج 
+                      اسم الباكدج <span className="text-xl text-red-500 mt-4">*</span>
                     </label>
                     <input
                       id="name"
@@ -145,7 +156,7 @@ const UpdatePackage = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
                       className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       htmlFor="price"
                     >
-                      سعر الباكدج
+                      سعر الباكدج <span className="text-xl text-red-500 mt-4">*</span>
                     </label>
                     <input
                       id="price"
@@ -163,7 +174,7 @@ const UpdatePackage = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
                       className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       htmlFor="category"
                     >
-                      نوع الباكدج
+                      نوع الباكدج <span className="text-xl text-red-500 mt-4">*</span>
                     </label>
                     <select
                       id="category"
@@ -183,7 +194,7 @@ const UpdatePackage = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
                       className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       htmlFor="desc"
                     >
-                      وصف الباكدج
+                      وصف الباكدج <span className="text-xl text-red-500 mt-4">*</span>
                     </label>
                     <textarea
                       id="desc"
@@ -199,7 +210,7 @@ const UpdatePackage = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
                       className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       htmlFor="photo"
                     >
-                      صورة الباكدج
+                      صورة الباكدج <span className="text-xl text-red-500 mt-4">*</span>
                     </label>
                     <input
                       id="photo"
@@ -214,6 +225,13 @@ const UpdatePackage = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
                         setPhotoURL(URL.createObjectURL(file));
                       }}
                     />
+                    {photoURL && (
+                      <img
+                        src={photoURL}
+                        alt="Preview"
+                        className="mt-4 w-full h-auto rounded"
+                      />
+                    )}
                   </div>
                   <div className="flex items-center justify-start gap-4 mt-4">
                     <button

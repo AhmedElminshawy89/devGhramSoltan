@@ -8,6 +8,7 @@ import { useUpdateLoanMutation } from "../../app/Feature/API/Loans";
 import { useDispatch } from "react-redux";
 import { updateOfflineLoan } from "../../app/Feature/offlineSlice";
 import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
+import { useGetAllEmployeesQuery } from "../../app/Feature/API/Emplyee";
 
 const UpdateLoans = ({
   isOpen,
@@ -24,6 +25,7 @@ const UpdateLoans = ({
   const [amount, setAmount] = useState(initialValues.price || "");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
+  const { data: allEmployee } = useGetAllEmployeesQuery();
 
   const isOnline = useContext(OnlineStatusContext);
 
@@ -125,26 +127,34 @@ const UpdateLoans = ({
                         htmlFor="employeeName"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        اسم الموظف
+                        اسم الموظف <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
-                      <input
+                      <select
                         id="employeeName"
-                        type="text"
                         value={employeeName}
                         onChange={(e) => setEmployeeName(e.target.value)}
-                        className={`shadow appearance-none border ${
-                          formSubmitted && !employeeName
-                            ? "border-red-500"
-                            : "border-gray-400"
-                        } rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                      />
+                        className={`block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline ${
+                          formSubmitted && !employeeName ? "border-red-500" : ""
+                        }`}
+                      >
+                        <option value="">اختر اسم الموظف</option>
+                        {allEmployee &&
+                          allEmployee.map((employee) => (
+                            <option
+                              key={employee.id}
+                              value={employee.employee_name}
+                            >
+                              {employee.employee_name}
+                            </option>
+                          ))}
+                      </select>
                     </div>
                     <div>
                       <label
                         htmlFor="expenseReason"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        سبب السلف
+                        سبب السلف <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="expenseReason"
@@ -163,13 +173,14 @@ const UpdateLoans = ({
                         htmlFor="amount"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        المبلغ
+                        المبلغ <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="amount"
                         type="number"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
+                        min={0}
                         className={`shadow appearance-none border ${
                           formSubmitted && !amount
                             ? "border-red-500"

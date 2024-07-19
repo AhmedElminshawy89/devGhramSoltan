@@ -19,21 +19,29 @@ const FormWorkers2 = ({ isOpen, closeModal }) => {
     setFormSubmitted(true);
 
     if (employeeName && amount) {
+      const formData = new FormData();
+      formData.append("name", employeeName);
+      formData.append("price", amount);
+
       try {
-        await saveWorkerMutation({ name: employeeName, price: amount });
-        // console.log("Form submitted!");
-        closeModal();
-        setNotification({
-          type: "success",
-          message: "تم حفظ البيانات بنجاح!",
-        });
-        toast.success("تم حفظ البيانات بنجاح!");
-        resetForm();
+        const response = await saveWorkerMutation(formData).unwrap();
+        if (response.error) {
+          setNotification({
+            type: "error",
+            message: response.error.message || "اسم الشغلانه موجوده بالفعل من فضلك ضع اسم اخر",
+          })}else{
+            closeModal();
+            setNotification({
+              type: "success",
+              message: "تم حفظ البيانات بنجاح!",
+            });
+            toast.success("تم حفظ البيانات بنجاح!");
+            resetForm();
+          }
       } catch (error) {
-        // console.error("Failed to save worker:", error);
         setNotification({
           type: "error",
-          message: "فشل حفظ البيانات. الرجاء المحاولة مرة أخرى!",
+          message: "اسم الشغلال موجود بالفعل من فضلك ضع اسم اخر"
         });
       }
     } else {
@@ -102,7 +110,8 @@ const FormWorkers2 = ({ isOpen, closeModal }) => {
                         htmlFor="employeeName"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        الاسم
+                        الاسم{" "}
+                        <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="employeeName"
@@ -119,7 +128,8 @@ const FormWorkers2 = ({ isOpen, closeModal }) => {
                         htmlFor="amount"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        السعر
+                        السعر{" "}
+                        <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="amount"

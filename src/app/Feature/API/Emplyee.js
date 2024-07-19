@@ -10,6 +10,11 @@ export const EmployeeApi = createApi({
       transformResponse: (response) => response.employee,
       providesTags: ["Employee"],
     }),
+    getAllEmployees: build.query({
+      query: () => `/getEmployee`,
+      transformResponse: (response) => response.employee,
+      providesTags: ["Employee"],
+    }),
     saveEmployee: build.mutation({
       query: (employeeData) => ({
         url: `/save`,
@@ -39,6 +44,7 @@ export const EmployeeApi = createApi({
 
 export const {
   useGetEmployeesQuery,
+  useGetAllEmployeesQuery,
   useSaveEmployeeMutation,
   useUpdateEmployeeMutation,
   useDeleteEmployeeMutation,

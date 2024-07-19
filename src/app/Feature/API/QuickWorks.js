@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import host from "../../../host/Host"; // تأكد من استيراد المتغير host بشكل صحيح
+import host from "../../../host/Host"; 
 
 export const QuickworksApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: `${host}/api/superAdmin/work` }),
   reducerPath: "QuickworksApi",
   endpoints: (build) => ({
     getQuickworks: build.query({
-      query: () => `/show`,
+      query: (page) => `/show?page=${page}`,
       transformResponse: (response) => response.works,
       providesTags: ["Quickworks"],
     }),

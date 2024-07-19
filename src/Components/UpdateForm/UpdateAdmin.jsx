@@ -53,24 +53,29 @@ const UpdateAdmin = ({ isOpen, closeModal, initialValues ,refetchSearch}) => {
       };
 
       try {
-        const { data } = await updateAdmin({
+        const response = await updateAdmin({
           id: initialValues.id,
           adminData: updatedAdmin,
         });
-
-        setNotification({
-          type: "success",
-          message: "تم تحديث بيانات الأدمن بنجاح!",
-        });
-        toast.success("تم تحديث بيانات الأدمن بنجاح!");
-        closeModal();
-        resetForm();
-        refetchSearch()
+        if (response.error) {
+          setNotification({
+            type: "error",
+            message: response.error.message || "البريد الالكتروني موجود بالفعل قم بوضع بريد الكتروني اخر",
+          })}else{
+            setNotification({
+              type: "success",
+              message: "تم تحديث بيانات الأدمن بنجاح!",
+            });
+            toast.success("تم تحديث بيانات الأدمن بنجاح!");
+            closeModal();
+            resetForm();
+            refetchSearch()
+          }
       } catch (error) {
         console.error("حدث خطأ أثناء تحديث بيانات الأدمن:", error);
         setNotification({
           type: "error",
-          message: "حدث خطأ أثناء تحديث بيانات الأدمن.",
+          message:  "البريد الالكتروني موجود بالفعل قم بوضع بريد الكتروني اخر",
         });
       }
     } else {
@@ -144,7 +149,7 @@ const UpdateAdmin = ({ isOpen, closeModal, initialValues ,refetchSearch}) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="name"
                         >
-                          الاسم
+                          الاسم <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input
                           id="name"
@@ -161,7 +166,7 @@ const UpdateAdmin = ({ isOpen, closeModal, initialValues ,refetchSearch}) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="email"
                         >
-                          البريد الإلكتروني
+                          البريد الإلكتروني <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input
                           id="email"
@@ -178,7 +183,7 @@ const UpdateAdmin = ({ isOpen, closeModal, initialValues ,refetchSearch}) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="phone"
                         >
-                          رقم التليفون
+                          رقم التليفون <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input
                           id="phone"
@@ -195,7 +200,7 @@ const UpdateAdmin = ({ isOpen, closeModal, initialValues ,refetchSearch}) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="adminType"
                         >
-                          نوع الأدمن
+                          نوع الأدمن <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <select
                           id="adminType"

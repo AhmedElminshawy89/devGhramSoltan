@@ -1,13 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import logo from "../../assets/Img/logo.png";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { selectLogin, userLogin } from "../../app/Feature/API/LoginSlice";
+import CookieService from "../../Services/CookiesServices";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { loading, error, data } = useSelector(selectLogin);
+
+  const jwt = CookieService.get("jwt");
+  if (jwt) {
+    navigate("/moderator", { replace: true });
+  }
+
+  const handleNavigate = useCallback(() => {
+    navigate("/moderator", { replace: true });
+  }, [navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -34,10 +52,7 @@ const Login = () => {
 
     const loginData = { email, password };
 
-    setTimeout(() => {
-      toast.success("تم تسجيل الدخول بنجاح");
-      console.log("Login Data:", loginData);
-    }, 1000);
+    dispatch(userLogin(loginData));
   };
 
   return (
@@ -63,12 +78,16 @@ const Login = () => {
                   type="text"
                   name="email"
                   id="email"
-                  className={`bg-white border ${emailError ? 'border-red-500' : 'border-gray-300'} text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5`}
+                  className={`bg-white border ${
+                    emailError ? "border-red-500" : "border-gray-300"
+                  } text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5`}
                   placeholder="البريد الالكتروني"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
-                {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
+                {emailError && (
+                  <p className="text-red-500 text-sm mt-1">{emailError}</p>
+                )}
               </div>
               <div>
                 <label
@@ -82,18 +101,28 @@ const Login = () => {
                   name="password"
                   id="password"
                   placeholder="••••••••"
-                  className={`bg-white border ${passwordError ? 'border-red-500' : 'border-gray-300'} text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5`}
+                  className={`bg-white border ${
+                    passwordError ? "border-red-500" : "border-gray-300"
+                  } text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5`}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
+                {passwordError && (
+                  <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+                )}
               </div>
               <button
                 type="submit"
                 className="w-full text-white bg-[#E9C357] hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                disabled={loading}
               >
-                تسجيل الدخول
+                {loading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
               </button>
+              {error && (
+                <p className="text-red-500 text-sm mt-1">
+                  فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.
+                </p>
+              )}
             </form>
           </div>
         </div>

@@ -150,7 +150,7 @@ const AdminForm = ({ isOpen, closeModal }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="name"
                         >
-                          الاسم
+                          الاسم <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input
                           id="name"
@@ -167,7 +167,7 @@ const AdminForm = ({ isOpen, closeModal }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="email"
                         >
-                          البريد الإلكتروني او الاسم
+                          البريد الإلكتروني او الاسم <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input
                           id="email"
@@ -184,7 +184,7 @@ const AdminForm = ({ isOpen, closeModal }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="phone"
                         >
-                          رقم التليفون
+                          رقم التليفون <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input
                           id="phone"
@@ -201,7 +201,7 @@ const AdminForm = ({ isOpen, closeModal }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="password"
                         >
-                          كلمة المرور
+                          كلمة المرور <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input
                           id="password"
@@ -218,7 +218,7 @@ const AdminForm = ({ isOpen, closeModal }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="confirmPassword"
                         >
-                          تأكيد كلمة المرور
+                          تأكيد كلمة المرور <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input
                           id="confirmPassword"
@@ -237,7 +237,7 @@ const AdminForm = ({ isOpen, closeModal }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="adminType"
                         >
-                          نوع الأدمن
+                          نوع الأدمن <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <select
                           id="adminType"

@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import DashboardLaout from "../layout/DashboardLaout";
 import HomeDashboard from "../Pages/DashboardScreen/HomeDashboard";
 import Makeup from "../Pages/DashboardScreen/Makeup";
@@ -17,7 +17,23 @@ import Reports from "../Pages/DashboardScreen/Reports";
 import Login from "../Pages/DashboardScreen/Login";
 import AddWorkers from "../Pages/DashboardScreen/AddWorkers";
 import LoansAllData from "../Pages/BackupData/LoansAllData";
+import { useEffect } from "react";
+import CookieService from "../Services/CookiesServices";
 const Routing = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const jwtToken = CookieService.get("jwt");
+  const type = JSON.parse(localStorage.getItem("type"));
+
+    const isModeratorPath = location.pathname.startsWith("/moderator");
+
+    if (!jwtToken && isModeratorPath) {
+      navigate("/login");
+    }
+  }, [navigate, location.pathname]);
+  
   return (
     <>
       <Routes>
@@ -40,7 +56,7 @@ const Routing = () => {
           <Route path="add-subpackage" element={<AddSubPackage />} />
           <Route path="reports" element={<Reports />} />
         </Route>
-        <Route path='/moderator/login' element={<Login/>}/>
+        <Route path='/Login' element={<Login/>}/>
       </Routes>
     </>
   );

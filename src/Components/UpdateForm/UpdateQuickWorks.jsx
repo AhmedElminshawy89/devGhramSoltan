@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useReactToPrint } from "react-to-print";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../../assets/Img/logo.png";
-import { useSaveQuickworkMutation } from "../../app/Feature/API/QuickWorks";
+import { useSaveQuickworkMutation, useUpdateQuickworkMutation } from "../../app/Feature/API/QuickWorks";
 import {
   useGetAllWorkersQuery,
   useGetPriceWorkQuery,
@@ -63,7 +63,10 @@ const Invoice = React.forwardRef((props, ref) => {
   );
 });
 
-const QuicklyForm = ({ isOpen, closeModal }) => {
+const UpdateQuicklyWorks = ({ isOpen,
+  initialValues,
+  closeModal,
+  refetchSearch }) => {
   const [employeeId, setEmployeeId] = useState("");
   const [employeeName, setEmployeeName] = useState("");
   const [jobType, setJobType] = useState([]);
@@ -71,19 +74,36 @@ const QuicklyForm = ({ isOpen, closeModal }) => {
   const [deposit, setDeposit] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
-  const [saveQuickwork, { isLoading }] = useSaveQuickworkMutation();
+  const [saveQuickwork, { isLoading }] = useUpdateQuickworkMutation();
   const { data: allWorks } = useGetAllWorkersQuery("");
   const { data: allEmployee } = useGetAllEmployeesQuery();
   const invoiceRef = useRef();
 
   useEffect(() => {
-    if (jobType.length > 0) {
-      const totalAmount = jobType.reduce((acc, job) => acc + job.price, 0);
-      setAmount(totalAmount);
-    } else {
-      setAmount("");
+    if (allEmployee && initialValues.employee_name_id) {
+      const selectedEmployee = allEmployee.find(employee => employee.id === initialValues.employee_name_id);
+      if (selectedEmployee) {
+        setEmployeeName(selectedEmployee.employee_name);
+      }
     }
-  }, [jobType]);
+  }, [allEmployee, initialValues.employee_name_id]);
+  
+  useEffect(() => {
+    const notesString = initialValues.job; 
+const notesArray = notesString.split(',').map((note) => ({
+  label: note.trim(),
+  value: note.trim(),
+}));
+    if (initialValues && initialValues.total) {
+      setAmount(initialValues.total);
+    }
+    if (initialValues && initialValues.employee_name_id) {
+      setEmployeeId(initialValues.employee_name_id);
+    }
+    if (initialValues && notesString) {
+      setJobType(notesArray);
+    }
+  }, [initialValues]);
 
 
   const handlePrint = useReactToPrint({
@@ -94,7 +114,7 @@ const QuicklyForm = ({ isOpen, closeModal }) => {
     e.preventDefault();
     setFormSubmitted(true);
 
-    if (!employeeId || jobType.length === 0 || !amount) {
+    if (!employeeId) {
       setNotification({
         type: "error",
         message: "يرجى ملء جميع الحقول المطلوبة.",
@@ -103,16 +123,19 @@ const QuicklyForm = ({ isOpen, closeModal }) => {
     }
 
     const jobTypes = jobType.map((job) => job.label);
-    const textValue = jobTypes.join(", ");
+    const textValue = jobTypes.join("و ");
 
-    const quickWorkData = {
+    const newOfflineData = {
+      id: initialValues.id ,
       employee_name_id: employeeId.value,
       job: textValue,
       total: amount,
     };
-
     try {
-      await saveQuickwork(quickWorkData).unwrap();
+      await saveQuickwork({
+        id: initialValues.id,
+        workData: newOfflineData,
+      }).unwrap();
       setNotification({
         type: "success",
         message: "تم حفظ البيانات بنجاح.",
@@ -120,6 +143,7 @@ const QuicklyForm = ({ isOpen, closeModal }) => {
       handlePrint();
       closeModal();
       resetForm();
+      refetchSearch()
     } catch (error) {
       setNotification({
         type: "error",
@@ -169,7 +193,7 @@ const QuicklyForm = ({ isOpen, closeModal }) => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
                   >
-                    اضافه شغل سريع
+                    تحديث شغل سريع للموظف {employeeName}
                   </Dialog.Title>
                   <div className="mt-2 overflow-hidden h-full">
                     {notification && (
@@ -197,13 +221,13 @@ const QuicklyForm = ({ isOpen, closeModal }) => {
                         </label>
                         <Select
                         id="employeeName"
-                        value={employeeId}
+                        value={employeeId||initialValues.employee_name_id}
                         onChange={(selectedOption) => setEmployeeId(selectedOption)}
                         options={
                           allEmployee &&
                           allEmployee.map((employee) => ({
                             label: employee.employee_name,
-                            value: employee.id,
+                            value: employee.id|| initialValues.employee_name_id,
                           }))
                         }
                         className={`shadow ${
@@ -213,7 +237,7 @@ const QuicklyForm = ({ isOpen, closeModal }) => {
                       />
 
                       </div>
-                      <div className="mb-4">
+                      {/* <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="jobType"
@@ -264,7 +288,7 @@ const QuicklyForm = ({ isOpen, closeModal }) => {
                           }`}
                           placeholder="السعر"
                         />
-                      </div>
+                      </div> */}
                       <div className="flex items-center justify-start gap-4 mt-4">
                     <button
                       type="button"
@@ -309,4 +333,4 @@ const QuicklyForm = ({ isOpen, closeModal }) => {
   );
 };
 
-export default QuicklyForm;
+export default UpdateQuicklyWorks;

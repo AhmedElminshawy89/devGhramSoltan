@@ -136,7 +136,7 @@ const ExpensesForm = ({ isOpen, closeModal }) => {
                         htmlFor="employeeName"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        الجهة
+                        الجهة<span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="employeeName"
@@ -155,7 +155,7 @@ const ExpensesForm = ({ isOpen, closeModal }) => {
                         htmlFor="expenseReason"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        سبب الصرف
+                        سبب الصرف <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="expenseReason"
@@ -174,12 +174,13 @@ const ExpensesForm = ({ isOpen, closeModal }) => {
                         htmlFor="amount"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        المبلغ
+                        المبلغ <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="amount"
                         type="number"
                         value={amount}
+                        min={0}
                         onChange={(e) => setAmount(e.target.value)}
                         className={`shadow appearance-none border ${
                           formSubmitted && !amount

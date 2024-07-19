@@ -10,6 +10,11 @@ export const SubCategoryApi = createApi({
       transformResponse: (response) => response.subCategory,
       providesTags: ["SubCategory"],
     }),
+    getSubCategoriesBasedOnCategory: build.query({
+      query: (id) => `/getCategory/${id}`,
+      transformResponse: (response) => response.category,
+      providesTags: ["SubCategory"],
+    }),
     saveSubCategory: build.mutation({
       query: (subCategoryData) => ({
         url: `/save`,
@@ -38,6 +43,7 @@ export const SubCategoryApi = createApi({
 
 export const {
   useGetSubCategoriesQuery,
+  useGetSubCategoriesBasedOnCategoryQuery,
   useSaveSubCategoryMutation,
   useUpdateSubCategoryMutation,
   useDeleteSubCategoryMutation,

@@ -11,12 +11,14 @@ import DeleteDialog from "../../Shared/DeleteDialog";
 import UpdatePackage from "../UpdateForm/UpdatePackage";
 import { Pagination } from "antd";
 import { useSearchCategoryQuery } from "../../app/Feature/API/Search";
+import { useGetSubCategoriesQuery } from "../../app/Feature/API/SubPackage";
 
 const PackageTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
   const { data: packages, refetch } = useGetCategoriesQuery(currentPage);
+  const { refetch:refetchSubPackage } = useGetSubCategoriesQuery(currentPage);
   const { data: searchedPackages, isLoading: loadingSearch, refetch: refetchSearch } =
     useSearchCategoryQuery(searchQuery);
   const [deletePackageId, setDeletePackageId] = useState(null);
@@ -58,6 +60,7 @@ const PackageTable = () => {
       setIsDeleteDialogOpen(false);
       refetch();
       refetchSearch();
+      refetchSubPackage();
     } catch (error) {
       console.error("Error deleting package:", error);
     }
@@ -78,6 +81,7 @@ const PackageTable = () => {
       await updateCategoryStatus(packageId);
       refetch();
       refetchSearch();
+      refetchSubPackage();
     } catch (error) {
       console.error("Error updating package status:", error);
     } finally {
@@ -93,8 +97,21 @@ const PackageTable = () => {
 
   const columns = [
     {
+      name:'#',
+      label:'',
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return tableMeta.rowIndex + 1;
+        },
+      },
+    },
+    {
       label: "اسم الباكدج",
       name: "name",
+    },
+    {
+      label: "نوع الباكدج",
+      name: "type",
     },
     {
       label: "صورة الباكدج",
@@ -309,6 +326,7 @@ const PackageTable = () => {
           initialValues={editPackage}
           closeModal={handleCloseEdit}
           refetchSearch = {refetchSearch}
+      refetchSubPackage={refetchSubPackage}
         />
       )}
 

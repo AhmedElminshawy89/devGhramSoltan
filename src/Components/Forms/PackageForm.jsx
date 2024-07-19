@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import { toast } from "react-toastify";
@@ -12,6 +12,7 @@ const PackageForm = ({ isOpen, closeModal }) => {
   const [category, setCategory] = useState("");
   const [desc, setDesc] = useState("");
   const [photo, setPhoto] = useState(null);
+  const [photoURL, setPhotoURL] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
 
@@ -71,9 +72,22 @@ const PackageForm = ({ isOpen, closeModal }) => {
     setCategory("");
     setDesc("");
     setPhoto(null);
+    setPhotoURL("");
     setFormSubmitted(false);
     setNotification(null);
   };
+
+  useEffect(() => {
+    if (photo) {
+      const fileReader = new FileReader();
+      fileReader.onloadend = () => {
+        setPhotoURL(fileReader.result);
+      };
+      fileReader.readAsDataURL(photo);
+    } else {
+      setPhotoURL("");
+    }
+  }, [photo]);
 
   return (
     <>
@@ -126,7 +140,7 @@ const PackageForm = ({ isOpen, closeModal }) => {
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                         htmlFor="name"
                       >
-                        اسم الباكدج
+                        اسم الباكدج <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="name"
@@ -143,7 +157,7 @@ const PackageForm = ({ isOpen, closeModal }) => {
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                         htmlFor="price"
                       >
-                        سعر الباكدج
+                        سعر الباكدج <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="price"
@@ -161,7 +175,7 @@ const PackageForm = ({ isOpen, closeModal }) => {
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                         htmlFor="category"
                       >
-                        نوع الباكدج
+                        نوع الباكدج <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <select
                         id="category"
@@ -181,7 +195,7 @@ const PackageForm = ({ isOpen, closeModal }) => {
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                         htmlFor="desc"
                       >
-                        وصف الباكدج
+                        وصف الباكدج <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <textarea
                         id="desc"
@@ -197,7 +211,7 @@ const PackageForm = ({ isOpen, closeModal }) => {
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                         htmlFor="photo"
                       >
-                        صورة الباكدج
+                        صورة الباكدج <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="photo"
@@ -209,6 +223,15 @@ const PackageForm = ({ isOpen, closeModal }) => {
                         onChange={(e) => setPhoto(e.target.files[0])}
                       />
                     </div>
+                    {photoURL && (
+                      <div className="mb-4">
+                        <img
+                          src={photoURL}
+                          alt="Preview"
+                          className="w-full h-auto rounded-lg"
+                        />
+                      </div>
+                    )}
                     <div className="flex items-center justify-start gap-4 mt-4">
                       <button
                         type="button"

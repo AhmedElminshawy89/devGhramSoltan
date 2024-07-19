@@ -9,11 +9,16 @@ import { SubCategoryApi } from "./Feature/API/SubPackage";
 import { LoanEmployeeApi } from "./Feature/API/Loans";
 import { ExpenseApi } from "./Feature/API/Expenses";
 import { SearchApi } from "./Feature/API/Search";
-import offlineReducer from '../app/Feature/offlineSlice';
-import offlineExpensesReducer from '../app/Feature/offlineExpensesSlice';
+import offlineReducer from "../app/Feature/offlineSlice";
+import offlineExpensesReducer from "../app/Feature/offlineExpensesSlice";
 import { RentsApi } from "./Feature/API/Rents";
 import offlineRentsSlice from "./Feature/offlineRentsSlice";
 import { QuickworksApi } from "./Feature/API/QuickWorks";
+import { StudioApi } from "./Feature/API/Studio";
+import LoginSlice from "./Feature/API/LoginSlice";
+import { MakeupApi } from "./Feature/API/MakeUp";
+import { ReportApi } from "./Feature/API/Reports";
+import { DailyApi } from "./Feature/API/Daily";
 
 const store = configureStore({
   reducer: {
@@ -21,6 +26,7 @@ const store = configureStore({
     offlineLoans: offlineReducer,
     offlineExpenses: offlineExpensesReducer,
     offlineRents: offlineRentsSlice,
+    login: LoginSlice,
     [AdminApi.reducerPath]: AdminApi.reducer,
     [EmployeeApi.reducerPath]: EmployeeApi.reducer,
     [WorkerApi.reducerPath]: WorkerApi.reducer,
@@ -32,6 +38,10 @@ const store = configureStore({
     [SearchApi.reducerPath]: SearchApi.reducer,
     [RentsApi.reducerPath]: RentsApi.reducer,
     [QuickworksApi.reducerPath]: QuickworksApi.reducer,
+    [StudioApi.reducerPath]: StudioApi.reducer,
+    [MakeupApi.reducerPath]: MakeupApi.reducer,
+    [ReportApi.reducerPath]: ReportApi.reducer,
+    [DailyApi.reducerPath]: DailyApi.reducer,
   },
   middleware: (gDM) =>
     gDM().concat(
@@ -46,6 +56,10 @@ const store = configureStore({
       SearchApi.middleware,
       RentsApi.middleware,
       QuickworksApi.middleware,
+      StudioApi.middleware,
+      MakeupApi.middleware,
+      ReportApi.middleware,
+      DailyApi.middleware
     ),
 });
 

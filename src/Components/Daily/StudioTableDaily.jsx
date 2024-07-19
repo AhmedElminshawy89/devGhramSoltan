@@ -1,27 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { AiOutlineEdit, AiOutlineDelete, AiOutlineLoading } from "react-icons/ai";
+import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import MUIDataTable from "mui-datatables";
-import Spinner from "../../Shared/Spinner";
-import DeleteDialog from "../../Shared/DeleteDialog";
 import { Pagination } from "antd";
-import { useSearchEmployeeQuery } from "../../app/Feature/API/Search";
-import UpdateEmployee from "./../UpdateForm/UpdateEmployee"; // Corrected path
-import { useDeleteEmployeeMutation, useGetEmployeesQuery } from "../../app/Feature/API/Emplyee";
+import {  useSearchStudioQuery } from "../../app/Feature/API/Search";
+import DeleteDialog from "../../Shared/DeleteDialog";
+import Spinner from "../../Shared/Spinner";
+import { useDeleteStudioMutation, useGetStudiosQuery } from "../../app/Feature/API/Studio";
+import UpdateStudioDaily from "../UpdateForm/UpdateStudioMakeUp";
+import { useGetStudioDailyQuery } from "../../app/Feature/API/Daily";
+import { useLocation } from "react-router-dom";
 
-const EmployeeTable = () => {
+const StudioTableDaily = () => {
+  const location = useLocation()
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
-  const { data: employees, refetch: refetchEmployees } = useGetEmployeesQuery(currentPage); // Renamed from packages to employees for clarity
+  const { data: employees, refetch: refetchEmployees } = useGetStudioDailyQuery(currentPage);
   const {
     data: searchedEmployees,
     isLoading: loadingSearch,
     refetch: refetchSearchResults,
-  } = useSearchEmployeeQuery(searchQuery);
+  } = useSearchStudioQuery(searchQuery);
   const [deleteEmployeeId, setDeleteEmployeeId] = useState(null);
-  const [deleteEmployee, { isLoading: isDeleting }] = useDeleteEmployeeMutation();
+  const [deleteEmployee, { isLoading: isDeleting }] = useDeleteStudioMutation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [editEmployee, setEditEmployee] = useState(null); // Renamed from editPackage to editEmployee for clarity
+  const [editEmployee, setEditEmployee] = useState(null);
+  const [loadingPackageId, setLoadingPackageId] = useState(null);
 
   useEffect(() => {
     if (employees?.data?.length === 0 && currentPage > 1) {
@@ -38,7 +42,7 @@ const EmployeeTable = () => {
     const employeeToEdit =
       searchQuery === ""
         ? employees.data.find((emp) => emp.id === employeeId)
-        : searchedEmployees.employee.find((emp) => emp.id === employeeId);
+        : searchedEmployees.studio.find((emp) => emp.id === employeeId);
     setEditEmployee(employeeToEdit);
   };
 
@@ -52,8 +56,8 @@ const EmployeeTable = () => {
       await deleteEmployee(deleteEmployeeId);
       setDeleteEmployeeId(null);
       setIsDeleteDialogOpen(false);
-      refetchEmployees(); // Renamed from refetch to refetchEmployees for clarity
-      refetchSearchResults(); // Renamed from refetchData to refetchSearchResults for clarity
+      refetchEmployees();
+      refetchSearchResults();
     } catch (error) {
       console.error("Error deleting employee:", error);
     }
@@ -68,11 +72,12 @@ const EmployeeTable = () => {
     setEditEmployee(null);
   };
 
+
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
     setCurrentPage(1);
     setEditEmployee(null);
-    refetchSearchResults(); // Renamed from refetchData to refetchSearchResults for clarity
+    refetchSearchResults();
   };
 
   const columns = [
@@ -86,31 +91,126 @@ const EmployeeTable = () => {
       },
     },
     {
-      name: "employee_name",
-      label: "اسم الموظف",
-    },
-    {
-      name: "num",
-      label: "رقم البصمة",
+      name: "category.name",
+      label: "اسم الباكدج",
       options: {
-        customBodyRender: (value) => {
-          return `${new Intl.NumberFormat("ar-EG").format(value)}`;
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const studioData = searchQuery === ""
+            ? employees?.data?.[tableMeta.rowIndex]
+            : searchedEmployees?.studio?.[tableMeta.rowIndex];
+          return studioData?.category?.name || "";
         },
       },
     },
     {
-      name: "phone",
-      label: "رقم التليفون",
+      name: "name",
+      label: "اسم العميل",
     },
     {
-      name: "salary",
-      label: "الراتب",
+      name: "appropriate",
+      label: "تاريخ المناسبه",
+    },
+    {
+        name: "receivedDate",
+        label: "تاريخ الاستلام",
+      },
+    {
+        name: "enter",
+        label: "معاد دخول",
+      },
+      {
+        name: "exit",
+        label: "معاد خروج",
+      },
+      {
+        name: "arrive",
+        label: "معاد وصول",
+      },
+      {
+        label: "حالة الدفع",
+        name: "status",
+        options: {
+          customBodyRender: (value, tableMeta, updateValue) => {
+            return (
+              <p
+                className={`${
+                  value === "لم يتم الدفع"
+                  ? "py-1 px-4" : "py-1 px-4"
+                } font-semibold text-lg rounded-full whitespace-nowrap ${
+                  value === "لم يتم الدفع"
+                    ? "bg-black text-white"
+                    : "bg-[#f3c74d] text-black"
+                }`}
+              >
+                { value === "لم يتم الدفع" ? (
+                  "لم يتم الدفع"
+                ) : (
+                  "تم الدفع"
+                )}
+              </p>
+            );
+          },
+        },
+      },
+    {
+      name: "total",
+      label: "الاجمالي",
       options: {
         customBodyRender: (value) => {
           return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
         },
       },
     },
+    {
+      name: "pay",
+      label: "المدفوع",
+      options: {
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
+        },
+      },
+    },
+    {
+      name: "rest",
+      label: "الباقي",
+      options: {
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
+        },
+      },
+    },
+    // {
+    //   label: "الحاله",
+    //   name: "status",
+    //   options: {
+    //     customBodyRender: (value, tableMeta, updateValue) => {
+    //       const packageId = (employees?.data || searchedEmployees?.makeup)?.[
+    //         tableMeta.rowIndex
+    //       ]?.id;
+    //       const isLoading = loadingPackageId === packageId;
+    //       return (
+    //         <button
+    //           onClick={() => handleStatusToggle(packageId, value)}
+    //           className={`${
+    //             isLoading ? "py-1 px-1 pb-1" : "py-1 px-4"
+    //           } font-semibold text-lg rounded-full whitespace-nowrap ${
+    //             value === "off"
+    //               ? "bg-black text-white"
+    //               : "bg-[#f3c74d] text-black"
+    //           }`}
+    //         >
+    //           {isLoading ? (
+    //             <Spinner />
+    //           ) : value === "لم يتم الدفع" ? (
+    //             "لم يتم الدفع"
+    //           ) : (
+    //             "تم الدفع"
+    //           )}
+    //         </button>
+    //       );
+    //     },
+    //   },
+    // },
     {
       name: "created_at",
       label: "تاريخ العملية",
@@ -124,6 +224,7 @@ const EmployeeTable = () => {
           });
           return `${formattedDate}(${formattedTime})`;
         },
+        wrap: 'nowrap',
       },
     },
     {
@@ -139,33 +240,37 @@ const EmployeeTable = () => {
           });
           return `${formattedDate}(${formattedTime})`;
         },
+        wrap: 'nowrap',
       },
     },
     {
       name: "actions",
       label: "تنفيذ",
       options: {
-        customBodyRender: (value, tableMeta) => {
-          const employee = (employees?.data || searchedEmployees?.employee)?.[
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const adminId = (employees?.data || searchedEmployees?.studio)?.[
             tableMeta.rowIndex
           ]?.id;
-          if (employee) {
-            return (
-              <>
-                <button onClick={() => handleEdit(employee)} className="ml-5">
-                  <AiOutlineEdit className="text-2xl text-black" />
-                </button>
-                <button onClick={() => handleDelete(employee)}>
-                  {isDeleting && deleteEmployeeId === employee ? (
-                    <AiOutlineLoading className="text-2xl animate-spin" />
-                  ) : (
-                    <AiOutlineDelete className="text-2xl text-[#ef4444]" />
-                  )}
-                </button>
-              </>
-            );
-          }
-          return null;
+          return (
+            <>
+              <button onClick={() => handleEdit(adminId)} className="ml-5">
+                <AiOutlineEdit
+                  title="تعديل  البيانات"
+                  className="text-2xl text-black"
+                />
+              </button>
+              <button onClick={() => handleDelete(adminId)}>
+                {isDeleting && deleteEmployeeId === adminId ? (
+                  <Spinner />
+                ) : (
+                  <AiOutlineDelete
+                    title="حذف العنصر"
+                    className="text-2xl text-[#ef4444]"
+                  />
+                )}
+              </button>
+            </>
+          );
         },
       },
     },
@@ -218,24 +323,34 @@ const EmployeeTable = () => {
     },
   };
 
-  const dataToDisplay = searchQuery ? searchedEmployees?.employee : employees?.data;
+  const searchOptions = {
+    filterType: "dropdown",
+    selectableRows: "none",
+    sort: false,
+    pagination: false,
+    search: false,
+  };
+
+  const dataToDisplay = searchQuery ? searchedEmployees?.studio : employees?.data;
 
   return (
     <>
+    {location.pathname==='/moderator/reservations/daily'&&(
       <div className="mb-4 flex justify-between items-center w-[100%]">
         <input
           type="text"
-          placeholder="ابحث اسم الموظف"
+          placeholder="ابحث اسم العميل"
           className="w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
           value={searchQuery}
           onChange={handleSearchChange}
         />
       </div>
+    )}
 
       {employees ? (
         <>
           <MUIDataTable
-            title={"الموظفين الحاليين"}
+            title={"تقارير الاستوديو"}
             data={dataToDisplay}
             columns={columns}
             options={options}
@@ -258,14 +373,14 @@ const EmployeeTable = () => {
       )}
 
       {editEmployee && (
-        <UpdateEmployee
+        <UpdateStudioDaily
           isOpen={true}
-          initialValues={editEmployee}
           closeModal={handleCloseEdit}
+          initialValues={editEmployee}
           refetchSearch={refetchSearchResults}
+          refetchEmployees={refetchEmployees}
         />
       )}
-
       <DeleteDialog
         isOpen={isDeleteDialogOpen}
         onDeleteConfirmed={handleDeleteConfirmed}
@@ -276,4 +391,4 @@ const EmployeeTable = () => {
   );
 };
 
-export default EmployeeTable;
+export default StudioTableDaily;

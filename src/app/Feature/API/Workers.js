@@ -10,6 +10,16 @@ export const WorkerApi = createApi({
       transformResponse: (response) => response.jobs,
       providesTags: ["Worker"],
     }),
+    getAllWorkers: build.query({
+      query: () => `/getJobs`,
+      transformResponse: (response) => response.jobs,
+      providesTags: ["Worker"],
+    }),
+    getPriceWork: build.query({
+      query: (name) => `/getJobPrice/${name}`,
+      transformResponse: (response) => response.job,
+      providesTags: ["Worker"],
+    }),
     saveWorker: build.mutation({
       query: (workerData) => ({
         url: `/save`,
@@ -38,6 +48,8 @@ export const WorkerApi = createApi({
 
 export const {
   useGetWorkersQuery,
+  useGetPriceWorkQuery,
+  useGetAllWorkersQuery,
   useSaveWorkerMutation,
   useUpdateWorkerMutation,
   useDeleteWorkerMutation,

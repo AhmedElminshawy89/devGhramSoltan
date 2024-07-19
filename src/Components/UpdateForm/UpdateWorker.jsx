@@ -118,7 +118,7 @@ const UpdateWorker = ({ isOpen, closeModal, initialValues ,refetchSearch}) => {
                         htmlFor="employeeName"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        الاسم
+                        الاسم <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="employeeName"
@@ -135,7 +135,7 @@ const UpdateWorker = ({ isOpen, closeModal, initialValues ,refetchSearch}) => {
                         htmlFor="amount"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        السعر
+                        السعر <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="amount"

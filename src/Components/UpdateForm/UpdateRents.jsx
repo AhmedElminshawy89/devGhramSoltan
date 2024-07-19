@@ -16,7 +16,7 @@ import {
   updateOfflineRent,
 } from "../../app/Feature/offlineRentsSlice";
 
-const UpdateRental = ({ isOpen, closeModal, initialValues }) => {
+const UpdateRental = ({ isOpen, closeModal, initialValues , refetchSearch}) => {
   const [name, setName] = useState(initialValues.name || "");
   const [categories, setCategories] = useState(
     initialValues.category ? initialValues.category.split(" و ") : []
@@ -98,6 +98,7 @@ const UpdateRental = ({ isOpen, closeModal, initialValues }) => {
 
         closeModal();
         resetForm();
+        refetchSearch();
       } catch (error) {
         dispatch(updateOfflineRent(newOfflineData));
         setNotification({
@@ -179,7 +180,7 @@ const UpdateRental = ({ isOpen, closeModal, initialValues }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="name"
                         >
-                          الاسم
+                          الاسم <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <input
                           id="name"
@@ -198,7 +199,7 @@ const UpdateRental = ({ isOpen, closeModal, initialValues }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="category"
                         >
-                          النوع
+                          النوع <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Select
                           id="category"
@@ -231,7 +232,7 @@ const UpdateRental = ({ isOpen, closeModal, initialValues }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="insuranceType"
                         >
-                          نوع التأمين
+                          نوع التأمين <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <select
                           id="insuranceType"
@@ -256,7 +257,7 @@ const UpdateRental = ({ isOpen, closeModal, initialValues }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="deposit"
                         >
-                          {insuranceType === "كاش" ? "المبلغ" : "رقم البطاقه"}
+                          {insuranceType === "كاش" ? "المبلغ" : "رقم البطاقه"} <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <input
                           id="deposit"

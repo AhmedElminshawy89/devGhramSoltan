@@ -80,6 +80,15 @@ const SubPackageTable = () => {
 
   const columns = [
     {
+      name:'#',
+      label:'',
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return tableMeta.rowIndex + 1;
+        },
+      },
+    },
+    {
       label: "اسم الباكدج",
       name: "category.data.name",
       options: {
@@ -88,6 +97,18 @@ const SubPackageTable = () => {
             searchQuery === "" ? packages.data : searchedPackages?.subCategory;
           const subPackage = rowData[tableMeta.rowIndex];
           return subPackage?.category?.name || "";
+        },
+      },
+    },
+    {
+      label: "نوع الباكدج",
+      name: "category.data.type",
+      options: {
+        customBodyRender: (value, tableMeta) => {
+          const rowData =
+            searchQuery === "" ? packages.data : searchedPackages?.subCategory;
+          const subPackage = rowData[tableMeta.rowIndex];
+          return subPackage?.category?.type || "";
         },
       },
     },

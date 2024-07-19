@@ -160,7 +160,7 @@ const RentalForm = ({ isOpen, closeModal }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="name"
                         >
-                          الاسم
+                          الاسم <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <input
                           id="name"
@@ -179,7 +179,7 @@ const RentalForm = ({ isOpen, closeModal }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="category"
                         >
-                          النوع
+                          النوع <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Select
                           id="category"
@@ -212,7 +212,7 @@ const RentalForm = ({ isOpen, closeModal }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="insuranceType"
                         >
-                          نوع التأمين
+                          نوع التأمين <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <select
                           id="insuranceType"
@@ -237,7 +237,7 @@ const RentalForm = ({ isOpen, closeModal }) => {
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="deposit"
                         >
-                          {insuranceType === "كاش" ? "المبلغ" : "رقم البطاقه"}
+                          {insuranceType === "كاش" ? "المبلغ" : "رقم البطاقه"} <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <input
                           id="deposit"
@@ -257,8 +257,8 @@ const RentalForm = ({ isOpen, closeModal }) => {
                             className="block text-gray-700 text-sm font-bold mb-2 text-start"
                             htmlFor="status"
                           >
-                            الحالة
-                          </label>
+                            الحالة 
+                          </label> 
                           <select
                             id="status"
                             value={status}

@@ -10,6 +10,16 @@ export const CategoryApi = createApi({
       transformResponse: (response) => response.categories,
       providesTags: ["Category"],
     }),
+    getCategoriesStudio: build.query({
+      query: () => `/showStudio`,
+      transformResponse: (response) => response.makeup,
+      providesTags: ["Category"],
+    }),
+    getCategoriesMakeUp: build.query({
+      query: () => `/showMakeup`,
+      transformResponse: (response) => response.makeup,
+      providesTags: ["Category"],
+    }),
     saveCategory: build.mutation({
       query: (categoryData) => ({
         url: `/save`,
@@ -45,6 +55,8 @@ export const CategoryApi = createApi({
 
 export const {
   useGetCategoriesQuery,
+  useGetCategoriesStudioQuery,
+  useGetCategoriesMakeUpQuery,
   useSaveCategoryMutation,
   useUpdateCategoryMutation,
   useDeleteCategoryMutation,

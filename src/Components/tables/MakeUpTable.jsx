@@ -1,46 +1,244 @@
-import MUIDataTable from "mui-datatables";
+import React, { useEffect, useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
-const MakeUpTable = () => {
-    
-  const columns = [
-    "نوع الباكدج",
-    "اسم العروسه",
-    "رقم الهاتف",    "البلد",
+import MUIDataTable from "mui-datatables";
+import Spinner from "../../Shared/Spinner";
+import DeleteDialog from "../../Shared/DeleteDialog";
+import { Pagination } from "antd";
+import { useSearchMakeUpQuery, useSearchStudioQuery } from "../../app/Feature/API/Search";
+import { useDeleteStudioMutation, useGetStudiosQuery } from "../../app/Feature/API/Studio";
+import UpdateStudio from "../UpdateForm/UpdateStudio";
+import { useDeleteMakeupMutation, useGetMakeupsQuery } from "../../app/Feature/API/MakeUp";
 
+const MakeUpTable = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { data: employees, refetch: refetchEmployees } = useGetMakeupsQuery(currentPage);
+  const {
+    data: searchedEmployees,
+    isLoading: loadingSearch,
+    refetch: refetchSearchResults,
+  } = useSearchMakeUpQuery(searchQuery);
+  const [deleteEmployeeId, setDeleteEmployeeId] = useState(null);
+  const [deleteEmployee, { isLoading: isDeleting }] = useDeleteMakeupMutation();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [editEmployee, setEditEmployee] = useState(null);
+
+  useEffect(() => {
+    if (employees?.data?.length === 0 && currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  }, [employees, currentPage]);
+
+  const handlePageChange = (page, pageSize) => {
+    setCurrentPage(page);
+    setPerPage(pageSize);
+  };
+
+
+  const handleEdit = async (employeeId) => {
+    const employeeToEdit =
+      searchQuery === ""
+        ? employees.data.find((emp) => emp.id === employeeId)
+        : searchedEmployees.makeup.find((emp) => emp.id === employeeId);
+    setEditEmployee(employeeToEdit);
+  };
+
+  const handleDelete = (employeeId) => {
+    setDeleteEmployeeId(employeeId);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    try {
+      await deleteEmployee(deleteEmployeeId);
+      setDeleteEmployeeId(null);
+      setIsDeleteDialogOpen(false);
+      refetchEmployees(); // Renamed from refetch to refetchEmployees for clarity
+      refetchSearchResults(); // Renamed from refetchData to refetchSearchResults for clarity
+    } catch (error) {
+      console.error("Error deleting employee:", error);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteEmployeeId(null);
+    setIsDeleteDialogOpen(false);
+  };
+
+  const handleCloseEdit = () => {
+    setEditEmployee(null);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
+    setEditEmployee(null);
+    refetchSearchResults(); // Renamed from refetchData to refetchSearchResults for clarity
+  };
+
+  const columns = [
     {
-      name: "تاريخ المناسبه",
+      name:'#',
+      label:'',
       options: {
-        filter: true,
-        customFilterListOptions: {
-          render: (value) => `تاريخ: ${value}`,
-        },
-        customFilterAndSearch: (filterValue, rowData) => {
-          return rowData[2].includes(filterValue);
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return tableMeta.rowIndex + 1;
         },
       },
     },
-    "مرتج من الباكدج",
-    "الخدمه الاضافيه",
-    "سعر الخدمه الاضافيه",
-    "الاجمالي",
-    "المدفوع",
-    "الباقي",
-    "نوع الخصم",
-    "قيمه الخصم",
-    "تاريخ الحجز",
-    "تاريخ التعديل",
     {
-      name: "تنفيذ",
+      name: "category.name",
+      label: "اسم الباكدج",
       options: {
         customBodyRender: (value, tableMeta, updateValue) => {
-          const rowIndex = tableMeta.rowIndex;
+          const studioData = searchQuery === ""
+            ? employees?.data?.[tableMeta.rowIndex]
+            : searchedEmployees?.makeup?.[tableMeta.rowIndex];
+          
+          return studioData?.category?.name || "";
+        },
+      },
+    },
+    {
+      name: "name",
+      label: "اسم العميل",
+    },
+    {
+      name: "phone",
+      label: "رقم الهاتف",
+    },
+    {
+      name: "address",
+      label: "العنوان",
+    },
+    {
+      name: "appropriate",
+      label: "تاريخ المناسبه",
+    },
+    {
+      name: "notes",
+      label: "مرتجع من الباكدج",
+    },
+    {
+      name: "addService",
+      label: "الخدمه الاضافيه",
+    },
+    {
+      name: "priceService",
+      label: "سعر الخدمه الاضافيه",
+            options: {
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
+        },
+      },
+    },
+    {
+      name: "total",
+      label: "الاجمالي",
+            options: {
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
+        },
+      },
+    },
+    {
+      name: "pay",
+      label: "المدفوع",
+            options: {
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
+        },
+      },
+    },
+    {
+      name: "rest",
+      label: "الباقي",
+            options: {
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
+        },
+      },
+    },
+    {
+      label: "نوع الخصم",
+      name: "discount.discount",
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const studioData = searchQuery === ""
+            ? employees?.data?.[tableMeta.rowIndex]
+            : searchedEmployees?.studio?.[tableMeta.rowIndex];
+          
+          return studioData?.discount?.discount || "";
+        },
+      },
+    },
+    {
+      label: "نسبه الخصم",
+      name: "price",
+            options: {
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
+        },
+      },
+    },
+    {
+      name: "created_at",
+      label: "تاريخ العملية",
+      options: {
+        customBodyRender: (value) => {
+          const date = new Date(value);
+          const formattedDate = date.toLocaleDateString("ar-EG");
+          const formattedTime = date.toLocaleTimeString("ar-EG", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          return `${formattedDate}(${formattedTime})`;
+        },
+        wrap: 'nowrap',
+      },
+    },
+    {
+      name: "updated_at",
+      label: "تاريخ التحديث",
+      options: {
+        customBodyRender: (value) => {
+          const date = new Date(value);
+          const formattedDate = date.toLocaleDateString("ar-EG");
+          const formattedTime = date.toLocaleTimeString("ar-EG", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          return `${formattedDate}(${formattedTime})`;
+        },
+        wrap: 'nowrap',
+      },
+    },
+    {
+      name: "actions",
+      label: "تنفيذ",
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const adminId = (employees?.data || searchedEmployees?.makeup)?.[
+            tableMeta.rowIndex
+          ]?.id;
           return (
             <>
-              <button onClick={() => handleEdit(rowIndex)} className="ml-5">
-                <AiOutlineEdit className="text-2xl text-black" />
-              </button>
-              <button onClick={() => handleDelete(rowIndex)}>
-                <AiOutlineDelete className="text-2xl text-[#ef4444]" />
+              {/* <button onClick={() => handleEdit(adminId)} className="ml-5">
+                <AiOutlineEdit
+                  title="تعديل  البيانات"
+                  className="text-2xl text-black"
+                />
+              </button> */}
+              <button onClick={() => handleDelete(adminId)}>
+                {isDeleting && deleteEmployeeId === adminId ? (
+                  <Spinner />
+                ) : (
+                  <AiOutlineDelete
+                    title="حذف العنصر"
+                    className="text-2xl text-[#ef4444]"
+                  />
+                )}
               </button>
             </>
           );
@@ -49,39 +247,21 @@ const MakeUpTable = () => {
     },
   ];
 
-  const data = [
-    [
-      "زفاف",
-      "هاله محمد",
-      "0123456789",
-      "دسوق",
-      "2025-06-15",
-      "طرحه",
-      "كوافير",
-      "450",
-      "5000",
-      "2500",
-      "1750",
-      "خصم موسمي",
-      "150",
-      "2024-06-15",
-      "2024-06-15",
-    ],
-  ];
   const options = {
     filterType: "dropdown",
-    selectableRows: 'none',
-    // elevation: false,
-    setRowProps: (row, dataIndex, rowIndex) => {
-      return {
-        style: {
-          backgroundColor: rowIndex % 2 === 0 ? "#f5f5f5" : "#ffffff",
-        },
-      };
-    },
+    selectableRows: "none",
+    sort: false,
+    pagination: false,
+    search: false,
+    setRowProps: (row, dataIndex, rowIndex) => ({
+      style: {
+        backgroundColor: rowIndex % 2 === 0 ? "#f5f5f5" : "#ffffff",
+        border: '1px solid #e0e0e0' 
+      },
+    }),
     textLabels: {
       body: {
-        noMatch: "لا توجد بيانات مطابقة",
+        noMatch: loadingSearch ? "جاري البحث..." : "لا توجد بيانات مطابقة",
         toolTip: "فرز",
         columnHeaderTooltip: (column) => `فرز لـ ${column.label}`,
       },
@@ -108,29 +288,68 @@ const MakeUpTable = () => {
         titleAria: "عرض/إخفاء أعمدة الجدول",
       },
       selectedRows: {
-        text: "صفوف محددة",
+        text: "الصفوف المحددة",
         delete: "حذف",
         deleteAria: "حذف الصفوف المحددة",
       },
     },
   };
-  
-  const handleEdit = (rowIndex) => {
-    console.log("Edit clicked for row:", rowIndex);
-  };
 
-  const handleDelete = (rowIndex) => {
-    console.log("Delete clicked for row:", rowIndex);
-  };
+  const dataToDisplay = searchQuery ? searchedEmployees?.makeup : employees?.data;
 
   return (
-    <MUIDataTable
-    title={"تقارير ميكاب"}
-    data={data}
-    columns={columns}
-    options={options}
-  />
-  )
-}
+    <>
+      <div className="mb-4 flex justify-between items-center w-[100%]">
+        <input
+          type="text"
+          placeholder="ابحث اسم العميل"
+          className="w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
+      </div>
 
-export default MakeUpTable
+      {employees ? (
+        <>
+          <MUIDataTable
+            title={"تقارير ميكاب"}
+            data={dataToDisplay}
+            columns={columns}
+            options={options}
+          />
+          <Pagination
+            current={currentPage}
+            pageSize={perPage}
+            total={employees.total}
+            onChange={handlePageChange}
+            onShowSizeChange={(current, size) => {
+              setCurrentPage(current);
+              setPerPage(size);
+            }}
+          />
+        </>
+      ) : (
+        <div className="mt-[200px] mb-[200px] text-center">
+          <Spinner />
+        </div>
+      )}
+
+      {editEmployee && (
+        <UpdateStudio
+          isOpen={true}
+          closeModal={handleCloseEdit}
+          initialValues={editEmployee}
+          refetchSearch={refetchSearchResults}
+        />
+      )}
+      <DeleteDialog
+        isOpen={isDeleteDialogOpen}
+        onDeleteConfirmed={handleDeleteConfirmed}
+        onClose={handleCancelDelete}
+        loading={isDeleting}
+      />
+    </>
+  );
+};
+
+export default MakeUpTable;

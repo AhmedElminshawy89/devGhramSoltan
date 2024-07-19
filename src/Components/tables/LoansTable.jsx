@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import MUIDataTable from "mui-datatables";
 import Spinner from "../../Shared/Spinner";
@@ -34,44 +34,11 @@ const LoansTable = () => {
   const loansOffline = useSelector((state) => state.offlineLoans.loans) || [ ];
   const dispatch = useDispatch();
 
-
-  // useEffect(() => {
-  //   const syncOfflineLoans = async () => {
-  //     if (!isOnline && loansOffline.length === 0) {
-  //       const offlineData = JSON.parse(localStorage.getItem("backuploans")) || [];
-  //       dispatch(setOfflineLoans(offlineData));
-  //     } else if (isOnline && loansOffline.length > 0) {
-  //       const updatedLoans = [];
-  //       for (const loan of loansOffline) {
-  //         try {
-  //           await saveLoan(loan);
-  //           updatedLoans.push(loan.id);
-  //         } catch (error) {
-  //           console.error("Failed to sync loan:", error);
-  //         }
-  //       }
-  //       const remainingLoans = loansOffline.filter(
-  //         (item) => !updatedLoans.includes(item.id)
-  //       );
-  //       dispatch(setOfflineLoans(remainingLoans));
-  //       localStorage.setItem("backuploans", JSON.stringify(remainingLoans));
-  //     }
-  //   };
-
-  //   syncOfflineLoans();
-  // }, [isOnline]);
-  
-
-  // const saveLoan = async (loan) => {
-  //   try {
-  //     await saveLoan(loan);
-  //     const updatedLoans = loansOffline.filter((item) => item.id !== loan.id);
-  //     dispatch(setOfflineLoans(updatedLoans));
-  //     localStorage.setItem("backuploans", JSON.stringify(updatedLoans));
-  //   } catch (error) {
-  //     console.error("Failed to sync loan:", error);
-  //   }
-  // };
+  useEffect(() => {
+    if (loansOnline?.data?.length === 0 && currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  }, [loansOnline, currentPage]);
 
   const handlePageChange = (page, pageSize) => {
     setCurrentPage(page);
@@ -132,6 +99,15 @@ const LoansTable = () => {
   };
   
   const columns = [
+    {
+      name:'#',
+      label:'',
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return tableMeta.rowIndex + 1;
+        },
+      },
+    },
     {
       name: "employee_name",
       label: "اسم الموظف",

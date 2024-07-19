@@ -140,7 +140,7 @@ const UpdateEmployee = ({ isOpen, closeModal, initialValues,refetchSearch }) => 
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="name"
                         >
-                          اسم الموظف
+                          اسم الموظف <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input
                           id="name"
@@ -159,7 +159,7 @@ const UpdateEmployee = ({ isOpen, closeModal, initialValues,refetchSearch }) => 
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="fingerprintNumber"
                         >
-                          رقم البصمة
+                          رقم البصمة <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input
                           id="fingerprintNumber"
@@ -179,7 +179,7 @@ const UpdateEmployee = ({ isOpen, closeModal, initialValues,refetchSearch }) => 
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="phone"
                         >
-                          رقم التليفون
+                          رقم التليفون <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input
                           id="phone"
@@ -198,7 +198,7 @@ const UpdateEmployee = ({ isOpen, closeModal, initialValues,refetchSearch }) => 
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="salary"
                         >
-                          الراتب
+                          الراتب <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input
                           id="salary"

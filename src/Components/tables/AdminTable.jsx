@@ -90,6 +90,15 @@ const AdminTable = () => {
 
   const columns = [
     {
+      name:'#',
+      label:'',
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return tableMeta.rowIndex + 1;
+        },
+      },
+    },
+    {
       name: "name",
       label: "الاسم",
     },
@@ -240,7 +249,7 @@ const AdminTable = () => {
       <div className="mb-4 flex justify-between items-center w-[100%]">
         <input
           type="text"
-          placeholder="ابحث اسم الادمن"
+          placeholder=" ابحث اسم الادمن او البريد الالكتروني"
           className="w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
           value={searchQuery}
           onChange={handleSearchChange}

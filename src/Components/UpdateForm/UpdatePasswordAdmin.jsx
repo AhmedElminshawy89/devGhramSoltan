@@ -100,7 +100,7 @@ const UpdatePasswordAdmin = ({ isOpen, closeModal ,initialValues,refetchSearch})
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
                   >
-                    تعديل كلمه المرور
+                    تعديل كلمه المرور 
                   </Dialog.Title>
                   <div className="mt-2">
                     {notification && (
@@ -120,7 +120,7 @@ const UpdatePasswordAdmin = ({ isOpen, closeModal ,initialValues,refetchSearch})
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="email"
                         >
-                          البريد الإلكتروني
+                          البريد الإلكتروني <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input
                           id="email"
@@ -137,7 +137,7 @@ const UpdatePasswordAdmin = ({ isOpen, closeModal ,initialValues,refetchSearch})
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="password"
                         >
-                          كلمة المرور
+                          كلمة المرور <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input.Password
                           id="password"
@@ -153,7 +153,7 @@ const UpdatePasswordAdmin = ({ isOpen, closeModal ,initialValues,refetchSearch})
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="confirmPassword"
                         >
-                          تأكيد كلمة المرور
+                          تأكيد كلمة المرور <span className="text-xl text-red-500 mt-4">*</span>
                         </label>
                         <Input.Password
                           id="confirmPassword"

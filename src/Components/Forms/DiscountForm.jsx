@@ -98,7 +98,7 @@ const DiscountForm = ({ isOpen, closeModal }) => {
                         htmlFor="typeDiscount"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        نوع الخصم
+                        نوع الخصم <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="typeDiscount"
@@ -115,7 +115,7 @@ const DiscountForm = ({ isOpen, closeModal }) => {
                         htmlFor="discount"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        نسبة الخصم
+                        نسبة الخصم <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="discount"

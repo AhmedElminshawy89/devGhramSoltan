@@ -25,6 +25,10 @@ li {
   list-style: none;
 }
 
+::selection{
+  background-color: #f3c74d;
+  color: #000;
+}
 .dashboard-layout {
   display: flex;
 }
@@ -48,7 +52,7 @@ li {
   padding: 8px 20px 0px 6px;
   border-left: 1px solid #eceff1;
   transition: width 0.3s ease;
-  z-index: 5555;
+  z-index: 5;
 }
 
 .sidebar-mobile .link-pages ul li a p {
@@ -57,15 +61,16 @@ li {
 
 .content-navbar {
   margin-right: 20%;
-  width: 100%;
-  transition: margin-right 0.3s ease;
+  width: 80%;
+  transition: margin-right 0.3s ease, width 0.3s ease;
 }
 
 .content-navbar-mobile {
   margin-right: 80px;
-  width: 100%;
-  transition: margin-right 0.3s ease;
+  width: calc(100% - 80px);
+    transition: margin-right 0.3s ease, width 0.3s ease;
 }
+
 
 .navbar-layout {
   background-color: #fff;
@@ -274,6 +279,7 @@ li {
   top: 0px;
   z-index: 100;
   background-color: transparent !important;
+  white-space: nowrap !important;
 }
 .tss-1akey0g-MUIDataTableHeadCell-data {
   display: inline-block;
@@ -361,4 +367,33 @@ li {
 }
 .ant-pagination-item-active>a{
   color: #000 !important;
+}
+.tss-iwylj0-MUIDataTableBodyCell-responsiveStackedSmallParent {
+  white-space: nowrap !important;
+}
+
+
+#date-range{
+  background-color: #fff !important;
+  padding: 8px 0px !important;
+  border-radius: .5rem !important;
+  color: #000 !important;
+  direction: ltr !important;
+  -webkit-border-radius: .5rem !important;
+  -moz-border-radius: .5rem !important;
+  -ms-border-radius: .5rem !important;
+  -o-border-radius: .5rem !important;
+  width: 92%;
+  text-align: center;
+}
+
+#date-range::placeholder{
+  direction: rtl !important;
+}
+
+.btn-cancel-del{
+  height: 100% !important;
+  width: 8% !important;
+  font-size: 24px !important;
+  min-width: 40px !important;
 }

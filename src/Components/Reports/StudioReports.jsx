@@ -1,0 +1,426 @@
+import React, { useEffect, useState } from "react";
+import MUIDataTable from "mui-datatables";
+import Spinner from "../../Shared/Spinner";
+import { Pagination } from "antd";
+import { useGetMakeupsQuery } from "../../app/Feature/API/MakeUp";
+import axios from "axios";
+import host from "../../host/Host";
+import { IoIosRefresh } from "react-icons/io";
+import { useGetStudiosQuery } from "../../app/Feature/API/Studio";
+
+const StudioReports = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [perPage, setPerPage] = useState(5);
+  const [searchDateData, setSearchDateData] = useState(null);
+  const [loadingSearch, setLoadingSearch] = useState(false);
+  const [totalAmount, setTotalAmount] = useState(0); 
+  const [totals, setTotals] = useState({
+    totalPriceService: 0,
+    totalAmount: 0,
+    totalPay: 0,
+    totalRest: 0,
+    totalDiscount:0
+  });
+  const { data: employees, isLoading: loadingEmployees } = useGetStudiosQuery(currentPage);
+
+  useEffect(() => {
+    if (employees?.data?.length === 0 && currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  }, [employees, currentPage]);
+  
+  const calculateTotals = () => {
+    if (searchDateData?.studio || employees?.data || []) {
+      let totalPriceService = 0;
+      let totalAmount = 0;
+      let totalPay = 0;
+      let totalRest = 0;
+      let totalDiscount = 0;
+  
+      const dataToDisplay = searchDateData?.studio || employees?.data || [];
+  
+      dataToDisplay.forEach((item) => {
+        totalPriceService += item.priceService || 0;
+        totalAmount += item.total || 0;
+        totalPay += item.pay || 0;
+        totalRest += item.rest || 0;
+  
+        // Add discount only if reason_discount_id is present
+        if (item.reason_discount_id) {
+          totalDiscount += item.discount?.price || 0;
+        }
+      });
+  
+      setTotals({
+        totalPriceService,
+        totalAmount,
+        totalPay,
+        totalRest,
+        totalDiscount, // Include totalDiscount in the totals
+      });
+    }
+  };
+  
+  
+  useEffect(() => {
+    calculateTotals();
+  }, [searchDateData, employees?.data]);
+  
+
+  const handlePageChange = (page, pageSize) => {
+    setCurrentPage(page);
+    setPerPage(pageSize);
+  };
+
+
+  const handleSearchDate = async (e) => {
+    e.preventDefault();
+    setLoadingSearch(true); // بدء تحميل البحث
+
+    try {
+      const response = await axios.post(`${host}/api/superAdmin/reports/studioSearchReports`, {
+        dateStart: startDate,
+        dateEnd: endDate
+      });
+
+      setSearchDateData(response.data);
+    } catch (error) {
+      console.error('Error searching by date:', error);
+    } finally {
+      setLoadingSearch(false); // إنهاء تحميل البحث
+    }
+  };
+
+  const handleResetSearch = () => {
+    setStartDate('');
+    setEndDate('');
+    setSearchDateData(null);
+  };
+
+  const columns = [
+    {
+      name:'#',
+      label:'',
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return tableMeta.rowIndex + 1;
+        },
+      },
+    },
+    {
+      name: "category.name",
+      label: "اسم الباكدج",
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const studioData = employees?.data?.[tableMeta.rowIndex]
+          
+          return studioData?.category?.name || "";
+        },
+      },
+    },
+    {
+      name: "name",
+      label: "اسم العميل",
+    },
+    {
+      name: "phone",
+      label: "رقم الهاتف",
+    },
+    {
+      name: "address",
+      label: "العنوان",
+    },
+    {
+      name: "appropriate",
+      label: "تاريخ المناسبه",
+    },
+    {
+        name: "receivedDate",
+        label: "تاريخ الاستلام",
+      },
+    {
+        name: "enter",
+        label: "معاد دخول",
+      },
+      {
+        name: "exit",
+        label: "معاد خروج",
+      },
+      {
+        name: "arrive",
+        label: "معاد وصول",
+      },
+      {
+        label: "حالة الدفع",
+        name: "status",
+        options: {
+          customBodyRender: (value, tableMeta, updateValue) => {
+            return (
+              <p
+                className={`${
+                  value === "لم تم الدفع"
+                  ? "py-1 px-4" : "py-1 px-4"
+                } font-semibold text-lg rounded-full whitespace-nowrap ${
+                  value === "لم تم الدفع"
+                    ? "bg-black text-white"
+                    : "bg-[#f3c74d] text-black"
+                }`}
+              >
+                { value === "لم تم الدفع" ? (
+                  "لم يتم الدفع"
+                ) : (
+                  "تم الدفع"
+                )}
+              </p>
+            );
+          },
+        },
+      },
+    {
+      name: "notes",
+      label: "مرتجع من الباكدج",
+    },
+    {
+      name: "addService",
+      label: "الخدمه الاضافيه",
+    },
+    {
+      name: "priceService",
+      label: "سعر الخدمه الاضافيه",
+            options: {
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`
+        },
+      },
+    },
+    {
+      name: "total",
+      label: "الاجمالي",
+            options: {
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`
+        },
+      },
+    },
+    {
+      name: "pay",
+      label: "المدفوع",
+            options: {
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`
+        },
+      },
+    },
+    {
+      name: "rest",
+      label: "الباقي",
+            options: {
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`
+        },
+      },
+    },
+    {
+      label: "نوع الخصم",
+      name: "discount.discount",
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const studioData = employees?.data?.[tableMeta.rowIndex]
+          return studioData?.discount?.discount || "";
+        },
+      },
+    },
+    {
+      label: "نسبه الخصم",
+      name: "price",
+            options: {
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`
+        },
+      },
+    },
+
+    {
+      name: "created_at",
+      label: "تاريخ العملية",
+      options: {
+        customBodyRender: (value) => {
+          const date = new Date(value);
+          const formattedDate = date.toLocaleDateString("ar-EG");
+          const formattedTime = date.toLocaleTimeString("ar-EG", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          return` ${formattedDate}(${formattedTime})`
+        },
+        wrap: 'nowrap',
+      },
+    },
+    {
+      name: "updated_at",
+      label: "تاريخ التحديث",
+      options: {
+        customBodyRender: (value) => {
+          const date = new Date(value);
+          const formattedDate = date.toLocaleDateString("ar-EG");
+          const formattedTime = date.toLocaleTimeString("ar-EG", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          return `${formattedDate}(${formattedTime})`
+        },
+        wrap: 'nowrap',
+      },
+    }
+  ];
+
+  const options = {
+    filterType: "dropdown",
+    selectableRows: "none",
+    sort: false,
+    pagination: false,
+    search: false,
+    setRowProps: (row, dataIndex, rowIndex) => ({
+      style: {
+        backgroundColor: rowIndex % 2 === 0 ? "#f5f5f5" : "#ffffff",
+        border: '1px solid #e0e0e0'
+      },
+    }),
+    textLabels: {
+      body: {
+        noMatch:"لا توجد بيانات مطابقة",
+        toolTip: "فرز",
+        columnHeaderTooltip: (column) => `فرز لـ ${column.label}`,
+      },
+      pagination: {
+        next: "الصفحة التالية",
+        previous: "الصفحة السابقة",
+        rowsPerPage: "عدد الصفوف لكل صفحة:",
+        displayRows: "من",
+      },
+      toolbar: {
+        search: "بحث",
+        downloadCsv: "تنزيل CSV",
+        print: "طباعة",
+        viewColumns: "عرض الأعمدة",
+        filterTable: "تصفية الجدول",
+      },
+      filter: {
+        all: "الكل",
+        title: "الفلاتر",
+        reset: "إعادة تعيين",
+      },
+      viewColumns: {
+        title: "عرض الأعمدة",
+        titleAria: "عرض/إخفاء أعمدة الجدول",
+      },
+      selectedRows: {
+        text: "الصفوف المحددة",
+        delete: "حذف",
+        deleteAria: "حذف الصفوف المحددة",
+      },
+    },
+    customFooter: () => (
+<>
+<tr>
+        <td colSpan={3} className="font-semibold text-lg">
+          <div className="flex justify-start gap-4 mt-2">
+            <span>إجمالي سعر الخدمات المضافه:</span>
+            <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalPriceService)} جنيه`}</span>
+          </div>
+          <div className="flex justify-start gap-4 mt-2">
+            <span>الاجمالي:</span>
+            <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalAmount)} جنيه`}</span>
+          </div>
+          <div className="flex justify-start gap-4 mt-2">
+            <span>إجمالي المدفوع:</span>
+            <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalPay)} جنيه`}</span>
+          </div>
+          <div className="flex justify-start gap-4 mt-2">
+            <span>إجمالي المتبقي:</span>
+            <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalRest)} جنيه`}</span>
+          </div>
+          <div className="flex justify-start gap-4 mt-2">
+            <span>إجمالي الخصم:</span>
+            <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalDiscount)} جنيه`}</span>
+          </div>
+        </td>
+      </tr>
+</>
+    ),
+  };
+
+  const dataToDisplay = searchDateData?.studio || employees?.data || [];
+
+  return (
+    <>
+      <div className="mb-4 flex flex-col md:flex-row justify-between items-center w-full gap-4">
+      <div className="flex flex-col md:flex-row gap-4 w-full items-center mt-2">
+        <div className="flex gap-4 w-full items-center">
+      من
+          <input
+            type="date"
+            placeholder="من"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className={`shadow appearance-none
+                border rounded w-full py-2 px-3 text-gray-700
+                 leading-tight focus:outline-none focus:shadow-outline`}
+          />
+        </div>
+        <div className="flex gap-4 w-full items-center">
+          الي
+          <input
+            type="date"
+            placeholder="الي"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className={`shadow appearance-none
+                border rounded w-full py-2 px-3 text-gray-700
+                 leading-tight focus:outline-none focus:shadow-outline`}
+          />
+        </div>
+        <div className="flex gap-4 w-full items-center">
+          <button onClick={handleSearchDate} disabled={loadingSearch}
+          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center">
+            {loadingSearch ? "جاري البحث..." : "ابحث"}
+          </button>
+          <button onClick={handleResetSearch} disabled={loadingSearch}
+          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center">
+          <IoIosRefresh/>
+          </button>
+        </div>
+        </div>
+      </div>
+
+      {loadingEmployees || loadingSearch ? (
+        <div className="mt-[200px] mb-[200px] text-center">
+          <Spinner />
+        </div>
+      ) : (
+        <>
+          <MUIDataTable
+            title={"تقارير استوديو"}
+            data={dataToDisplay}
+            columns={columns}
+            options={options}
+          />
+          <Pagination
+            current={currentPage}
+            pageSize={perPage}
+            total={employees?.total || 0}
+            onChange={handlePageChange}
+            onShowSizeChange={(current, size) => {
+              setCurrentPage(current);
+              setPerPage(size);
+            }}
+          />
+        </>
+      )}
+    </>
+  );
+};
+
+export default StudioReports;

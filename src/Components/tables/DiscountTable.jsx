@@ -78,6 +78,15 @@ const SubPackageTable = () => {
 
   const columns = [
     {
+      name:'#',
+      label:'',
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return tableMeta.rowIndex + 1;
+        },
+      },
+    },
+    {
       name: "discount",
       label: "نوع الخصم",
     },
@@ -97,16 +106,30 @@ const SubPackageTable = () => {
       name: "created_at",
       label: "تاريخ العملية",
       options: {
-        customBodyRender: (value) =>
-          new Date(value).toLocaleDateString("ar-EG"),
+        customBodyRender: (value) => {
+          const date = new Date(value);
+          const formattedDate = date.toLocaleDateString("ar-EG");
+          const formattedTime = date.toLocaleTimeString("ar-EG", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          return `${formattedDate}(${formattedTime})`;
+        },
       },
     },
     {
       name: "updated_at",
       label: "تاريخ التحديث",
       options: {
-        customBodyRender: (value) =>
-          new Date(value).toLocaleDateString("ar-EG"),
+        customBodyRender: (value) => {
+          const date = new Date(value);
+          const formattedDate = date.toLocaleDateString("ar-EG");
+          const formattedTime = date.toLocaleTimeString("ar-EG", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          return `${formattedDate}(${formattedTime})`;
+        },
       },
     },
     {

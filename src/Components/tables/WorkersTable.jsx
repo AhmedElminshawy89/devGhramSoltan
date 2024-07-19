@@ -77,6 +77,15 @@ const WorkTable = () => {
 
   const columns = [
     {
+      name:'#',
+      label:'',
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return tableMeta.rowIndex + 1;
+        },
+      },
+    },
+    {
       name: "name",
       label: "الاسم",
     },

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import MUIDataTable from "mui-datatables";
 import Spinner from "../../Shared/Spinner";
@@ -32,6 +32,13 @@ const ExpensesTable = () => {
   const [editLoan, setEditLoan] = useState(null);
 
   const isOnline = useContext(OnlineStatusContext);
+
+
+  useEffect(() => {
+    if (loansOnline?.data?.length === 0 && currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  }, [loansOnline, currentPage]);
 
   const dispatch = useDispatch();
   const offlineExpenses =
@@ -93,6 +100,15 @@ const ExpensesTable = () => {
     refetchSearchResultsOnline();
   };
   const columns = [
+    {
+      name:'#',
+      label:'',
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return tableMeta.rowIndex + 1;
+        },
+      },
+    },
     {
       name: "side",
       label: "الجهه",

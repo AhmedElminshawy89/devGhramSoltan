@@ -8,6 +8,7 @@ import { useSaveLoansMutation } from "../../app/Feature/API/Loans";
 import { useDispatch, useSelector } from "react-redux";
 import { addOfflineLoan } from "../../app/Feature/offlineSlice";
 import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
+import { useGetAllEmployeesQuery } from "../../app/Feature/API/Emplyee";
 
 const LoansForm = ({ isOpen, closeModal }) => {
   const [employeeName, setEmployeeName] = useState("");
@@ -22,31 +23,7 @@ const LoansForm = ({ isOpen, closeModal }) => {
   const dispatch = useDispatch();
   const offlineLoans = useSelector((state) => state.offlineLoans.loans) || [];
 
-  // useEffect(() => {
-  //   const handleOnline = () => {
-  //     if (offlineLoans.length > 0) {
-  //       syncOfflineData();
-  //     }
-  //   };
-
-  //   const handleOffline = () => {
-  //     const savedData = JSON.parse(localStorage.getItem("backuploans"));
-  //     if (savedData) {
-  //       setOfflineLoans(savedData);
-  //       toast.info(
-  //         "أنت حاليا غير متصل بالإنترنت! عرض البيانات المحفوظة محليًا."
-  //       );
-  //     }
-  //   };
-
-  //   window.addEventListener("online", handleOnline);
-  //   window.addEventListener("offline", handleOffline);
-
-  //   return () => {
-  //     window.removeEventListener("online", handleOnline);
-  //     window.removeEventListener("offline", handleOffline);
-  //   };
-  // }, []);
+  const { data: allEmployee } = useGetAllEmployeesQuery();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,7 +32,7 @@ const LoansForm = ({ isOpen, closeModal }) => {
     if (employeeName && expenseReason && amount) {
       try {
         if (isOnline) {
-          const response = await saveLoan({
+          await saveLoan({
             employee_name: employeeName,
             reason: expenseReason,
             price: amount,
@@ -82,7 +59,6 @@ const LoansForm = ({ isOpen, closeModal }) => {
           closeModal();
           resetForm();
           toast.error("تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.");
-          console.log(offlineLoans);
         }
       } catch (error) {
         console.error("Error saving loan:", error);
@@ -105,26 +81,6 @@ const LoansForm = ({ isOpen, closeModal }) => {
       setNotification({ type: "error", message: "الرجاء ملء جميع الحقول!" });
     }
   };
-
-  // const syncOfflineData = async () => {
-  //   try {
-  //     const savedData = JSON.parse(localStorage.getItem("backuploans"));
-  //     if (!savedData || savedData.length === 0) {
-  //       toast.info("لا توجد بيانات محلية لمزامنتها مع الخادم.");
-  //       return;
-  //     }
-  //     for (let data of savedData) {
-  //       const { id, ...dataWithoutId } = data;
-  //       await saveLoan(dataWithoutId).unwrap();
-  //       dispatch(updateOfflineLoan({ id, ...dataWithoutId }));
-  //     }
-  //     dispatch(clearOfflineLoans());
-  //     toast.success("تمت مزامنة البيانات المحلية مع الخادم بنجاح!");
-  //   } catch (error) {
-  //     console.error("Error syncing offline data:", error);
-  //     toast.error("حدث خطأ أثناء مزامنة البيانات المحلية مع الخادم!");
-  //   }
-  // };
 
   const resetForm = () => {
     setEmployeeName("");
@@ -185,26 +141,36 @@ const LoansForm = ({ isOpen, closeModal }) => {
                         htmlFor="employeeName"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        اسم الموظف
+                        اسم الموظف{" "}
+                        <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
-                      <input
+                      <select
                         id="employeeName"
-                        type="text"
                         value={employeeName}
                         onChange={(e) => setEmployeeName(e.target.value)}
-                        className={`shadow appearance-none border ${
-                          formSubmitted && !employeeName
-                            ? "border-red-500"
-                            : "border-gray-400"
-                        } rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                      />
+                        className={`block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline ${
+                          formSubmitted && !employeeName ? "border-red-500" : ""
+                        }`}
+                      >
+                        <option value="">اختر اسم الموظف</option>
+                        {allEmployee &&
+                          allEmployee.map((employee) => (
+                            <option
+                              key={employee.id}
+                              value={employee.employee_name}
+                            >
+                              {employee.employee_name}
+                            </option>
+                          ))}
+                      </select>
                     </div>
                     <div>
                       <label
                         htmlFor="expenseReason"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        سبب السلف
+                        سبب السلف{" "}
+                        <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="expenseReason"
@@ -223,11 +189,13 @@ const LoansForm = ({ isOpen, closeModal }) => {
                         htmlFor="amount"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        المبلغ
+                        المبلغ{" "}
+                        <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <input
                         id="amount"
                         type="number"
+                        min={0}
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
                         className={`shadow appearance-none border ${

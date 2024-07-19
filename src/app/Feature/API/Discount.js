@@ -45,6 +45,16 @@ export const DiscountApi = createApi({
       transformResponse: (response) => response.discounts,
       providesTags: ["Discount"],
     }),
+    getallDiscountsWithoutPagination: build.query({
+      query: () => `/getDiscount`,
+      transformResponse: (response) => response.discounts,
+      providesTags: ["Discount"],
+    }),
+    getDiscountsPrice: build.query({
+      query: (id) => `/getPriceDiscount/${id}`,
+      transformResponse: (response) => response.discount,
+      providesTags: ["Discount"],
+    }),
     saveDiscount: build.mutation({
       query: (discountData) => ({
         url: `/save`,
@@ -80,6 +90,8 @@ export const DiscountApi = createApi({
 
 export const {
   useGetDiscountsQuery,
+  useGetDiscountsPriceQuery,
+  useGetallDiscountsWithoutPaginationQuery,
   useSaveDiscountMutation,
   useUpdateDiscountMutation,
   useDeleteDiscountMutation,

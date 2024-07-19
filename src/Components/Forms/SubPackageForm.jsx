@@ -126,7 +126,7 @@ const SubPackageForm = ({ isOpen, closeModal }) => {
                         htmlFor="packageName"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        اختيار باكدج
+                        اختيار باكدج <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <select
                         id="packageName"
@@ -149,7 +149,7 @@ const SubPackageForm = ({ isOpen, closeModal }) => {
                         htmlFor="item"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        الصنف
+                        الصنف <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <Input
                         id="item"
@@ -166,7 +166,7 @@ const SubPackageForm = ({ isOpen, closeModal }) => {
                         htmlFor="price"
                         className="block text-gray-700 text-sm font-bold mb-2 text-start"
                       >
-                        السعر
+                        السعر <span className="text-xl text-red-500 mt-4">*</span>
                       </label>
                       <Input
                         id="price"
