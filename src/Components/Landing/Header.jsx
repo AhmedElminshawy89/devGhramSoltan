@@ -62,7 +62,7 @@ const Header = () => {
           <ul className="nav__links"  data-aos="fade-down">
             <li
               className={`link ${
-                activeSection === "الرئيسية" ? "active-link" : ""
+                activeSection === "الرئيسية" ? "active-link-land" : ""
               }`}
               onClick={() => handleLinkClick("الرئيسية")}
             >
@@ -70,7 +70,7 @@ const Header = () => {
             </li>
             <li
               className={`link ${
-                activeSection === "تعرف_علينا" ? "active-link" : ""
+                activeSection === "تعرف_علينا" ? "active-link-land" : ""
               }`}
               onClick={() => handleLinkClick("تعرف_علينا")}
             >
@@ -78,7 +78,7 @@ const Header = () => {
             </li>
             <li
               className={`link ${
-                activeSection === "خدماتنا" ? "active-link" : ""
+                activeSection === "خدماتنا" ? "active-link-land" : ""
               }`}
               onClick={() => handleLinkClick("خدماتنا")}
             >
@@ -86,7 +86,7 @@ const Header = () => {
             </li>
             <li
               className={`link ${
-                activeSection === "اهتمامنا" ? "active-link" : ""
+                activeSection === "اهتمامنا" ? "active-link-land" : ""
               }`}
               onClick={() => handleLinkClick("اهتمامنا")}
             >
@@ -94,7 +94,7 @@ const Header = () => {
             </li>
             <li
               className={`link ${
-                activeSection === "ما_يميزنا" ? "active-link" : ""
+                activeSection === "ما_يميزنا" ? "active-link-land" : ""
               }`}
               onClick={() => handleLinkClick("ما_يميزنا")}
             >

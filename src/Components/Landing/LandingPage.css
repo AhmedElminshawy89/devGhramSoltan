@@ -9,7 +9,7 @@
   --max-width: 1200px;
 }
 
-* {
+/* * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
@@ -27,7 +27,7 @@ html {
 
 body {
   overflow-x: hidden;
-}
+} */
 
 .section__container {
   max-width: var(--max-width);
@@ -173,7 +173,7 @@ header {
   color: var(--active-color);
 }
 
-.active-link {
+.active-link-land {
   border-bottom: 3px solid var(--active-color);
 }
 
@@ -693,7 +693,7 @@ background-color: #fff !important;
   }
 }
 
-.overlay {
+.overlay-drawer {
   position: fixed;
   top: 0;
   left: 0;
@@ -962,119 +962,6 @@ background-color: #fff !important;
   -moz-border-radius: 10px;
   -ms-border-radius: 10px;
   -o-border-radius: 10px;
-}
-
-.table-appointment {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.clinic-cell {
-  position: relative;
-}
-
-.tick-icon {
-  position: absolute;
-  left: 5px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-/* Colors for clinics */
-td:nth-child(1) {
-  background-color: #fff;
-  color: #3498db;
-}
-
-td:nth-child(2) {
-  background-color: #3498db;
-  color: #ffffff;
-}
-
-td:nth-child(3) {
-  background-color: #fff;
-  color: #3498db;
-}
-
-.bg-white {
-  background-color: #fff !important;
-}
-
-td:nth-child(4) {
-  background-color: #3498db;
-  color: #ffffff;
-}
-
-.table-appointment th,
-.table-appointment td {
-  border-right: 1px solid rgb(0 112 205 / .8);
-  padding: 12px;
-}
-
-.right-border-none {
-  border-right: none !important;
-}
-
-.bottom-border-none {
-  border-bottom: none !important;
-}
-
-.table-appointment th {
-  background-color: #fff;
-  color: rgb(0 112 205 / .8);
-  border-bottom: 1px solid rgb(0 112 205 / .8);
-}
-
-.table-appointment td {
-  border-bottom: 1px solid rgb(0 112 205 / .8);
-}
-
-.left-raduis {
-  border-top-left-radius: 10px;
-}
-
-.right-raduis {
-  border-top-right-radius: 10px;
-}
-
-@media (max-width: 600px) {
-  .right-raduis {
-    border-top-left-radius: 10px;
-  }
-
-  .left-raduis {
-    border-radius: 0px;
-  }
-
-  /* .table-appointment th, .table-appointment td {
-    display: flex;
-    width: 100%;
-  } */
-  /* 
-  .table-appointment tr {
-    margin-bottom: 15px;
-    display: block;
-    border-bottom: 2px solid rgb(0 112 205 / .8);
-  }
-
-  .table-appointment td {
-    text-align: right;
-    padding-right: 50%;
-    position: relative;
-  }
-
-  .table-appointment td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 10px;
-    width: 45%;
-    padding-right: 10px;
-    white-space: nowrap;
-    text-align: left;
-    font-weight: bold;
-  } */
 }
 
 .gallery {

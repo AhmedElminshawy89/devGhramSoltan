@@ -1,63 +1,54 @@
 import { FaFacebookF, FaInstagram, FaTimes, FaYoutube } from "react-icons/fa";
-
+import logo from '../../assets/Img/logo.png'
 const Drawer = ({ isOpen, onClose }) => {
   return (
     <>
-      {isOpen && <div className="overlay" onClick={onClose}></div>}
+      {isOpen && <div className="overlay-drawer" onClick={onClose}></div>}
       <div className={`drawer ${isOpen ? "open" : ""}`}>
         <div className="drawer__header">
-          <div className="nav__logo">
-            احمد <span>شاما </span>
+        <div className="nav__logo" data-aos="fade-down">
+            <img src={logo} alt="" />
           </div>
           <button className="drawer__close" onClick={onClose}>
             <FaTimes />
           </button>
         </div>
-        <ul>
-          <li className={`link`} onClick={onClose}>
-            <a href="#الرئيسية">الرئيسية</a>
-          </li>
-          <li
-            className={`link `}
-            onClick={onClose}
-          >
-            <a href="#تعرف_علينا">تعرف علينا</a>
-          </li>
-          <li
-            className={`link`}
-            onClick={onClose}
-          >
-            <a href="#خدماتنا">خدماتنا</a>
-          </li>
-          <li
-            className={`link `}
-            onClick={onClose}
-          >
-            <a href="#اهتمامنا">اهتمامنا</a>
-          </li>
-          <li
-            className={`link `}
-            onClick={onClose}
-          >
-            <a href="#المواعيد">المواعيد</a>
-          </li>
-          <li
-            className={`link `}
-            onClick={onClose}
-          >
-            <a href="#للتواصل_والحجز">للتواصل والحجز</a>
-          </li>
-        </ul>
+        <ul className="nav__links"  data-aos="fade-down">
+            <li
+              className={`link `}
+            >
+              <a href="#الرئيسية">الرئيسية</a>
+            </li>
+            <li
+              className={`link }`}
+            >
+              <a href="#تعرف علينا">تعرف علينا</a>
+            </li>
+            <li
+              className={`link `}
+            >
+              <a href="#خدماتنا">خدماتنا</a>
+            </li>
+            <li
+              className={`link `}
+            >
+              <a href="#اهتمامنا">اهتمامنا</a>
+            </li>
+            <li
+              className={`link `}
+            >
+              <a href="#ما_يميزنا">ما يميزنا</a>
+            </li>
+          </ul>
         <div className="drawer__socials">
-        <a href="https://www.facebook.com/drahmedshamaa" target="_blank">
+        <a href="" target="_blank">
                 <FaFacebookF />
               </a>
-          <a href="https://www.instagram.com/drahmedshamaa" target="_blank">
+          <a href="" target="_blank">
                 <FaInstagram />
               </a>
           <a
-                href="https://www.youtube.com/@drAhmedshamaa
-"
+                href=""
                 target="_blank"
               >
                 <FaYoutube />
