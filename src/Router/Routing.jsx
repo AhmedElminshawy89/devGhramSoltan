@@ -38,7 +38,7 @@ const Routing = () => {
   return (
     <>
       <Routes>
-        <Route path="/" element={<LandingPage/>}/>
+        <Route path="/" index element={<LandingPage/>}/>
         <Route path="/moderator" element={<DashboardLaout />}>
           <Route index element={<HomeDashboard />} />
           <Route path="reservations/makeup" element={<Makeup />} />
