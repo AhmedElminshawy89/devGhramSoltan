@@ -19,6 +19,7 @@ import AddWorkers from "../Pages/DashboardScreen/AddWorkers";
 import LoansAllData from "../Pages/BackupData/LoansAllData";
 import { useEffect } from "react";
 import CookieService from "../Services/CookiesServices";
+import LandingPage from "../Pages/LandingPage/LandingPage";
 const Routing = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,6 +38,7 @@ const Routing = () => {
   return (
     <>
       <Routes>
+        <Route path="/" element={<LandingPage/>}/>
         <Route path="/moderator" element={<DashboardLaout />}>
           <Route index element={<HomeDashboard />} />
           <Route path="reservations/makeup" element={<Makeup />} />
