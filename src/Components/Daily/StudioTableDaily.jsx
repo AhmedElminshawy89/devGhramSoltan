@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import MUIDataTable from "mui-datatables";
 import { Pagination } from "antd";
-import {  useSearchStudioQuery } from "../../app/Feature/API/Search";
+import {  useSearchStudioDateQuery, useSearchStudioQuery } from "../../app/Feature/API/Search";
 import DeleteDialog from "../../Shared/DeleteDialog";
 import Spinner from "../../Shared/Spinner";
 import { useDeleteStudioMutation, useGetStudiosQuery } from "../../app/Feature/API/Studio";
@@ -20,13 +20,15 @@ const StudioTableDaily = () => {
     data: searchedEmployees,
     isLoading: loadingSearch,
     refetch: refetchSearchResults,
-  } = useSearchStudioQuery(searchQuery);
+  } = useSearchStudioDateQuery(searchQuery);
   const [deleteEmployeeId, setDeleteEmployeeId] = useState(null);
   const [deleteEmployee, { isLoading: isDeleting }] = useDeleteStudioMutation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editEmployee, setEditEmployee] = useState(null);
   const [loadingPackageId, setLoadingPackageId] = useState(null);
-
+  useEffect(() => {
+    refetchEmployees();
+  }, [refetchEmployees]);
   useEffect(() => {
     if (employees?.data?.length === 0 && currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
@@ -49,6 +51,8 @@ const StudioTableDaily = () => {
   const handleDelete = (employeeId) => {
     setDeleteEmployeeId(employeeId);
     setIsDeleteDialogOpen(true);
+    setLoadingPackageId(employeeId);
+    refetchSearchResults()
   };
 
   const handleDeleteConfirmed = async () => {
@@ -56,6 +60,7 @@ const StudioTableDaily = () => {
       await deleteEmployee(deleteEmployeeId);
       setDeleteEmployeeId(null);
       setIsDeleteDialogOpen(false);
+      setLoadingPackageId(null)
       refetchEmployees();
       refetchSearchResults();
     } catch (error) {
@@ -66,6 +71,7 @@ const StudioTableDaily = () => {
   const handleCancelDelete = () => {
     setDeleteEmployeeId(null);
     setIsDeleteDialogOpen(false);
+    setLoadingPackageId(null)
   };
 
   const handleCloseEdit = () => {
@@ -109,15 +115,32 @@ const StudioTableDaily = () => {
     {
       name: "appropriate",
       label: "تاريخ المناسبه",
+      options: {
+        customBodyRender: (value) => {
+          const date = new Date(value);
+          const formattedDate = date.toLocaleDateString("ar-EG");
+          return `${formattedDate}`;
+        },
+        wrap: 'nowrap',
+      },
     },
     {
         name: "receivedDate",
         label: "تاريخ الاستلام",
+              options: {
+        customBodyRender: (value) => {
+          const date = new Date(value);
+          const formattedDate = date.toLocaleDateString("ar-EG");
+          return `${formattedDate}`;
+        },
+        wrap: 'nowrap',
       },
-    {
+      },
+      {
         name: "enter",
         label: "معاد دخول",
-      },
+      }
+,      
       {
         name: "exit",
         label: "معاد خروج",
@@ -142,11 +165,12 @@ const StudioTableDaily = () => {
                     : "bg-[#f3c74d] text-black"
                 }`}
               >
-                { value === "لم يتم الدفع" ? (
+                {/* { value === "لم يتم الدفع" ? (
                   "لم يتم الدفع"
                 ) : (
                   "تم الدفع"
-                )}
+                )} */}
+                {value}
               </p>
             );
           },
@@ -274,6 +298,7 @@ const StudioTableDaily = () => {
         },
       },
     },
+
   ];
 
   const options = {
@@ -335,17 +360,21 @@ const StudioTableDaily = () => {
 
   return (
     <>
-    {location.pathname==='/moderator/reservations/daily'&&(
-      <div className="mb-4 flex justify-between items-center w-[100%]">
+        {location.pathname==='/moderator/reservations/daily'&&(
+      <div className="mb-4 flex justify-center items-center w-[300px] relative sm:flex-row flex-col">
         <input
-          type="text"
+          type="date"
           placeholder="ابحث اسم العميل"
-          className="w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
+          className="w-[300px] relative border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
           value={searchQuery}
           onChange={handleSearchChange}
         />
+        {searchQuery&&(
+          <button className=" text-gray-500 py-2 px-3 rounded-lg  text-xl font-medium flex items-center absolute right-[26px]"
+          onClick={()=>setSearchQuery('')}>x</button>
+        )}
       </div>
-    )}
+        )}
 
       {employees ? (
         <>

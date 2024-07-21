@@ -27,10 +27,10 @@ const LoansReports = () => {
   }, [employees, currentPage]);
 
   const calculateTotals = () => {
-    if (searchDateData?.studio || employees?.data || []) {
+    if (searchDateData?.loan || employees?.data || []) {
      let totalPriceLoans = 0
   
-      const dataToDisplay = searchDateData?.studio || employees?.data || [];
+      const dataToDisplay = searchDateData?.loan || employees?.data || [];
   
       dataToDisplay.forEach((item) => {
         totalPriceLoans += item.price || 0;

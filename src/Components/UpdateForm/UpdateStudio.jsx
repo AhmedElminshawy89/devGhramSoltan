@@ -12,7 +12,9 @@ import {
 import { useReactToPrint } from "react-to-print";
 import logo from "../../assets/Img/logo.png";
 import { toast } from "react-toastify";
-import { useSaveStudioMutation } from "../../app/Feature/API/Studio";
+import { useSaveStudioMutation, useUpdateStudioMutation } from "../../app/Feature/API/Studio";
+import Spinner from "../../Shared/Spinner";
+import { useGetStudioDailyQuery } from "../../app/Feature/API/Daily";
 
 const Invoice = React.forwardRef((props, ref) => {
   const {
@@ -128,6 +130,7 @@ const UpdateStudio = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
 
   const [discountType, setDiscountType] = useState("");
   const [discountName, setDiscountName] = useState("");
+  const [CategoryName, setCategoryName] = useState("");
   const { data: ShowDiscountPrice } = useGetDiscountsPriceQuery(discountType);
   const { data: getAllDiscount } = useGetallDiscountsWithoutPaginationQuery("");
   const [packageType, setPackageType] = useState("");
@@ -148,12 +151,14 @@ const UpdateStudio = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
   const { data: showCategoryStudio } = useGetCategoriesStudioQuery("");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
-  const [saveStudio, { isLoading }] = useSaveStudioMutation();
-  const invoiceRef = useRef();
+  const [saveStudio2, { isLoading }] = useUpdateStudioMutation();
+  const { refetch: refetchStudioDaily } = useGetStudioDailyQuery();
 
+  const invoiceRef = useRef();
   useEffect(() => {
     setSelectedPackageDetails([]);
     setDiscountType("");
+  
     if (showCategoryStudio) {
       const uniqueCategories = showCategoryStudio.reduce((acc, current) => {
         const existing = acc.find((item) => item.name === current.name);
@@ -163,8 +168,15 @@ const UpdateStudio = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
         return acc;
       }, []);
       setUniqueCategories(uniqueCategories);
+  
+      const selectedCategory = uniqueCategories.find(
+        (category) => category.id === initialValues.category_id
+      );
+      if (selectedCategory) {
+        setCategoryName(selectedCategory.name);
+      }
     }
-
+  
     if (getAllDiscount && Array.isArray(getAllDiscount)) {
       const uniqueDiscounts = Array.from(
         new Set(getAllDiscount.map((item) => item.discount))
@@ -172,22 +184,31 @@ const UpdateStudio = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
         return getAllDiscount.find((item) => item.discount === discount);
       });
       setAllDiscounts(uniqueDiscounts);
+  
+      const selectedDiscount = getAllDiscount.find(
+        (discount) => discount.id === initialValues.reason_discount_id
+      );
+      if (selectedDiscount) {
+        setDiscountName(selectedDiscount.discount);
+      }
     } else {
       console.error("getAllDiscount is not an array or is undefined/null.");
     }
-  }, [showCategoryStudio, getAllDiscount]);
+  }, [showCategoryStudio, getAllDiscount, initialValues.category_id, initialValues.reason_discount_id]);
+  
+  
 
 
   useEffect(() => {
 const notesString = initialValues.notes; 
-const notesArray = notesString.split(',').map((note) => ({
+const notesArray = notesString?.split(',').map((note) => ({
   label: note.trim(),
   value: note.trim(),
 }));
     if (initialValues) {
       setPackageType(initialValues.category_id)
-      setSelectedPackageDetails(notesArray)
-      setDiscountType(initialValues.reason_discount)
+      setSelectedPackageDetails(notesArray?notesArray:[])
+      setDiscountType(initialValues.reason_discount?initialValues.reason_discount:"")
       setBrideName(initialValues.name)
       setPhone(initialValues.phone)
       setCity(initialValues.address)
@@ -196,94 +217,11 @@ const notesArray = notesString.split(',').map((note) => ({
       setTotal(initialValues.total)
       setPayment(initialValues.pay)
       setRemaining(initialValues.rest)
-      setAdditionalService(initialValues.addService)
-      setAdditionalServicePrice(initialValues.priceService)
+      setAdditionalService(initialValues.addService?initialValues.addService:"")
+      setAdditionalServicePrice(initialValues.priceService?initialValues.priceService:"")
     }
   }, [initialValues]);
 
-  useEffect(() => {
-    const calculateTotal = () => {
-      let totalPrice = 0;
-  
-      const subCategoryPrices = ShowSubCategory
-        ? [...new Set(ShowSubCategory.map((pckg) => pckg.category.price))]
-        : [];
-      const TotalPackage = subCategoryPrices.reduce((acc, price) => acc + price, 0);
-      totalPrice += TotalPackage;
-  
-      if (additionalServicePrice) {
-        totalPrice += additionalServicePrice;
-      }
-  
-      const selectedPackage = uniqueCategories.find((pkg) => pkg.id === packageType);
-      if (selectedPackage) {
-        totalPrice -= selectedPackage.price;
-      }
-  
-      selectedPackageDetails.forEach((detail) => {
-        const subCategory = ShowSubCategory ? ShowSubCategory.find((sub) => sub.id === detail.value) : null;
-        if (subCategory) {
-          totalPrice -= subCategory.price;
-        }
-      });
-  
-      const notesString = initialValues.notes;
-      if (notesString) {
-        const arabicNumberMatches = notesString.match(/\d/g);
-        if (arabicNumberMatches) {
-          const arabicNumber = arabicNumberMatches.join('');
-          const englishNumber = arabicNumber
-            .replace(/١/g, '1')
-            .replace(/٢/g, '2')
-            .replace(/٣/g, '3')
-            .replace(/٤/g, '4')
-            .replace(/٥/g, '5')
-            .replace(/٦/g, '6')
-            .replace(/٧/g, '7')
-            .replace(/٨/g, '8')
-            .replace(/٩/g, '9')
-            .replace(/٠/g, '0');
-          const priceFromNotes = parseFloat(englishNumber);
-          if (!isNaN(priceFromNotes)) {
-            totalPrice -= priceFromNotes;
-          }
-        }
-      }
-  
-      // خصم الخصم إذا كان مفعلاً
-      if (discountType && ShowDiscountPrice?.price) {
-        totalPrice -= ShowDiscountPrice.price;
-      }
-  
-      // تعيين الإجمالي في الحالة
-      setTotal(totalPrice);
-    };
-  
-    // استدعاء الدالة لحساب الإجمالي عند تغيير الاعتماديات المعتمدة
-    calculateTotal();
-  
-    // تنفيذ calculateTotal فقط إذا لم يكن هناك تغيير في selectedPackageDetails
-    const timeout = setTimeout(() => {
-      if (!selectedPackageDetails.some(detail => !detail.value)) {
-        calculateTotal();
-      }
-    }, 10000);
-  
-    return () => clearTimeout(timeout);
-  }, [
-    packageType,
-    selectedPackageDetails,
-    additionalServicePrice,
-    ShowDiscountPrice,
-    uniqueCategories,
-    ShowSubCategory,
-    discountType,
-    initialValues // تم إضافة initialValues كجزء من الاعتماديات للتأكد من أصل البيانات
-  ]);
-  
-  
-  
-  
 
   useEffect(() => {
     setRemaining(total - payment);
@@ -298,14 +236,12 @@ const notesArray = notesString.split(',').map((note) => ({
   const handleReceiveDateChange = (e) => setReceiveDate(e.target.value);
   const handleTotalChange = (value) => setTotal(value);
   const handlePaymentChange = (value) => setPayment(value);
-  const handleAdditionalServiceChange = (e) => setAdditionalService(e.target.value);
-  const handleAdditionalServicePriceChange = (value) => setAdditionalServicePrice(value);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
     const phoneRegex = /^(\+?\d{1,3}[- ]?)?\d{10}$/;
-    if (packageType && brideName && phone && city && eventDate && receiveDate && remaining && payment && total) {
+    if (brideName && phone && city && eventDate && receiveDate  && total) {
       if (!phone.match(phoneRegex)) {
         setNotification({
           type: "error",
@@ -313,40 +249,29 @@ const notesArray = notesString.split(',').map((note) => ({
         });
         return;
       }
-      const notes = selectedPackageDetails.map((detail) => detail.label).join(', ')
       try {
-        const response = await saveStudio({
-          category_id:packageType,
-          notes,
-          name:brideName,
-          phone:phone,
-          address:city,
-          appropriate:eventDate,
-          receivedDate:receiveDate,
-          total,
-          pay:payment,
-          rest:remaining,
-          reason_discount:discountType,
-          addService:additionalService,
-          priceService:additionalServicePrice,
-          price:discountRate,
-        });
-
-        if (response.error) {
-          setNotification({
-            type: "error",
-            message: response.error.message || "حدث خطأ أثناء حفظ البيانات.",
-          });
-        } else {
+        const formData2 = new FormData();
+        formData2.append('name', brideName);
+        formData2.append('phone', phone);
+        formData2.append('address', city);
+        formData2.append('appropriate', eventDate);
+        formData2.append('receivedDate', receiveDate);
+        formData2.append('total', total);
+        formData2.append('pay', payment);
+        formData2.append('rest', remaining);
+        await saveStudio2({
+          id: initialValues.id,
+          studioData: formData2,
+        }).unwrap();
           setNotification({
             type: "success",
-            message: "تم حفظ البيانات بنجاح!",
+            message: "تم تحديث البيانات بنجاح!",
           });
-          toast.success("تم حفظ البيانات بنجاح!");
+          toast.success("تم تحديث البيانات بنجاح!");
           resetForm();
-          handlePrint();
           closeModal();
-        }
+          refetchSearch();
+          refetchStudioDaily()
       } catch (error) {
         setNotification({
           type: "error",
@@ -361,14 +286,6 @@ const notesArray = notesString.split(',').map((note) => ({
       });
     }
     console.log(discountName)
-  };
-
-  const handlePrint = useReactToPrint({
-    content: () => invoiceRef.current,
-  });
-
-  const handleDetailSelection = (selectedOptions) => {
-    setSelectedPackageDetails(selectedOptions);
   };
 
   const resetForm = () => {
@@ -425,7 +342,7 @@ const notesArray = notesString.split(',').map((note) => ({
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
                   >
-                    حجز استوديو
+                    تعديل حجز استوديو
                   </Dialog.Title>
                   <div className="mt-2 overflow-y-auto overflow-x-hidden h-full">
                   {notification && (
@@ -443,97 +360,6 @@ const notesArray = notesString.split(',').map((note) => ({
                       className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
                       onSubmit={handleSubmit}
                     >
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="category"
-                        >
-                          نوع الباكدج <span className="text-xl text-red-500 mt-4">*</span>
-                        </label>
-                          <select
-                            id="category"
-                            className={`
-                            block appearance-none w-full bg-white border
-                             border-gray-400 hover:border-gray-500 px-4 py-2 pr-8
-                              rounded leading-tight focus:outline-none focus:shadow-outline
-                            ${formSubmitted && !packageType 
-                              ? "border-red-500"
-                              : ""}`}
-                            onChange={(e) => {
-                              setPackageType(e.target.value);
-                            }}
-                            value={packageType}
-                          >
-                            <option value="">اختر الباكدج</option>
-                            {uniqueCategories.map((cta) => (
-                              <option key={cta.id} value={cta.id}>
-                                {cta.name} - {cta.price.toLocaleString("ar-EG")}{" "}
-                                جنيه
-                              </option>
-                            ))}
-                          </select>
-                      </div>
-                      {packageType && (
-                        <>
-                          <div className="mb-4">
-                            <label
-                              className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                              htmlFor="packageDetails"
-                            >
-                              مرتجع من الباكدج <span className="text-xl text-white mt-4">*</span>
-                            </label>
-                            <Select
-                              options={
-                                ShowSubCategory?.map((subCategory) => ({
-                                  value: subCategory.id,
-                                  label: `${
-                                    subCategory.item
-                                  } - ${subCategory.price.toLocaleString(
-                                    "ar-EG"
-                                  )} جنيه`,
-                                })) || []
-                              }
-                              isMulti
-                              placeholder="اختر"
-                              value={selectedPackageDetails}
-                              onChange={handleDetailSelection}
-                            />
-                          </div>
-                        </>
-                      )}
-                      {packageType && (
-                        <>
-                          <div className="mb-4">
-                            <label
-                              className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                              htmlFor="additionalService"
-                            >
-                              خدمة إضافية <span className="text-xl text-white mt-4">*</span>
-                            </label>
-                            <input
-                              id="additionalService"
-                              type="text"
-                              value={additionalService}
-                              onChange={handleAdditionalServiceChange}
-                              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            />
-                          </div>
-                          <div className="mb-4">
-                            <label
-                              className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                              htmlFor="additionalServicePrice"
-                            >
-                              سعر الخدمة الإضافية <span className="text-xl text-white mt-4">*</span>
-                            </label>
-                            <InputNumber
-                              id="additionalServicePrice"
-                              value={additionalServicePrice}
-                              onChange={handleAdditionalServicePriceChange}
-                              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            />
-                          </div>
-                        </>
-                      )}
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
@@ -665,12 +491,7 @@ const notesArray = notesString.split(',').map((note) => ({
                           onChange={handlePaymentChange}
                           className={`shadow appearance-none border
                             rounded w-full py-2 px-3 text-gray-700 leading-tight
-                             focus:outline-none focus:shadow-outline
-                             ${
-                               formSubmitted && !payment
-                                 ? "border-red-500"
-                                 : ""
-                             } `}                          />
+                             focus:outline-none focus:shadow-outline `}                          />
                       </div>
                       <div className="mb-4">
                         <label
@@ -684,71 +505,30 @@ const notesArray = notesString.split(',').map((note) => ({
                           value={remaining}
                           className={`shadow appearance-none border
                             rounded w-full py-2 px-3 text-gray-700 leading-tight
-                             focus:outline-none focus:shadow-outline
-                             ${
-                               formSubmitted && !remaining
-                                 ? "border-red-500"
-                                 : ""
-                             } `}                            readOnly
+                             focus:outline-none focus:shadow-outline `}                            readOnly
                         />
                       </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="discount"
-                        >
-                          خصم <span className="text-xl text-white mt-4">*</span>
-                        </label>
-                        <select
-                          id="discount"
-                          className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline"
-                          onChange={(e) => {
-                            setDiscountType(e.target.value);
-                          }}
-                          value={discountType}
-                        >
-                          <option value="">اختر الخصم</option>
-                          {allDiscounts.map((discount) => (
-                            <option key={discount.id} value={discount.id}>
-                              {discount.discount}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      {discountType && (
-                        <div className="mb-4">
-                          <label
-                            className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                            htmlFor="discountRate"
-                          >
-                            قيمة الخصم <span className="text-xl text-white mt-4">*</span>
-                          </label>
-                          <InputNumber
-                            id="discountRate"
-                            value={ShowDiscountPrice ? ShowDiscountPrice.price : ""}
-                            readOnly
-                            min={0}
-                            max={10000}
-                            className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          />
-                        </div>
-                      )}
-                      <br/>
                       <div className="flex items-center justify-start gap-4 mt-4">
-                  <button
-                    type="button"
-                    onClick={closeModal}
-                    className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center"
-                  >
-                    <AiOutlineClose className="ml-3" /> إلغاء
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
-                  >
-                    <AiOutlineSave className="ml-3" /> حفظ
-                  </button>
-                </div>
+                        <button
+                          type="button"
+                          onClick={closeModal}
+                          className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center"
+                        >
+                          <AiOutlineClose className="ml-3" /> إلغاء
+                        </button>
+                        <button
+                          type="submit"
+                          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
+                          disabled={isLoading}
+                        >
+                          {!isLoading ? (
+                            <AiOutlineSave className="ml-3" />
+                          ) : (
+                            <Spinner />
+                          )}
+                          حفظ
+                        </button>
+                      </div>
                     </form>
                   </div>
                 </Dialog.Panel>
@@ -760,7 +540,7 @@ const notesArray = notesString.split(',').map((note) => ({
       <div style={{ display: "none" }}>
       <Invoice
         ref={invoiceRef}
-        packageType={packageType}
+        packageType={CategoryName}
         selectedPackageDetails={selectedPackageDetails}
         brideName={brideName}
         phone={phone}
@@ -770,7 +550,7 @@ const notesArray = notesString.split(',').map((note) => ({
         total={total}
         payment={payment}
         remaining={remaining}
-        discountName={discountType}
+        discountName={discountName}
         additionalService={additionalService}
         additionalServicePrice={additionalServicePrice}
         discountRate={discountRate}

@@ -47,7 +47,6 @@ const StudioReports = () => {
         totalPay += item.pay || 0;
         totalRest += item.rest || 0;
   
-        // Add discount only if reason_discount_id is present
         if (item.reason_discount_id) {
           totalDiscount += item.discount?.price || 0;
         }
@@ -160,19 +159,15 @@ const StudioReports = () => {
             return (
               <p
                 className={`${
-                  value === "لم تم الدفع"
+                  value === "لم يتم الدفع"
                   ? "py-1 px-4" : "py-1 px-4"
                 } font-semibold text-lg rounded-full whitespace-nowrap ${
-                  value === "لم تم الدفع"
+                  value === "لم يتم الدفع"
                     ? "bg-black text-white"
                     : "bg-[#f3c74d] text-black"
                 }`}
               >
-                { value === "لم تم الدفع" ? (
-                  "لم يتم الدفع"
-                ) : (
-                  "تم الدفع"
-                )}
+                { value}
               </p>
             );
           },

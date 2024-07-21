@@ -2,14 +2,15 @@ import React, { useEffect, useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import MUIDataTable from "mui-datatables";
 import { Pagination } from "antd";
-import { useDeleteMakeupMutation, useGetMakeupsQuery } from "../../app/Feature/API/MakeUp";
-import { useSearchMakeUpQuery } from "../../app/Feature/API/Search";
-import UpdateStudio from "../UpdateForm/UpdateStudio";
+import {  useSearchMakeUpDateQuery, useSearchStudioDateQuery, useSearchStudioQuery } from "../../app/Feature/API/Search";
 import DeleteDialog from "../../Shared/DeleteDialog";
 import Spinner from "../../Shared/Spinner";
-import UpdateMakeUpDaily from "../UpdateForm/UpdateMakeUpDaily";
-import { useGetMakeUpDailyQuery } from "../../app/Feature/API/Daily";
+import { useDeleteStudioMutation, useGetStudiosQuery } from "../../app/Feature/API/Studio";
+import UpdateStudioDaily from "../UpdateForm/UpdateStudioMakeUp";
+import { useGetMakeUpDailyQuery, useGetStudioDailyQuery } from "../../app/Feature/API/Daily";
 import { useLocation } from "react-router-dom";
+import { useDeleteMakeupMutation } from "../../app/Feature/API/MakeUp";
+import UpdateMakeUpDaily from './../UpdateForm/UpdateMakeUpDaily';
 
 const MakeUpTableDaily = () => {
   const location = useLocation()
@@ -21,13 +22,15 @@ const MakeUpTableDaily = () => {
     data: searchedEmployees,
     isLoading: loadingSearch,
     refetch: refetchSearchResults,
-  } = useSearchMakeUpQuery(searchQuery);
+  } = useSearchMakeUpDateQuery(searchQuery);
   const [deleteEmployeeId, setDeleteEmployeeId] = useState(null);
   const [deleteEmployee, { isLoading: isDeleting }] = useDeleteMakeupMutation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editEmployee, setEditEmployee] = useState(null);
   const [loadingPackageId, setLoadingPackageId] = useState(null);
-
+  useEffect(() => {
+    refetchEmployees();
+  }, [refetchEmployees]);
   useEffect(() => {
     if (employees?.data?.length === 0 && currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
@@ -50,6 +53,8 @@ const MakeUpTableDaily = () => {
   const handleDelete = (employeeId) => {
     setDeleteEmployeeId(employeeId);
     setIsDeleteDialogOpen(true);
+    setLoadingPackageId(employeeId);
+    refetchSearchResults()
   };
 
   const handleDeleteConfirmed = async () => {
@@ -57,6 +62,7 @@ const MakeUpTableDaily = () => {
       await deleteEmployee(deleteEmployeeId);
       setDeleteEmployeeId(null);
       setIsDeleteDialogOpen(false);
+      setLoadingPackageId(null)
       refetchEmployees();
       refetchSearchResults();
     } catch (error) {
@@ -67,6 +73,7 @@ const MakeUpTableDaily = () => {
   const handleCancelDelete = () => {
     setDeleteEmployeeId(null);
     setIsDeleteDialogOpen(false);
+    setLoadingPackageId(null)
   };
 
   const handleCloseEdit = () => {
@@ -110,11 +117,20 @@ const MakeUpTableDaily = () => {
     {
       name: "appropriate",
       label: "تاريخ المناسبه",
+      options: {
+        customBodyRender: (value) => {
+          const date = new Date(value);
+          const formattedDate = date.toLocaleDateString("ar-EG");
+          return `${formattedDate}`;
+        },
+        wrap: 'nowrap',
+      },
     },
-    {
+      {
         name: "enter",
         label: "معاد دخول",
-      },
+      }
+,      
       {
         name: "exit",
         label: "معاد خروج",
@@ -131,19 +147,20 @@ const MakeUpTableDaily = () => {
             return (
               <p
                 className={`${
-                  value === "لم تم الدفع"
+                  value === "لم يتم الدفع"
                   ? "py-1 px-4" : "py-1 px-4"
                 } font-semibold text-lg rounded-full whitespace-nowrap ${
-                  value === "لم تم الدفع"
+                  value === "لم يتم الدفع"
                     ? "bg-black text-white"
                     : "bg-[#f3c74d] text-black"
                 }`}
               >
-                { value === "لم تم الدفع" ? (
+                {/* { value === "لم يتم الدفع" ? (
                   "لم يتم الدفع"
                 ) : (
                   "تم الدفع"
-                )}
+                )} */}
+                {value}
               </p>
             );
           },
@@ -271,6 +288,7 @@ const MakeUpTableDaily = () => {
         },
       },
     },
+
   ];
 
   const options = {
@@ -328,26 +346,30 @@ const MakeUpTableDaily = () => {
     search: false,
   };
 
-  const dataToDisplay = searchQuery ? searchedEmployees?.makeup : employees?.data;
+  const dataToDisplay = searchQuery ? searchedEmployees?.studio : employees?.data;
 
   return (
     <>
         {location.pathname==='/moderator/reservations/daily'&&(
-      <div className="mb-4 flex justify-between items-center w-[100%]">
+      <div className="mb-4 flex justify-center items-center w-[300px] relative sm:flex-row flex-col">
         <input
-          type="text"
+          type="date"
           placeholder="ابحث اسم العميل"
-          className="w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
+          className="w-[300px] relative border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
           value={searchQuery}
           onChange={handleSearchChange}
         />
+        {searchQuery&&(
+          <button className=" text-gray-500 py-2 px-3 rounded-lg  text-xl font-medium flex items-center absolute right-[26px]"
+          onClick={()=>setSearchQuery('')}>x</button>
+        )}
       </div>
         )}
 
       {employees ? (
         <>
           <MUIDataTable
-            title={"تقارير الميكاب"}
+            title={"تقارير ميكاب"}
             data={dataToDisplay}
             columns={columns}
             options={options}
@@ -375,7 +397,7 @@ const MakeUpTableDaily = () => {
           closeModal={handleCloseEdit}
           initialValues={editEmployee}
           refetchSearch={refetchSearchResults}
-          refetchEmployee={refetchEmployees}
+          refetchEmployees={refetchEmployees}
         />
       )}
       <DeleteDialog

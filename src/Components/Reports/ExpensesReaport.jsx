@@ -33,10 +33,10 @@ const ExpensesReaport = () => {
   }, [employees, currentPage]);
 
   const calculateTotals = () => {
-    if (searchDateData?.studio || employees?.data || []) {
+    if (searchDateData?.expense || employees?.data || []) {
      let totalPriceLoans = 0
   
-      const dataToDisplay = searchDateData?.studio || employees?.data || [];
+      const dataToDisplay = searchDateData?.expense || employees?.data || [];
   
       dataToDisplay.forEach((item) => {
         totalPriceLoans += item.price || 0;

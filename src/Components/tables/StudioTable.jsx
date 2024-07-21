@@ -7,6 +7,7 @@ import { Pagination } from "antd";
 import { useSearchStudioQuery } from "../../app/Feature/API/Search";
 import { useDeleteStudioMutation, useGetStudiosQuery } from "../../app/Feature/API/Studio";
 import UpdateStudio from "../UpdateForm/UpdateStudio";
+import { useGetStudioDailyQuery } from "../../app/Feature/API/Daily";
 
 const StudioTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,6 +23,7 @@ const StudioTable = () => {
   const [deleteEmployee, { isLoading: isDeleting }] = useDeleteStudioMutation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editEmployee, setEditEmployee] = useState(null);
+  const { refetch: refetchStudioDaily } = useGetStudioDailyQuery();
 
   useEffect(() => {
     if (employees?.data?.length === 0 && currentPage > 1) {
@@ -46,6 +48,7 @@ const StudioTable = () => {
   const handleDelete = (employeeId) => {
     setDeleteEmployeeId(employeeId);
     setIsDeleteDialogOpen(true);
+    refetchStudioDaily()
   };
 
   const handleDeleteConfirmed = async () => {
@@ -55,6 +58,7 @@ const StudioTable = () => {
       setIsDeleteDialogOpen(false);
       refetchEmployees(); // Renamed from refetch to refetchEmployees for clarity
       refetchSearchResults(); // Renamed from refetchData to refetchSearchResults for clarity
+      refetchStudioDaily()
     } catch (error) {
       console.error("Error deleting employee:", error);
     }
@@ -114,10 +118,26 @@ const StudioTable = () => {
     {
       name: "appropriate",
       label: "تاريخ المناسبه",
+                    options: {
+        customBodyRender: (value) => {
+          const date = new Date(value);
+          const formattedDate = date.toLocaleDateString("ar-EG");
+          return `${formattedDate}`;
+        },
+        wrap: 'nowrap',
+      },
     },
     {
       name: "receivedDate",
       label: "تاريخ الاستلام",
+                    options: {
+        customBodyRender: (value) => {
+          const date = new Date(value);
+          const formattedDate = date.toLocaleDateString("ar-EG");
+          return `${formattedDate}`;
+        },
+        wrap: 'nowrap',
+      },
     },
     {
       name: "notes",
@@ -227,12 +247,12 @@ const StudioTable = () => {
           ]?.id;
           return (
             <>
-              {/* <button onClick={() => handleEdit(adminId)} className="ml-5">
+              <button onClick={() => handleEdit(adminId)} className="ml-5">
                 <AiOutlineEdit
                   title="تعديل  البيانات"
                   className="text-2xl text-black"
                 />
-              </button> */}
+              </button>
               <button onClick={() => handleDelete(adminId)}>
                 {isDeleting && deleteEmployeeId === adminId ? (
                   <Spinner />

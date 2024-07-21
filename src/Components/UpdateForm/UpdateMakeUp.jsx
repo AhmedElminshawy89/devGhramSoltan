@@ -1,72 +1,235 @@
 import React, { useState, Fragment, useEffect, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
+import Select from "react-select";
 import { useGetCategoriesStudioQuery } from "../../app/Feature/API/Package";
+import { useGetSubCategoriesBasedOnCategoryQuery } from "../../app/Feature/API/SubPackage";
 import { InputNumber } from "antd";
+import {
+  useGetallDiscountsWithoutPaginationQuery,
+  useGetDiscountsPriceQuery,
+} from "../../app/Feature/API/Discount";
+import { useReactToPrint } from "react-to-print";
+import logo from "../../assets/Img/logo.png";
 import { toast } from "react-toastify";
-import { useUpdateStudioMutation } from "../../app/Feature/API/Studio";
-import { useUpdateMakeupMutation } from "../../app/Feature/API/MakeUp";
-import { useGetMakeUpDailyQuery } from "../../app/Feature/API/Daily";
+import { useSaveStudioMutation, useUpdateStudioMutation } from "../../app/Feature/API/Studio";
 import Spinner from "../../Shared/Spinner";
+import { useUpdateMakeupMutation } from "../../app/Feature/API/MakeUp";
 
+const Invoice = React.forwardRef((props, ref) => {
+  const {
+    packageType,
+    selectedPackageDetails,
+    brideName,
+    phone,
+    city,
+    eventDate,
+    receiveDate,
+    total,
+    payment,
+    remaining,
+    discountName,
+    additionalService,
+    additionalServicePrice,
+    discountRate,
+    logo,
+  } = props;
 
-const UpdateMakeUpDaily = ({ isOpen, closeModal, initialValues,refetchSearch,refetchEmployees }) => {
-// console.log(initialValues.category_id)
+  return (
+    <div
+      ref={ref}
+      style={{
+        width: "80mm",
+        padding: "10mm",
+        fontFamily: "Arial, sans-serif",
+        direction:'rtl'
+      }}
+    >
+      <div style={{ textAlign: "center" }}>
+        <img
+          src={logo}
+          alt="Logo"
+          style={{ width: "30mm", height: "auto", margin: "0 auto" }}
+        />
+      </div>
+      <div>
+        <div
+          style={{
+            borderBottom: "1px solid #eee",
+            padding: "4mm 0",
+          }}
+        >
+          <p className="mb-1 text-lg">
+            <strong>اسم العميل:</strong> {brideName}
+          </p>
+          <p className="mb-1 text-lg">
+            <strong>رقم التليفون:</strong> {phone}
+          </p>
+          <p className="mb-1 text-lg">
+            <strong>البلد:</strong> {city}
+          </p>
+          <p className="mb-1 text-lg">
+            <strong>تاريخ اليوم:</strong>
+            {new Date().toLocaleDateString("ar-EG")}
+          </p>
+          <p className="mb-1 text-lg">
+            <strong>تاريخ المناسبة:</strong> {eventDate}
+          </p>
+          <p className="mb-1 text-lg">
+            <strong>تاريخ الاستلام:</strong> {receiveDate}
+          </p>
+        </div>
+        <div
+          style={{
+            padding: "4mm 0",
+          }}
+        >
+          <p className="mb-1">
+            <strong>نوع الباكدج:</strong> {packageType}
+          </p>
+          <p className="mb-1">
+            <strong>مرتجع من الباكدج:</strong> {selectedPackageDetails.map((detail) => detail.label).join(', ')}
+          </p>
+          <p className="mb-1">
+            <strong>خدمة إضافية:</strong> {additionalService}
+          </p>
+          <p className="mb-1">
+            <strong>سعر الخدمة الإضافية:</strong> {additionalServicePrice}
+          </p>
+          <p className="mb-1">
+            <strong>إجمالي :</strong> {total}
+          </p>
+          <p className="mb-1">
+            <strong>المبلغ المدفوع:</strong> {payment}
+          </p>
+          <p className="mb-1">
+            <strong>المبلغ المتبقي:</strong> {remaining}
+          </p>
+          <p className="mb-1">
+            <strong>نوع الخصم:</strong> {discountName}
+          </p>
+          <p className="mb-1">
+            <strong>قيمة الخصم:</strong> {discountRate}
+          </p>
+        </div>
+      </div>
+      <p className="mb-1 text-md text-center">
+        <strong>في حاله الالغاء لا يسترد المبلغ المدفوع</strong>
+      </p>
+      <p className="mb-1 text-md text-center">
+        <strong>يرجي الاحتفاظ بالايصال للمراجعه</strong>
+      </p>
+      <p className="mb-1 text-md text-center">
+        <strong>العنوان:دسوق - شارع الجيش م:0106853310</strong>
+      </p>
+    </div>
+  );
+});
+
+const UpdateMakeUp = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
   const [discountType, setDiscountType] = useState("");
   const [discountName, setDiscountName] = useState("");
+  const [CategoryName, setCategoryName] = useState("");
+  const { data: ShowDiscountPrice } = useGetDiscountsPriceQuery(discountType);
+  const { data: getAllDiscount } = useGetallDiscountsWithoutPaginationQuery("");
   const [packageType, setPackageType] = useState("");
+  const { data: ShowSubCategory } = useGetSubCategoriesBasedOnCategoryQuery(packageType);
   const [selectedPackageDetails, setSelectedPackageDetails] = useState([]);
+  const [uniqueCategories, setUniqueCategories] = useState([]);
   const [brideName, setBrideName] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [receiveDate, setReceiveDate] = useState("");
-  const [enter, setEnter] = useState("");
-  const [exit, setExit] = useState("");
-  const [arrive, setArrive] = useState("");
   const [total, setTotal] = useState(0);
   const [payment, setPayment] = useState(0);
   const [remaining, setRemaining] = useState(0);
   const [additionalService, setAdditionalService] = useState("");
   const [additionalServicePrice, setAdditionalServicePrice] = useState(0);
   const [allDiscounts, setAllDiscounts] = useState([]);
-const [setUniqueCategories] = useState([])
   const { data: showCategoryStudio } = useGetCategoriesStudioQuery("");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
-  const [saveStudio, { isLoading }] = useUpdateMakeupMutation();
-  const { refetch: refetchMakeupDaily } = useGetMakeUpDailyQuery();
+  const [saveStudio2, { isLoading }] = useUpdateMakeupMutation();
+  const invoiceRef = useRef();
+  useEffect(() => {
+    setSelectedPackageDetails([]);
+    setDiscountType("");
+  
+    if (showCategoryStudio) {
+      const uniqueCategories = showCategoryStudio.reduce((acc, current) => {
+        const existing = acc.find((item) => item.name === current.name);
+        if (!existing) {
+          return [...acc, current];
+        }
+        return acc;
+      }, []);
+      setUniqueCategories(uniqueCategories);
+  
+      const selectedCategory = showCategoryStudio.find(
+        (category) => category.id === initialValues.category_id
+      );
+      if (selectedCategory) {
+        setCategoryName(selectedCategory.name);
+      }
+    }
+  
+    if (getAllDiscount && Array.isArray(getAllDiscount)) {
+      const uniqueDiscounts = Array.from(
+        new Set(getAllDiscount.map((item) => item.discount))
+      ).map((discount) => {
+        return getAllDiscount.find((item) => item.discount === discount);
+      });
+      setAllDiscounts(uniqueDiscounts);
+  
+      const selectedDiscount = getAllDiscount.find(
+        (discount) => discount.id === initialValues.reason_discount_id
+      );
+      if (selectedDiscount) {
+        setDiscountName(selectedDiscount.discount);
+      }
+    } else {
+      console.error("getAllDiscount is not an array or is undefined/null.");
+    }
+  }, [showCategoryStudio, getAllDiscount, initialValues.category_id, initialValues.reason_discount_id]);
+  
+  
 
 
   useEffect(() => {
+const notesString = initialValues.notes; 
+const notesArray = notesString?.split(',').map((note) => ({
+  label: note.trim(),
+  value: note.trim(),
+}));
     if (initialValues) {
       setPackageType(initialValues.category_id)
-      setDiscountType(initialValues.reason_discount)
+      setSelectedPackageDetails(notesArray?notesArray:[])
+      setDiscountType(initialValues.reason_discount_id?initialValues.reason_discount_id:"")
       setBrideName(initialValues.name)
       setPhone(initialValues.phone)
       setCity(initialValues.address)
       setEventDate(initialValues.appropriate)
-      setReceiveDate(initialValues.receivedDate)
       setTotal(initialValues.total)
       setPayment(initialValues.pay)
       setRemaining(initialValues.rest)
-      setAdditionalService(initialValues.addService)
-      setAdditionalServicePrice(initialValues.priceService)
-      setEnter(initialValues.enter?initialValues.enter:null)
-      setExit(initialValues.exit?initialValues.exit:null)
-      setArrive(initialValues.arrive?initialValues.arrive:null)
+      setAdditionalService(initialValues.addService?initialValues.addService:"")
+      setAdditionalServicePrice(initialValues.priceService?initialValues.priceService:"")
     }
   }, [initialValues]);
+
 
   useEffect(() => {
     setRemaining(total - payment);
   }, [total, payment]);
 
+  const discountRate = ShowDiscountPrice ? ShowDiscountPrice.price : "";
 
   const handleBrideNameChange = (e) => setBrideName(e.target.value);
   const handlePhoneChange = (e) => setPhone(e.target.value);
   const handleCityChange = (e) => setCity(e.target.value);
   const handleEventDateChange = (e) => setEventDate(e.target.value);
+  const handleReceiveDateChange = (e) => setReceiveDate(e.target.value);
   const handleTotalChange = (value) => setTotal(value);
   const handlePaymentChange = (value) => setPayment(value);
 
@@ -74,8 +237,7 @@ const [setUniqueCategories] = useState([])
     e.preventDefault();
     setFormSubmitted(true);
     const phoneRegex = /^(\+?\d{1,3}[- ]?)?\d{10}$/;
-  
-    if (packageType && brideName && phone && city && eventDate && total) {
+    if (brideName && phone && city && eventDate  && total) {
       if (!phone.match(phoneRegex)) {
         setNotification({
           type: "error",
@@ -83,39 +245,28 @@ const [setUniqueCategories] = useState([])
         });
         return;
       }
-  
-      const notes = selectedPackageDetails.map((detail) => detail.label).join(', ');
-  
       try {
-        const formData = {
-          name: brideName,
-          phone: phone,
-          address: city,
-          appropriate: eventDate,
-          receivedDate: receiveDate,
-          total: total,
-          pay: payment,
-          rest: remaining ,
-          enter:enter,
-          arrive: arrive ,
-          exit:exit
-      };
-  
-        await saveStudio({
+        const formData = new FormData();
+        formData.append('name', brideName);
+        formData.append('phone', phone);
+        formData.append('address', city);
+        formData.append('appropriate', eventDate);
+        formData.append('total', total);
+        formData.append('pay', payment);
+        formData.append('rest', remaining);
+        await saveStudio2({
           id: initialValues.id,
           makeupData: formData,
         }).unwrap();
-  
-        setNotification({
-          type: "success",
-          message: "تم تحديث البيانات بنجاح!",
-        });
-        toast.success("تم تحديث البيانات بنجاح!");
-        resetForm();
-        closeModal();
-        refetchSearch();
-        refetchEmployees();
-        refetchMakeupDaily()
+          setNotification({
+            type: "success",
+            message: "تم تحديث البيانات بنجاح!",
+          });
+          toast.success("تم تحديث البيانات بنجاح!");
+          resetForm();
+          closeModal();
+          // handlePrint()
+          refetchSearch();
       } catch (error) {
         setNotification({
           type: "error",
@@ -129,20 +280,16 @@ const [setUniqueCategories] = useState([])
         message: "الرجاء ملء جميع الحقول!",
       });
     }
-    console.log(discountName);
   };
-  
-
-
+  const handlePrint = useReactToPrint({
+    content: () => invoiceRef.current,
+  });
   const resetForm = () => {
     setBrideName("");
     setPhone("");
     setCity("");
     setEventDate("");
     setReceiveDate("");
-    setExit("")
-    setArrive("")
-    setEnter("")
     setTotal(0);
     setPayment(0);
     setRemaining(0);
@@ -191,7 +338,7 @@ const [setUniqueCategories] = useState([])
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
                   >
-                   تعديل حجز ميكاب 
+                    تعديل حجز ميكاب
                   </Dialog.Title>
                   <div className="mt-2 overflow-y-auto overflow-x-hidden h-full">
                   {notification && (
@@ -286,82 +433,6 @@ const [setUniqueCategories] = useState([])
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="time"
-                        >
-                          معاد الدخول  <span className="text-xl text-white mt-4">*</span>
-                        </label>
-                        <input
-                          id="time"
-                          type="time"
-                          value={enter}
-                          onChange={(e)=>setEnter(e.target.value)}
-                          className={`shadow appearance-none border rounded 
-                          w-full py-2 px-3 text-gray-700 leading-tight
-                           focus:outline-none focus:shadow-outline
-                         `}
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="time2"
-                        >
-                          معاد الخروج  <span className="text-xl text-white mt-4">*</span>
-                        </label>
-                        <input
-                          id="time2"
-                          type="time"
-                          value={exit}
-                          onChange={(e)=>setExit(e.target.value)}
-                          className={`shadow appearance-none border rounded 
-                          w-full py-2 px-3 text-gray-700 leading-tight
-                           focus:outline-none focus:shadow-outline
-                         `}
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="time2"
-                        >
-                          معاد الوصول  <span className="text-xl text-white mt-4">*</span>
-                        </label>
-                        <input
-                          id="time2"
-                          type="time"
-                          value={arrive}
-                          onChange={(e)=>setArrive(e.target.value)}
-                          className={`shadow appearance-none border rounded 
-                          w-full py-2 px-3 text-gray-700 leading-tight
-                           focus:outline-none focus:shadow-outline
-                         `}
-                        />
-                      </div>
-                      {/* <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="receiveDate"
-                        >
-                          تاريخ الاستلام <span className="text-xl text-red-500 mt-4">*</span>
-                        </label>
-                        <input
-                          id="receiveDate"
-                          type="date"
-                          value={receiveDate}
-                          onChange={handleReceiveDateChange}
-                          className={`shadow appearance-none border 
-                          rounded w-full py-2 px-3 text-gray-700 leading-tight
-                           focus:outline-none focus:shadow-outline
-                           ${
-                            formSubmitted && !receiveDate
-                              ? "border-red-500"
-                              : ""
-                          } `}
-                        />
-                      </div> */}
-                      <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="total"
                         >
                           الإجمالي <span className="text-xl text-red-500 mt-4">*</span>
@@ -394,12 +465,7 @@ const [setUniqueCategories] = useState([])
                           onChange={handlePaymentChange}
                           className={`shadow appearance-none border
                             rounded w-full py-2 px-3 text-gray-700 leading-tight
-                             focus:outline-none focus:shadow-outline
-                             ${
-                               formSubmitted && !payment
-                                 ? "border-red-500"
-                                 : ""
-                             } `}                          />
+                             focus:outline-none focus:shadow-outline `}                          />
                       </div>
                       <div className="mb-4">
                         <label
@@ -416,68 +482,27 @@ const [setUniqueCategories] = useState([])
                              focus:outline-none focus:shadow-outline `}                            readOnly
                         />
                       </div>
-                      {/* <div className="mb-4">
-                        <label
-                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                          htmlFor="discount"
-                        >
-                          خصم <span className="text-xl text-white mt-4">*</span>
-                        </label>
-                        <select
-                          id="discount"
-                          className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline"
-                          onChange={(e) => {
-                            setDiscountType(e.target.value);
-                          }}
-                          value={discountType}
-                        >
-                          <option value="">اختر الخصم</option>
-                          {allDiscounts.map((discount) => (
-                            <option key={discount.id} value={discount.id}>
-                              {discount.discount}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      {discountType && (
-                        <div className="mb-4">
-                          <label
-                            className="block text-gray-700 text-sm font-bold mb-2 text-start"
-                            htmlFor="discountRate"
-                          >
-                            قيمة الخصم <span className="text-xl text-white mt-4">*</span>
-                          </label>
-                          <InputNumber
-                            id="discountRate"
-                            value={ShowDiscountPrice ? ShowDiscountPrice.price : ""}
-                            readOnly
-                            min={0}
-                            max={10000}
-                            className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          />
-                        </div>
-                      )} */}
-                      <br/>
                       <div className="flex items-center justify-start gap-4 mt-4">
-                  <button
-                    type="button"
-                    onClick={closeModal}
-                    className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center"
-                  >
-                    <AiOutlineClose className="ml-3" /> إلغاء
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
-                  >
-                    {isLoading?(
-<Spinner/>
-                    ):(
-                      <AiOutlineSave className="ml-3" />
-                    )}
-                    حفظ
-                  </button>
-                </div>
+                        <button
+                          type="button"
+                          onClick={closeModal}
+                          className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center"
+                        >
+                          <AiOutlineClose className="ml-3" /> إلغاء
+                        </button>
+                        <button
+                          type="submit"
+                          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
+                          disabled={isLoading}
+                        >
+                          {!isLoading ? (
+                            <AiOutlineSave className="ml-3" />
+                          ) : (
+                            <Spinner />
+                          )}
+                          حفظ
+                        </button>
+                      </div>
                     </form>
                   </div>
                 </Dialog.Panel>
@@ -486,8 +511,28 @@ const [setUniqueCategories] = useState([])
           </div>
         </Dialog>
       </Transition>
+      <div style={{ display: "none" }}>
+      <Invoice
+        ref={invoiceRef}
+        packageType={CategoryName}
+        selectedPackageDetails={selectedPackageDetails}
+        brideName={brideName}
+        phone={phone}
+        city={city}
+        eventDate={eventDate}
+        receiveDate={receiveDate}
+        total={total}
+        payment={payment}
+        remaining={remaining}
+        discountName={discountName}
+        additionalService={additionalService}
+        additionalServicePrice={additionalServicePrice}
+        discountRate={discountRate}
+        logo={logo}
+      />
+    </div>
     </div>
   );
 };
 
-export default UpdateMakeUpDaily;
+export default UpdateMakeUp;

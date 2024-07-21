@@ -14,7 +14,7 @@ const Reports = () => {
           <Tab as={Fragment}>
             {({ selected }) => (
               <button
-                className={`w-full py-2.5 text-sm leading-5 font-medium text-black rounded-lg ${
+                className={`w-full py-2.5 text-xl leading-5 font-bold text-black rounded-lg ${
                   selected
                     ? "bg-white shadow"
                     : "text-black hover:bg-white/[0.12] hover:text-black"
@@ -27,7 +27,7 @@ const Reports = () => {
           <Tab as={Fragment}>
             {({ selected }) => (
               <button
-                className={`w-full py-2.5 text-sm leading-5 font-medium text-black rounded-lg ${
+                className={`w-full py-2.5 text-xl leading-5 font-bold text-black rounded-lg ${
                   selected
                     ? "bg-white shadow"
                     : "text-black hover:bg-white/[0.12] hover:text-black"
@@ -40,7 +40,7 @@ const Reports = () => {
           <Tab as={Fragment}>
             {({ selected }) => (
               <button
-                className={`w-full py-2.5 text-sm leading-5 font-medium text-black rounded-lg ${
+                className={`w-full py-2.5 text-xl leading-5 font-bold text-black rounded-lg ${
                   selected
                     ? "bg-white shadow"
                     : "text-black hover:bg-white/[0.12] hover:text-black"
@@ -53,7 +53,7 @@ const Reports = () => {
           <Tab as={Fragment}>
             {({ selected }) => (
               <button
-                className={`w-full py-2.5 text-sm leading-5 font-medium text-black rounded-lg ${
+                className={`w-full py-2.5 text-xl leading-5 font-bold text-black rounded-lg ${
                   selected
                     ? "bg-white shadow"
                     : "text-black hover:bg-white/[0.12] hover:text-black"

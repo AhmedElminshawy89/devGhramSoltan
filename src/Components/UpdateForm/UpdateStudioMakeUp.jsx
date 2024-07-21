@@ -49,10 +49,12 @@ const [setUniqueCategories] = useState([])
       setRemaining(initialValues.rest)
       setAdditionalService(initialValues.addService)
       setAdditionalServicePrice(initialValues.priceService)
+      setEnter(initialValues.enter?initialValues.enter:null)
+      setExit(initialValues.exit?initialValues.exit:null)
+      setArrive(initialValues.arrive?initialValues.arrive:null)
     }
   }, [initialValues]);
 
-  console.log('packageType',packageType)
   useEffect(() => {
     setRemaining(total - payment);
   }, [total, payment]);
@@ -78,23 +80,21 @@ const [setUniqueCategories] = useState([])
         });
         return;
       }
-  
-      const notes = selectedPackageDetails.map((detail) => detail.label).join(', ');
-  
       try {
-        const formData2 = new FormData();
-        formData2.append('category_id', packageType);
-        formData2.append('name', brideName);
-        formData2.append('phone', phone);
-        formData2.append('address', city);
-        formData2.append('appropriate', eventDate);
-        formData2.append('receivedDate', receiveDate);
-        formData2.append('total', total);
-        formData2.append('pay', payment);
-        formData2.append('rest', remaining);
-        formData2.append('enter', enter);
-        formData2.append('arrive', arrive);
-        formData2.append('exit', exit);
+        const formData2 = {
+          name: brideName,
+          phone: phone,
+          address: city,
+          appropriate: eventDate,
+          receivedDate: receiveDate,
+          total: total,
+          pay: payment,
+          rest: remaining ,
+          enter:enter,
+          arrive: arrive ,
+          exit:exit
+      };
+      
   
         await saveStudio2({
           id: initialValues.id,
@@ -123,7 +123,6 @@ const [setUniqueCategories] = useState([])
         message: "الرجاء ملء جميع الحقول!",
       });
     }
-    console.log(discountName);
   };
   
 

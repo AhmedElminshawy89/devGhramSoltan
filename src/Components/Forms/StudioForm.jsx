@@ -14,6 +14,7 @@
 import { toast } from "react-toastify";
 import { useSaveStudioMutation } from "../../app/Feature/API/Studio";
 import Spinner from "../../Shared/Spinner";
+import { useGetStudioDailyQuery } from "../../app/Feature/API/Daily";
 
 const Invoice = React.forwardRef((props, ref) => {
   const {
@@ -172,6 +173,8 @@ const Invoice = React.forwardRef((props, ref) => {
     const [formSubmitted, setFormSubmitted] = useState(false);
     const [notification, setNotification] = useState(null);
     const [saveStudio, { isLoading }] = useSaveStudioMutation();
+    const { refetch: refetchStudioDaily } = useGetStudioDailyQuery();
+
     const invoiceRef = useRef();
   
     useEffect(() => {
@@ -308,6 +311,7 @@ const Invoice = React.forwardRef((props, ref) => {
             resetForm();
             handlePrint();
             closeModal();
+            refetchStudioDaily()
           }
         } catch (error) {
           setNotification({

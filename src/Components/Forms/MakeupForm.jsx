@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { useSaveStudioMutation } from "../../app/Feature/API/Studio";
 import Spinner from "../../Shared/Spinner";
 import { useSaveMakeupMutation } from "../../app/Feature/API/MakeUp";
+import { useGetMakeUpDailyQuery } from "../../app/Feature/API/Daily";
 
 const Invoice = React.forwardRef((props, ref) => {
 const {
@@ -169,6 +170,8 @@ const MakeupForm = ({ isOpen, closeModal }) => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
   const [saveStudio, { isLoading }] = useSaveMakeupMutation();
+  const {refetch: refetchMakeupDaily } = useGetMakeUpDailyQuery();
+
   const invoiceRef = useRef();
 
   useEffect(() => {
@@ -304,6 +307,7 @@ const MakeupForm = ({ isOpen, closeModal }) => {
           resetForm();
           handlePrint();
           closeModal();
+          refetchMakeupDaily()
         }
       } catch (error) {
         setNotification({

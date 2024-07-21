@@ -8,6 +8,8 @@ import { useSearchMakeUpQuery, useSearchStudioQuery } from "../../app/Feature/AP
 import { useDeleteStudioMutation, useGetStudiosQuery } from "../../app/Feature/API/Studio";
 import UpdateStudio from "../UpdateForm/UpdateStudio";
 import { useDeleteMakeupMutation, useGetMakeupsQuery } from "../../app/Feature/API/MakeUp";
+import UpdateMakeUp from "../UpdateForm/UpdateMakeUp";
+import { useGetMakeUpDailyQuery } from "../../app/Feature/API/Daily";
 
 const MakeUpTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,6 +25,7 @@ const MakeUpTable = () => {
   const [deleteEmployee, { isLoading: isDeleting }] = useDeleteMakeupMutation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editEmployee, setEditEmployee] = useState(null);
+  const { refetch: refetchMakeUpDaily } = useGetMakeUpDailyQuery();
 
   useEffect(() => {
     if (employees?.data?.length === 0 && currentPage > 1) {
@@ -47,6 +50,7 @@ const MakeUpTable = () => {
   const handleDelete = (employeeId) => {
     setDeleteEmployeeId(employeeId);
     setIsDeleteDialogOpen(true);
+    refetchMakeUpDaily()
   };
 
   const handleDeleteConfirmed = async () => {
@@ -56,6 +60,7 @@ const MakeUpTable = () => {
       setIsDeleteDialogOpen(false);
       refetchEmployees(); // Renamed from refetch to refetchEmployees for clarity
       refetchSearchResults(); // Renamed from refetchData to refetchSearchResults for clarity
+      refetchMakeUpDaily()
     } catch (error) {
       console.error("Error deleting employee:", error);
     }
@@ -114,7 +119,14 @@ const MakeUpTable = () => {
     },
     {
       name: "appropriate",
-      label: "تاريخ المناسبه",
+      label: "تاريخ المناسبه",              options: {
+        customBodyRender: (value) => {
+          const date = new Date(value);
+          const formattedDate = date.toLocaleDateString("ar-EG");
+          return `${formattedDate}`;
+        },
+        wrap: 'nowrap',
+      },
     },
     {
       name: "notes",
@@ -224,12 +236,12 @@ const MakeUpTable = () => {
           ]?.id;
           return (
             <>
-              {/* <button onClick={() => handleEdit(adminId)} className="ml-5">
+              <button onClick={() => handleEdit(adminId)} className="ml-5">
                 <AiOutlineEdit
                   title="تعديل  البيانات"
                   className="text-2xl text-black"
                 />
-              </button> */}
+              </button>
               <button onClick={() => handleDelete(adminId)}>
                 {isDeleting && deleteEmployeeId === adminId ? (
                   <Spinner />
@@ -335,7 +347,7 @@ const MakeUpTable = () => {
       )}
 
       {editEmployee && (
-        <UpdateStudio
+        <UpdateMakeUp
           isOpen={true}
           closeModal={handleCloseEdit}
           initialValues={editEmployee}
