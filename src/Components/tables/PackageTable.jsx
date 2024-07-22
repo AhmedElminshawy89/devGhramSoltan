@@ -137,6 +137,15 @@ const PackageTable = () => {
     {
       label: "وصف الباكدج",
       name: "desc",
+      options: {
+        customBodyRender: (value) => {
+          return (
+            <div style={{ whiteSpace: 'break-spaces' }}>
+              {value}
+            </div>
+          );
+        },
+      },
     },
     {
       label: "سعر الباكدج",

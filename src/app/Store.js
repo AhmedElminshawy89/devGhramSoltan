@@ -59,7 +59,7 @@ const store = configureStore({
       StudioApi.middleware,
       MakeupApi.middleware,
       ReportApi.middleware,
-      DailyApi.middleware
+      DailyApi.middleware,
     ),
 });
 

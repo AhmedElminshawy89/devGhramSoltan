@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import MUIDataTable from "mui-datatables";
 import { Pagination } from "antd";
@@ -11,8 +11,13 @@ import { useGetMakeUpDailyQuery, useGetStudioDailyQuery } from "../../app/Featur
 import { useLocation } from "react-router-dom";
 import { useDeleteMakeupMutation } from "../../app/Feature/API/MakeUp";
 import UpdateMakeUpDaily from './../UpdateForm/UpdateMakeUpDaily';
+import { IoPrint } from "react-icons/io5";
+import PrintInvoice from "../Prints/PrintInvoice";
+import { useReactToPrint } from "react-to-print";
 
 const MakeUpTableDaily = () => {
+  const invoiceRef = useRef();
+
   const location = useLocation()
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
@@ -28,9 +33,12 @@ const MakeUpTableDaily = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editEmployee, setEditEmployee] = useState(null);
   const [loadingPackageId, setLoadingPackageId] = useState(null);
+  const [printInvoice, setPrintInvoice] = useState(null);
+
   useEffect(() => {
     refetchEmployees();
   }, [refetchEmployees]);
+
   useEffect(() => {
     if (employees?.data?.length === 0 && currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
@@ -48,6 +56,24 @@ const MakeUpTableDaily = () => {
         ? employees.data.find((emp) => emp.id === employeeId)
         : searchedEmployees.makeup.find((emp) => emp.id === employeeId);
     setEditEmployee(employeeToEdit);
+  };
+
+  
+  const handlePrintRef = useReactToPrint({
+    content: () => invoiceRef.current,
+  });
+
+  const handlePrint = async (employeeId) => {
+    const PrintInvoices =
+      searchQuery === ""
+        ? employees.data.find((emp) => emp.id === employeeId)
+        : searchedEmployees.makeup.find((emp) => emp.id === employeeId);
+  
+    setPrintInvoice(PrintInvoices);
+  
+    setTimeout(() => {
+      handlePrintRef();
+    }, 300);
   };
 
   const handleDelete = (employeeId) => {
@@ -267,6 +293,12 @@ const MakeUpTableDaily = () => {
           ]?.id;
           return (
             <>
+                         <button onClick={() => handlePrint(adminId)} className="ml-5">
+                <IoPrint
+                  title="طباعه الفاتوره"
+                  className="text-2xl text-black"
+                />
+              </button>
               <button onClick={() => handleEdit(adminId)} className="ml-5">
                 <AiOutlineEdit
                   title="تعديل  البيانات"
@@ -346,7 +378,7 @@ const MakeUpTableDaily = () => {
     search: false,
   };
 
-  const dataToDisplay = searchQuery ? searchedEmployees?.studio : employees?.data;
+  const dataToDisplay = searchQuery ? searchedEmployees?.makeup : employees?.data;
 
   return (
     <>
@@ -390,7 +422,9 @@ const MakeUpTableDaily = () => {
           <Spinner />
         </div>
       )}
-
+<div style={{display:'none'}}>
+      <PrintInvoice ref={invoiceRef} employee={printInvoice} />
+      </div>
       {editEmployee && (
         <UpdateMakeUpDaily
           isOpen={true}

@@ -2,7 +2,7 @@ import React, { useState, Fragment, useEffect, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import Select from "react-select";
-import { useGetCategoriesMakeUpQuery, useGetCategoriesStudioQuery } from "../../app/Feature/API/Package";
+import { useGetCategoriesMakeUpQuery } from "../../app/Feature/API/Package";
 import { useGetSubCategoriesBasedOnCategoryQuery } from "../../app/Feature/API/SubPackage";
 import { InputNumber } from "antd";
 import {
@@ -12,7 +12,6 @@ import {
 import { useReactToPrint } from "react-to-print";
 import logo from "../../assets/Img/logo.png";
 import { toast } from "react-toastify";
-import { useSaveStudioMutation } from "../../app/Feature/API/Studio";
 import Spinner from "../../Shared/Spinner";
 import { useSaveMakeupMutation } from "../../app/Feature/API/MakeUp";
 import { useGetMakeUpDailyQuery } from "../../app/Feature/API/Daily";

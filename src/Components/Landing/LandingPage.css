@@ -63,6 +63,27 @@ body {
   background-color: #000;
 }
 
+.btn-banner {
+  padding: 0.5rem 1rem;
+    outline: none;
+border: none;
+font-size: 1.4rem;
+white-space: nowrap;
+color: #fff !important;
+background-color: rgba(0 0 0 / .8);
+border-radius: 5px;
+cursor: pointer;
+transition: .3s background-color ease-in;
+-webkit-transition: .3s background-color ease-in;
+-moz-transition: .3s background-color ease-in;
+-ms-transition: .3s background-color ease-in;
+-o-transition: .3s background-color ease-in;
+border: 1px solid  rgba(0 0 0 / .8);
+}
+.btn-banner:hover {
+background-color: transparent;
+}
+
 .btn-sec{
     padding: 0.5rem 1rem;
     outline: none;
@@ -257,6 +278,7 @@ header {
 .service__header__content p {
   max-width: 600px;
   color: var(--text-light);
+  font-size: 1.368rem;
 }
 
 .service__btn {
@@ -339,6 +361,7 @@ background-color: #fff !important;
 .service__card p {
   margin-bottom: 1rem;
   color: var(--text-light);
+  font-size: 1.3rem;
 }
 
 .service__card a {
@@ -370,7 +393,7 @@ background-color: #fff !important;
 .about__content ul li {
   margin-bottom: 1rem;
   color: #555;
-  font-size: 1.2rem;
+  font-size: 1.368rem;
   position: relative;
   padding-right: 40px;
 }
@@ -531,7 +554,7 @@ background-color: #fff !important;
 }
 
 .footer {
-  background-color: var(--main-color);
+  background-color: rgb(0 0 0 / .9);
   color: #fff !important;
 }
 
@@ -699,10 +722,22 @@ background-color: #fff !important;
   left: 0;
   width: 100%;
   height: 100%;
+  right: -100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 999;
+  transition: right ease-in .2s;
 }
-
+.overlay-drawer-active-land{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  transition: right ease-in .2s;
+  right: 0%;
+}
 .btn-bar {
   display: none;
 }
@@ -713,7 +748,7 @@ background-color: #fff !important;
   left: -300px;
   max-width: 300px;
   height: 100%;
-  background-color: var(--primary-color);
+  background-color:rgb(0 0 0 / .82);
   transition: left 0.3s ease;
   z-index: 1000;
   width: 100%;
@@ -1203,14 +1238,16 @@ a {
 }
 
 .team .box .info {
-    padding-right: 40px;
-    position: relative;
+  padding-right: 40px;
+  position: relative;
+  width: calc(100% - 100px);
+  margin-top: 15px;
 }
 
 .team .box .info h3 {
     margin-bottom: 0;
     color: #000 !important;
-    font-size: 22px;
+    font-size: 1.368rem;
     transition: all .5s;
     -webkit-transition: all .5s;
     -moz-transition: all .5s;
@@ -1222,6 +1259,7 @@ a {
     margin-top: 10px;
     margin-bottom: 25px;
     color: #000 !important;
+    font-size: 1.3rem;
 }
 .main_title_Articles{
     margin-bottom: 40px;
@@ -1245,11 +1283,11 @@ a {
 
 
 .features {
-  padding-top: 100px;
+  padding-top: 20px;
   padding-bottom: 100px;
   position: relative;
   background-color: #fff;
-  margin-top: 100px !important  ;
+  margin-top: 20px !important  ;
 }
 
 .features .container {
@@ -1281,9 +1319,9 @@ a {
   content: " ";
   position: absolute;
   bottom: 0;
-  right: 0;
+  right: -3px;
   border-style: solid;
-  border-width: 0px 0px 170px 500px;
+  border-width: 0px 0px 170px 521px;
   border-color: transparent transparent #fff transparent;
   transition: .3s ease-in all;
   -webkit-transition: .3s ease-in all;
@@ -1293,12 +1331,14 @@ a {
 }
 
 .features .container .box:hover .img-holder::after {
-  border-width: 170px 500px 170px 0px;
+  border-width: 170px 521px 170px 0px;
 }
 
 .features .container .img-holder img {
   max-width: 100%;
-}
+  height: 450px;
+  object-fit: cover;
+  object-position: center;}
 
 .features .container .box h2 {
   font-size: 40px;
@@ -1315,7 +1355,7 @@ a {
   left: 15px;
   width: calc(100% - 30px);
   height: 5px;
-  background-color: red;
+  background-color: rgba(0 0 0 / .8);
 }
 
 .features .container .box p {
@@ -1328,34 +1368,34 @@ a {
 
 .features .container .box a {
   display: block;
-  border: 2px solid red;
+  border: 2px solid rgba(0 0 0 / .8);
   width: fit-content;
   padding: 10px 30px;
   margin: 0 auto 30px;
   font-size: 22px;
-  color: red;
+  color: rgba(0 0 0 / .8);
   border-radius: 6px;
 }
 
 .features .container .quality .img-holder::before {
-  background-color: rgb(244 64 54 / 60%);
+  background-color: #5555;
 }
 
 .features .container .quality h2::before {
-  color: #f44036;
+  color: rgba(0 0 0 / .8) !important;
 }
 
 .features .container .quality a {
-  color: #f44036;
-  border-color: #f44036;
-  background: linear-gradient(to right, #f44036 50%, #fff 50%);
+  color: #fff;
+  border-color: rgba(0 0 0 / .8);
+  background: linear-gradient(to right, rgba(0 0 0 / .8) 50%, #fff 50%);
   background-size: 200% 100%;
   background-position: right bottom;
 }
 
 .features .container .box:hover a {
   background-position: left bottom;
-  color: white;
+  color: white !important;
   transition:  .3s ease-in all;
   -webkit-transition:  .3s ease-in all;
   -moz-transition:  .3s ease-in all;
@@ -1364,43 +1404,43 @@ a {
 }
 
 .features .container .time .img-holder::before {
-  background-color: rgb(0 150 136 / 60%);
+  background-color: rgb(218 165 32 / .3);
 }
 
 .features .container .time h2::before {
-  background-color: #009688;
+  background-color: rgb(218 165 32);
 }
 
 .features .container .time a {
-  color: #009688;
-  border-color: #009688;
+  color: rgb(218 165 32);
+  border-color: rgb(218 165 32);
 }
 
 .features .container .time a {
-  color: #009688;
-  border-color: #009688;
-  background: linear-gradient(to right, #009688 50%, #fff 50%);
+  color: #fff;
+  border-color: rgb(218 165 32);
+  background: linear-gradient(to right, rgb(218 165 32) 50%, #fff 50%);
   background-size: 200% 100%;
   background-position: right bottom;
 }
 
 .features .container .passion .img-holder::before {
-  background-color: rgb(3 169 244 / 60%);
+  background-color: rgba(0 0 0 / .8);
 }
 
 .features .container .passion h2::before {
-  background-color: #03a9f4;
+  background-color: rgba(0 0 0 / .8);
 }
 
 .features .container .passion a {
-  color: #03a9f4;
-  border-color: #03a9f4;
+  color: #000 !important;
+  border-color: rgba(0 0 0 / .8);
 }
 
 .features .container .passion a {
-  color: #03a9f4;
-  border-color: #03a9f4;
-  background: linear-gradient(to right, #03a9f4 50%, #fff 50%);
+  color: #000 !important;
+  border-color: rgba(0 0 0 / .8);
+  background: linear-gradient(to right, rgba(0 0 0 / .8) 50%, #fff 50%);
   background-size: 200% 100%;
   background-position: right bottom;
 }

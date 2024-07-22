@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import MUIDataTable from "mui-datatables";
 import Spinner from "../../Shared/Spinner";
@@ -8,8 +8,13 @@ import { useSearchStudioQuery } from "../../app/Feature/API/Search";
 import { useDeleteStudioMutation, useGetStudiosQuery } from "../../app/Feature/API/Studio";
 import UpdateStudio from "../UpdateForm/UpdateStudio";
 import { useGetStudioDailyQuery } from "../../app/Feature/API/Daily";
+import { IoPrint } from "react-icons/io5";
+import PrintInvoice from "../Prints/PrintInvoice";
+import { useReactToPrint } from "react-to-print";
 
 const StudioTable = () => {
+ const invoiceRef = useRef();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,6 +29,7 @@ const StudioTable = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editEmployee, setEditEmployee] = useState(null);
   const { refetch: refetchStudioDaily } = useGetStudioDailyQuery();
+  const [printInvoice, setPrintInvoice] = useState(null);
 
   useEffect(() => {
     if (employees?.data?.length === 0 && currentPage > 1) {
@@ -43,6 +49,25 @@ const StudioTable = () => {
         ? employees.data.find((emp) => emp.id === employeeId)
         : searchedEmployees.studio.find((emp) => emp.id === employeeId);
     setEditEmployee(employeeToEdit);
+  };
+
+
+  
+  const handlePrintRef = useReactToPrint({
+    content: () => invoiceRef.current,
+  });
+
+  const handlePrint = async (employeeId) => {
+    const PrintInvoices =
+      searchQuery === ""
+        ? employees.data.find((emp) => emp.id === employeeId)
+        : searchedEmployees.makeup.find((emp) => emp.id === employeeId);
+  
+    setPrintInvoice(PrintInvoices);
+  
+    setTimeout(() => {
+      handlePrintRef();
+    }, 300);
   };
 
   const handleDelete = (employeeId) => {
@@ -247,6 +272,12 @@ const StudioTable = () => {
           ]?.id;
           return (
             <>
+                         <button onClick={() => handlePrint(adminId)} className="ml-5">
+                <IoPrint
+                  title="طباعه الفاتوره"
+                  className="text-2xl text-black"
+                />
+              </button>
               <button onClick={() => handleEdit(adminId)} className="ml-5">
                 <AiOutlineEdit
                   title="تعديل  البيانات"
@@ -356,7 +387,9 @@ const StudioTable = () => {
           <Spinner />
         </div>
       )}
-
+      <div style={{display:'none'}}>
+      <PrintInvoice ref={invoiceRef} employee={printInvoice} />
+      </div>
       {editEmployee && (
         <UpdateStudio
           isOpen={true}

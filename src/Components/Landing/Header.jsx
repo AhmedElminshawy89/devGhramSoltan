@@ -110,10 +110,9 @@ const Header = () => {
           <div className="header__content" data-aos="fade-up" data-aos-delay="500">
             <h1>مرحبًا بكم في عالم الجمال والإبداع مع غرام سلطان</h1>
             <p>
-             خبيرة المكياج المتميزة. 
-            احصلي على إطلالة ساحرة ومذهلة في أتليه غرام، حيث يلتقي الفن والابتكار مع أحدث صيحات المكياج والأزياء.
+          خبيرة المكياج المتميزة. احصلي على إطلالة ساحرة ومذهلة في مركز غرام سلطان، حيث يلتقي الفن والابتكار مع أحدث صيحات المكياج والتصوير الاحترافي.
             </p>
-            <a className="btn" href="https://wa.me/+20109252712" target="_blank" data-aos="fade-up" data-aos-delay="300">
+            <a className="btn" href="https://wa.me/+201092527126" target="_blank" data-aos="fade-up" data-aos-delay="300">
               تواصل معنا
             </a>
           </div>

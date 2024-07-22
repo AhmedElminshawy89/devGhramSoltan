@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { FaInstagram, FaPhoneAlt, FaWhatsapp, FaFacebookMessenger, FaYoutube } from "react-icons/fa";
+import { FaInstagram, FaPhoneAlt, FaWhatsapp, FaFacebookMessenger, FaYoutube, FaTiktok } from "react-icons/fa";
 import { RiContactsBookUploadFill, RiCloseFill } from "react-icons/ri";
 import { MdConnectWithoutContact } from "react-icons/md";
+import { FaThreads } from 'react-icons/fa6';
 
 const ContactPhone = () => {
   const [showContacts, setShowContacts] = useState(false);
@@ -17,17 +18,18 @@ const ContactPhone = () => {
       </div>
       <div className={`contact-list ${showContacts ? 'show' : ''}`}>
         <div className="phone">
-          <a href="tel:01201818272" target="_blank" rel="noreferrer">
+          <a href="tel:012018182726" target="_blank" rel="noreferrer">
             <FaPhoneAlt />
           </a>
         </div>
         <div className="whatsapp">
-          <a href="https://wa.me/+20109252712" target="_blank" rel="noreferrer">
+          <a href="https://wa.me/+201092527126" target="_blank" rel="noreferrer">
             <FaWhatsapp />
           </a>
         </div>
+        
         <div className="instagram">
-          <a href="#" target="_blank" rel="noreferrer">
+          <a href="https://www.instagram.com/gharamsoltan/" target="_blank" rel="noreferrer">
             <FaInstagram />
           </a>
         </div>
@@ -37,9 +39,14 @@ const ContactPhone = () => {
           </a>
         </div>
         <div className="youtube">
-          <a href="#" target="_blank" rel="noreferrer">
-            <FaYoutube />
-          </a>
+        <a href="https://www.threads.net/@gharamsoltan" target="_blank" rel="noopener noreferrer">
+    <FaThreads color="#fff" size="24" /> 
+</a>
+        </div>
+        <div className="tik-tok">
+        <a href="https://www.tiktok.com/@gharamsoltan" target="_blank" rel="noopener noreferrer">
+    <FaTiktok color="#fff" size="24" />
+</a>
         </div>
       </div>
       <style jsx>{`
@@ -78,7 +85,7 @@ const ContactPhone = () => {
           transform: translateY(0);
           opacity: 1;
         }
-        .phone, .whatsapp, .instagram, .messenger, .youtube {
+        .phone, .whatsapp, .instagram, .messenger, .youtube ,.tik-tok {
           background: goldenrod;
           width: 46px;
           height: 46px;
@@ -101,7 +108,10 @@ const ContactPhone = () => {
           background-color: #0078FF;
         }
         .youtube {
-          background-color: #FF0000;
+          background-color: #000;
+        }
+                  .tik-tok {
+          background-color: #000;
         }
       `}</style>
     </>

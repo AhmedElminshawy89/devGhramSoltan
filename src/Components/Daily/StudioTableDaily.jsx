@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import MUIDataTable from "mui-datatables";
 import { Pagination } from "antd";
@@ -9,8 +9,12 @@ import { useDeleteStudioMutation, useGetStudiosQuery } from "../../app/Feature/A
 import UpdateStudioDaily from "../UpdateForm/UpdateStudioMakeUp";
 import { useGetStudioDailyQuery } from "../../app/Feature/API/Daily";
 import { useLocation } from "react-router-dom";
+import { IoPrint } from "react-icons/io5";
+import PrintInvoice from "../Prints/PrintInvoice";
+import { useReactToPrint } from "react-to-print";
 
 const StudioTableDaily = () => {
+  const invoiceRef = useRef();
   const location = useLocation()
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
@@ -26,6 +30,8 @@ const StudioTableDaily = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editEmployee, setEditEmployee] = useState(null);
   const [loadingPackageId, setLoadingPackageId] = useState(null);
+  const [printInvoice, setPrintInvoice] = useState(null);
+
   useEffect(() => {
     refetchEmployees();
   }, [refetchEmployees]);
@@ -53,6 +59,25 @@ const StudioTableDaily = () => {
     setIsDeleteDialogOpen(true);
     setLoadingPackageId(employeeId);
     refetchSearchResults()
+  };
+
+
+  
+  const handlePrintRef = useReactToPrint({
+    content: () => invoiceRef.current,
+  });
+
+  const handlePrint = async (employeeId) => {
+    const PrintInvoices =
+      searchQuery === ""
+        ? employees.data.find((emp) => emp.id === employeeId)
+        : searchedEmployees.studio.find((emp) => emp.id === employeeId);
+  
+    setPrintInvoice(PrintInvoices);
+  
+    setTimeout(() => {
+      handlePrintRef();
+    }, 300);
   };
 
   const handleDeleteConfirmed = async () => {
@@ -277,6 +302,12 @@ const StudioTableDaily = () => {
           ]?.id;
           return (
             <>
+                         <button onClick={() => handlePrint(adminId)} className="ml-5">
+                <IoPrint
+                  title="طباعه الفاتوره"
+                  className="text-2xl text-black"
+                />
+              </button>
               <button onClick={() => handleEdit(adminId)} className="ml-5">
                 <AiOutlineEdit
                   title="تعديل  البيانات"
@@ -400,7 +431,9 @@ const StudioTableDaily = () => {
           <Spinner />
         </div>
       )}
-
+      <div style={{display:'none'}}>
+      <PrintInvoice ref={invoiceRef} employee={printInvoice} />
+      </div>
       {editEmployee && (
         <UpdateStudioDaily
           isOpen={true}

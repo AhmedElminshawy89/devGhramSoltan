@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import MUIDataTable from "mui-datatables";
 import Spinner from "../../Shared/Spinner";
@@ -8,8 +8,14 @@ import { useDeleteQuickworkMutation, useGetQuickworksQuery } from "../../app/Fea
 import { useSearchWorkersQuery } from "../../app/Feature/API/Search";
 import UpdateWorker from './../UpdateForm/UpdateWorker';
 import UpdateQuickWorks from './../UpdateForm/UpdateQuickWorks';
+import { IoPrint } from "react-icons/io5";
+import PrintInvoice from "../Prints/PrintInvoice";
+import { useReactToPrint } from "react-to-print";
+import PrintInvoiceQuickWork from "../Prints/PrintInvoiceQuickWork";
 
 const QuicklyTable = () => {
+  const invoiceRef = useRef();
+  const [printInvoice, setPrintInvoice] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,6 +50,22 @@ const QuicklyTable = () => {
     setEditPackage(packageToEdit);
   };
 
+  const handlePrintRef = useReactToPrint({
+    content: () => invoiceRef.current,
+  });
+
+  const handlePrint = async (packageId) => {
+    const packageToInvoice =
+      searchQuery === ""
+        ? packages.data.find((pkg) => pkg.id === packageId)
+        : searchedPackages.work.find((pkg) => pkg.id === packageId);
+  
+    setPrintInvoice(packageToInvoice);
+  
+    setTimeout(() => {
+      handlePrintRef();
+    }, 300);
+  };
   const handleDelete = (packageId) => {
     setDeletePackageId(packageId);
     setIsDeleteDialogOpen(true);
@@ -156,6 +178,12 @@ const QuicklyTable = () => {
             : searchedPackages?.work[tableMeta.rowIndex]?.id;
           return (
             <>
+                         <button onClick={() => handlePrint(discountId)} className="ml-5">
+                <IoPrint
+                  title="طباعه الفاتوره"
+                  className="text-2xl text-black"
+                />
+              </button>
               <button onClick={() => handleEdit(discountId)} className="ml-5">
                 <AiOutlineEdit className="text-2xl text-black" />
               </button>
@@ -269,7 +297,9 @@ const QuicklyTable = () => {
           refetchSearch={refetchData}
         />
       )}
-
+      <div style={{display:'none'}}>
+      <PrintInvoiceQuickWork ref={invoiceRef} employee={printInvoice} />
+      </div>
       <DeleteDialog
         isOpen={isDeleteDialogOpen}
         onDeleteConfirmed={handleDeleteConfirmed}
