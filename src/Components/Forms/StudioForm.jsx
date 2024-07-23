@@ -51,19 +51,24 @@ const Invoice = React.forwardRef((props, ref) => {
     <div
       ref={ref}
       style={{
-        width: "80mm",
+        // width: "80mm",
         padding: "10mm",
         fontFamily: "Arial, sans-serif",
         direction: 'rtl',
+         textAlign: "center"
       }}
     >
-      <div style={{ textAlign: "center" }}>
+        <div         style={{
+        display:'flex', justifyContent:'center',
+        alignItems: 'center'
+
+        }}>
         <img
           src={logo}
           alt="Logo"
-          style={{ width: "30mm", height: "auto", margin: "0 auto" }}
+          style={{ width: "30mm", height: "auto", marginBottom: "2px" }}
         />
-      </div>
+        </div>
       <div>
         <div
           style={{

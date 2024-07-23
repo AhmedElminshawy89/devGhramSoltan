@@ -27,10 +27,11 @@ const Invoice = React.forwardRef((props, ref) => {
     <div
       ref={ref}
       style={{
-        width: "80mm",
+        // width: "80mm",
         padding: "10mm",
         fontFamily: "Arial, sans-serif",
         direction: "rtl",
+        textAlign:'center'
       }}
     >
       <div
@@ -38,11 +39,17 @@ const Invoice = React.forwardRef((props, ref) => {
           padding: "10mm 0",
         }}
       >
+        <div         style={{
+        display:'flex', justifyContent:'center',
+        alignItems: 'center'
+
+        }}>
         <img
           src={logo}
           alt="Logo"
           style={{ width: "30mm", height: "auto", marginBottom: "2px" }}
         />
+        </div>
         <p className="mb-1">
           <strong>اسم الموظف:</strong> {employeeName}
         </p>

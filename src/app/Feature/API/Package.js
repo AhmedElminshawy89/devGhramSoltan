@@ -10,6 +10,11 @@ export const CategoryApi = createApi({
       transformResponse: (response) => response.categories,
       providesTags: ["Category"],
     }),
+    getCategoriesWithoutPagination: build.query({
+      query: () => `/showCategory`,
+      transformResponse: (response) => response.categories,
+      providesTags: ["Category"],
+    }),
     getCategoriesStudio: build.query({
       query: () => `/showStudio`,
       transformResponse: (response) => response.makeup,
@@ -55,6 +60,7 @@ export const CategoryApi = createApi({
 
 export const {
   useGetCategoriesQuery,
+  useGetCategoriesWithoutPaginationQuery,
   useGetCategoriesStudioQuery,
   useGetCategoriesMakeUpQuery,
   useSaveCategoryMutation,

@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Input } from "antd";
 import { useSaveSubCategoryMutation } from "../../app/Feature/API/SubPackage";
-import { useGetCategoriesQuery } from "../../app/Feature/API/Package";
+import {useGetCategoriesWithoutPaginationQuery } from "../../app/Feature/API/Package";
 import Spinner from "../../Shared/Spinner";
 
 const SubPackageForm = ({ isOpen, closeModal }) => {
@@ -13,7 +13,7 @@ const SubPackageForm = ({ isOpen, closeModal }) => {
     data: packageOptions,
     isLoading: packageLoading,
     error: packageError,
-  } = useGetCategoriesQuery();
+  } = useGetCategoriesWithoutPaginationQuery();
 
   const [packageName, setPackageName] = useState("");
   const [item, setItem] = useState("");
@@ -72,8 +72,8 @@ const SubPackageForm = ({ isOpen, closeModal }) => {
   if (packageError) return <div>Error: {packageError.message}</div>;
 
   const uniquePackageOptions = Array.from(
-    new Set(packageOptions.data?.map((pkg) => pkg.name))
-  ).map((name) => packageOptions.data?.find((pkg) => pkg.name === name));
+    new Set(packageOptions?.map((pkg) => pkg.name))
+  ).map((name) => packageOptions?.find((pkg) => pkg.name === name));
 
   return (
     <>
