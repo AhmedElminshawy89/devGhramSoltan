@@ -285,7 +285,7 @@ const notesArray = notesString?.split(',').map((note) => ({
         message: "الرجاء ملء جميع الحقول!",
       });
     }
-    console.log(discountName)
+    // console.log(discountName)
   };
 
   const resetForm = () => {

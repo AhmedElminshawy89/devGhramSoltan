@@ -10,9 +10,9 @@ db.version(1).stores({
 export const saveExpenseData = async (expenseData) => {
   try {
     await db.expenses.add(expenseData);
-    console.log("Expense saved to IndexedDB:", expenseData);
+    // console.log("Expense saved to IndexedDB:", expenseData);
   } catch (error) {
-    console.error("Error saving expense to IndexedDB:", error);
+    // console.error("Error saving expense to IndexedDB:", error);
     throw error;
   }
 };
@@ -20,10 +20,10 @@ export const saveExpenseData = async (expenseData) => {
 export const getAllExpenses = async () => {
   try {
     const expenses = await db.expenses.toArray();
-    console.log("Retrieved expenses from IndexedDB:", expenses);
+    // console.log("Retrieved expenses from IndexedDB:", expenses);
     return expenses;
   } catch (error) {
-    console.error("Error retrieving expenses from IndexedDB:", error);
+    // console.error("Error retrieving expenses from IndexedDB:", error);
     throw error;
   }
 };

@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import MUIDataTable from "mui-datatables";
 import { Pagination } from "antd";
-import {  useSearchStudioDateQuery, useSearchStudioQuery } from "../../app/Feature/API/Search";
+import {  useSearchStudioDateQuery } from "../../app/Feature/API/Search";
 import DeleteDialog from "../../Shared/DeleteDialog";
 import Spinner from "../../Shared/Spinner";
-import { useDeleteStudioMutation, useGetStudiosQuery } from "../../app/Feature/API/Studio";
+import { useDeleteStudioMutation } from "../../app/Feature/API/Studio";
 import UpdateStudioDaily from "../UpdateForm/UpdateStudioMakeUp";
 import { useGetStudioDailyQuery } from "../../app/Feature/API/Daily";
 import { useLocation } from "react-router-dom";
@@ -17,7 +17,7 @@ const StudioTableDaily = () => {
   const invoiceRef = useRef();
   const location = useLocation()
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
+  const [perPage, setPerPage] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const { data: employees, refetch: refetchEmployees } = useGetStudioDailyQuery(currentPage);
   const {
@@ -417,7 +417,7 @@ const StudioTableDaily = () => {
           />
           <Pagination
             current={currentPage}
-            pageSize={perPage}
+            pageSize={employees.per_page}
             total={employees.total}
             onChange={handlePageChange}
             onShowSizeChange={(current, size) => {

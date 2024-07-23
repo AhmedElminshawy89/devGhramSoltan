@@ -1425,7 +1425,7 @@ a {
 }
 
 .features .container .passion .img-holder::before {
-  background-color: rgba(0 0 0 / .8);
+  background-color: rgba(0 0 0 / .4);
 }
 
 .features .container .passion h2::before {

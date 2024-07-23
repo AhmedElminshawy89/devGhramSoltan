@@ -8,7 +8,6 @@ import {
 } from "../../app/Feature/API/Rents";
 import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
 import { useDispatch, useSelector } from "react-redux";
-import { useUpdateCategoryStatusMutation } from "../../app/Feature/API/Package";
 import Spinner from "../../Shared/Spinner";
 import DeleteDialog from "../../Shared/DeleteDialog";
 import { Pagination } from "antd";
@@ -18,7 +17,7 @@ import { useSearchRentsQuery } from "../../app/Feature/API/Search";
 
 const RentalTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
+  const [perPage, setPerPage] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const { data: loansOnline, refetch: refetchLoansOnline } =
     useGetRentsQuery(currentPage);
@@ -428,7 +427,7 @@ const RentalTable = () => {
             />
             <Pagination
               current={currentPage}
-              pageSize={perPage}
+              pageSize={loansOnline.per_page}
               total={loansOnline.total}
               onChange={handlePageChange}
               onShowSizeChange={(current, size) => {

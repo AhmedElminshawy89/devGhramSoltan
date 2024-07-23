@@ -129,7 +129,7 @@ const [setUniqueCategories] = useState([])
         message: "الرجاء ملء جميع الحقول!",
       });
     }
-    console.log(discountName);
+    // console.log(discountName);
   };
   
 

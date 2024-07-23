@@ -15,7 +15,7 @@ import { useGetSubCategoriesQuery } from "../../app/Feature/API/SubPackage";
 
 const PackageTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
+  const [perPage, setPerPage] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const { data: packages, refetch } = useGetCategoriesQuery(currentPage);
   const { refetch:refetchSubPackage } = useGetSubCategoriesQuery(currentPage);
@@ -140,7 +140,7 @@ const PackageTable = () => {
       options: {
         customBodyRender: (value) => {
           return (
-            <div style={{ whiteSpace: 'break-spaces' }}>
+            <div style={{ whiteSpace: 'break-spaces',minWidth:'400px' }}>
               {value}
             </div>
           );
@@ -314,7 +314,7 @@ const PackageTable = () => {
           />
           <Pagination
             current={currentPage}
-            pageSize={perPage}
+            pageSize={packages.per_page}
             total={packages.total}
             onChange={handlePageChange}
             onShowSizeChange={(current, size) => {

@@ -12,7 +12,7 @@ import UpdatePasswordAdmin from './../UpdateForm/UpdatePasswordAdmin';
 
 const AdminTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
+  const [perPage, setPerPage] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const { data: employees, refetch: refetchEmployees } = useGetAdminsQuery(currentPage); // Renamed from packages to employees for clarity
   const {
@@ -266,7 +266,7 @@ const AdminTable = () => {
           />
           <Pagination
             current={currentPage}
-            pageSize={perPage}
+            pageSize={employees.per_page}
             total={employees.total}
             onChange={handlePageChange}
             onShowSizeChange={(current, size) => {

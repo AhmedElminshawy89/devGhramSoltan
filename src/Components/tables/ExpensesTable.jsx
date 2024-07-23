@@ -17,7 +17,7 @@ import { setOfflineExpenses } from "../../app/Feature/offlineExpensesSlice";
 
 const ExpensesTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
+  const [perPage, setPerPage] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const { data: loansOnline, refetch: refetchLoansOnline } =
     useGetExpensesQuery(currentPage);
@@ -317,7 +317,7 @@ const ExpensesTable = () => {
             />
             <Pagination
               current={currentPage}
-              pageSize={perPage}
+              pageSize={loansOnline.per_page}
               total={loansOnline.total}
               onChange={handlePageChange}
               onShowSizeChange={(current, size) => {

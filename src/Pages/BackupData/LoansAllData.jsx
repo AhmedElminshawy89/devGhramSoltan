@@ -6,7 +6,7 @@ import { saveData, getData } from "../../Services/dexieService";
 const LoansAllData = () => {
   const { data: loansOnline, refetch } = useGetLoansQuery();
   const [loansOffline, setLoansOffline] = useState([]);
-  console.log("ExpensesAllData", loansOffline);
+  // console.log("ExpensesAllData", loansOffline);
 
   useEffect(() => {
     if (loansOnline && loansOnline.data) {

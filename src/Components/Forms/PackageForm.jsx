@@ -34,14 +34,6 @@ const PackageForm = ({ isOpen, closeModal }) => {
 
         await saveCategory(formData);
 
-        console.log("Form submitted!");
-        console.log({
-          name,
-          price,
-          category,
-          desc,
-          photo,
-        });
 
         closeModal();
         setNotification({

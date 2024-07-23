@@ -13,7 +13,7 @@ import { useSearchSubCategoryQuery } from "../../app/Feature/API/Search";
 
 const SubPackageTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
+  const [perPage, setPerPage] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const { data: packages, refetch } = useGetSubCategoriesQuery(currentPage);
   const {
@@ -259,7 +259,7 @@ const SubPackageTable = () => {
           />
           <Pagination
             current={currentPage}
-            pageSize={perPage}
+            pageSize={packages.per_page}
             total={packages.total}
             onChange={handlePageChange}
             onShowSizeChange={(current, size) => {

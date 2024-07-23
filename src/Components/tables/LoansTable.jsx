@@ -16,7 +16,7 @@ import { setOfflineLoans } from "../../app/Feature/offlineSlice";
 
 const LoansTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
+  const [perPage, setPerPage] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const { data: loansOnline, refetch: refetchLoansOnline } =
     useGetLoansQuery(currentPage);
@@ -316,7 +316,7 @@ const LoansTable = () => {
             />
             <Pagination
               current={currentPage}
-              pageSize={perPage}
+              pageSize={loansOnline.per_page}
               total={loansOnline.total}
               onChange={handlePageChange}
               onShowSizeChange={(current, size) => {

@@ -10,7 +10,7 @@ import { useDeleteEmployeeMutation, useGetEmployeesQuery } from "../../app/Featu
 
 const EmployeeTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
+  const [perPage, setPerPage] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const { data: employees, refetch: refetchEmployees } = useGetEmployeesQuery(currentPage); // Renamed from packages to employees for clarity
   const {
@@ -242,7 +242,7 @@ const EmployeeTable = () => {
           />
           <Pagination
             current={currentPage}
-            pageSize={perPage}
+            pageSize={employees.per_page}
             total={employees.total}
             onChange={handlePageChange}
             onShowSizeChange={(current, size) => {

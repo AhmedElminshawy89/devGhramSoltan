@@ -54,7 +54,6 @@ const ExpensesForm = ({ isOpen, closeModal }) => {
             closeModal();
             resetForm();
             toast.error("تم حفظها محليًا وستتم مزامنتها عند استعادة الاتصال.");
-            console.log(offlineLoans);
           }
         } catch (error) {
           const newOfflineData = {

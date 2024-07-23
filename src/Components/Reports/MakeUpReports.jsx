@@ -11,7 +11,7 @@ const MakeUpReports = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [perPage, setPerPage] = useState(5);
+  const [perPage, setPerPage] = useState();
   const [searchDateData, setSearchDateData] = useState(null);
   const [loadingSearch, setLoadingSearch] = useState(false); 
   const [totals, setTotals] = useState({
@@ -396,7 +396,7 @@ const MakeUpReports = () => {
           />
           <Pagination
             current={currentPage}
-            pageSize={perPage}
+            pageSize={employees.per_page}
             total={employees?.total || 0}
             onChange={handlePageChange}
             onShowSizeChange={(current, size) => {

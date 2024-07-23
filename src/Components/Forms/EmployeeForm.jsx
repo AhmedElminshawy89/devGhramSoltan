@@ -50,7 +50,6 @@ const EmployeeForm = ({ isOpen, closeModal }) => {
 
       try {
         const { data } = await saveEmployee(newEmployee).unwrap();
-        console.log("تمت إضافة الموظف بنجاح:", data);
 
         setNotification({
           type: "success",

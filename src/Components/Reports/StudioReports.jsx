@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import MUIDataTable from "mui-datatables";
 import Spinner from "../../Shared/Spinner";
 import { Pagination } from "antd";
-import { useGetMakeupsQuery } from "../../app/Feature/API/MakeUp";
 import axios from "axios";
 import host from "../../host/Host";
 import { IoIosRefresh } from "react-icons/io";
@@ -12,10 +11,9 @@ const StudioReports = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [perPage, setPerPage] = useState(5);
+  const [perPage, setPerPage] = useState();
   const [searchDateData, setSearchDateData] = useState(null);
   const [loadingSearch, setLoadingSearch] = useState(false);
-  const [totalAmount, setTotalAmount] = useState(0); 
   const [totals, setTotals] = useState({
     totalPriceService: 0,
     totalAmount: 0,
@@ -404,7 +402,7 @@ const StudioReports = () => {
           />
           <Pagination
             current={currentPage}
-            pageSize={perPage}
+            pageSize={employees.per_page}
             total={employees?.total || 0}
             onChange={handlePageChange}
             onShowSizeChange={(current, size) => {

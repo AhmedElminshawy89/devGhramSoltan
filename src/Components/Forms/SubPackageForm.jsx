@@ -35,8 +35,8 @@ const SubPackageForm = ({ isOpen, closeModal }) => {
           price,
         });
 
-        console.log("Form submitted!");
-        console.log(result.data);
+        // console.log("Form submitted!");
+        // console.log(result.data);
 
         closeModal();
         setNotification({

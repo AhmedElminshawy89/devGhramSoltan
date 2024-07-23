@@ -17,7 +17,7 @@ const QuicklyTable = () => {
   const invoiceRef = useRef();
   const [printInvoice, setPrintInvoice] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
+  const [perPage, setPerPage] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const { data: packages, refetch } = useGetQuickworksQuery(currentPage);
   const {
@@ -274,7 +274,7 @@ const QuicklyTable = () => {
           />
           <Pagination
             current={currentPage}
-            pageSize={perPage}
+            pageSize={packages.per_page}
             total={packages.total}
             onChange={handlePageChange}
             onShowSizeChange={(current, size) => {

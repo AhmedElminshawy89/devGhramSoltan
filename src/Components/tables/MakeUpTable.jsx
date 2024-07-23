@@ -15,7 +15,7 @@ import { useReactToPrint } from "react-to-print";
 const MakeUpTable = () => {
   const invoiceRef = useRef();
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
+  const [perPage, setPerPage] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const { data: employees, refetch: refetchEmployees } = useGetMakeupsQuery(currentPage);
   const {
@@ -359,7 +359,7 @@ const MakeUpTable = () => {
           />
           <Pagination
             current={currentPage}
-            pageSize={perPage}
+            pageSize={employees.per_page}
             total={employees.total}
             onChange={handlePageChange}
             onShowSizeChange={(current, size) => {
