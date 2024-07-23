@@ -2,7 +2,6 @@ import React, { useState, useContext } from "react";
 import { VscSaveAs } from "react-icons/vsc";
 import ExpensesTable from "../../Components/tables/ExpensesTable";
 import ExpensesForm from "../../Components/Forms/ExpensesForm";
-import { Link } from "react-router-dom";
 import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
 
 const Expenses = () => {
@@ -30,9 +29,11 @@ const Expenses = () => {
         >
           <VscSaveAs className="ml-3" /> المصروفات
         </button>
+        {!isOnline&&(
         <span className="text-lg font-semibold">
           البيانات الغير متصله({Number_of_data_offline})
-        </span>{" "}
+        </span>
+        )}
       </div>
       <ExpensesForm closeModal={closeModal} isOpen={isOpen} />
       <ExpensesTable />

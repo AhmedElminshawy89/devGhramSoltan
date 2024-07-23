@@ -135,9 +135,9 @@ const WorkTable = () => {
       name: "تنفيذ",
       options: {
         customBodyRender: (value, tableMeta) => {
-          const workerId = (packages?.data || searchedPackages?.job)?.[
-            tableMeta.rowIndex
-          ]?.id;
+          const workerId = searchQuery
+          ? searchedPackages?.job?.[tableMeta.rowIndex]?.id
+          : packages?.data?.[tableMeta.rowIndex]?.id
           return (
             <>
               <button onClick={() => handleEdit(workerId)} className="ml-5">

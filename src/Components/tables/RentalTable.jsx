@@ -137,7 +137,11 @@ const RentalTable = () => {
       name: "status",
       options: {
         customBodyRender: (value, tableMeta) => {
-          const packageId = loansOnline?.data?.[tableMeta.rowIndex]?.id;
+          const packageId = 
+          // loansOnline?.data?.[tableMeta.rowIndex]?.id;
+          searchQuery
+          ? searchedRents?.rent?.[tableMeta.rowIndex]?.id
+          : loansOnline?.data?.[tableMeta.rowIndex]?.id
           const isLoading = loadingPackageIds.includes(packageId);
 
           return (

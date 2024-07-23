@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import { VscSaveAs } from "react-icons/vsc";
 import LoansTable from "../../Components/tables/LoansTable";
 import LoansForm from "../../Components/Forms/LoansForm";
-import { Link } from "react-router-dom";
 import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
 
 const Loans = () => {
@@ -27,9 +26,11 @@ const Loans = () => {
         >
           <VscSaveAs className="ml-3" /> سلفه
         </button>
+        {!isOnline&&(
         <span className="text-lg font-semibold">
           البيانات الغير متصله({Number_of_data_offline})
-        </span>{" "}
+        </span>
+        )}
       </div>
 
       <LoansForm closeModal={closeModal} isOpen={isOpen} />

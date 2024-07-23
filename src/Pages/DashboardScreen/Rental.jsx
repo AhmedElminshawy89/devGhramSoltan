@@ -1,14 +1,12 @@
-import React, { useState, Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { AiOutlineClose, AiOutlineSave, AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
+import React, { useContext, useState } from "react";
 import { VscSaveAs } from "react-icons/vsc";
-import MUIDataTable from "mui-datatables";
-import Select from "react-select";
 import RentalTable from "../../Components/tables/RentalTable";
 import RentalForm from "../../Components/Forms/RentalForm";
+import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
 
 const Rental = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const isOnline = useContext(OnlineStatusContext);
 
   const backupRents = JSON.parse(localStorage.getItem("backuprents")) || [];
   const Number_of_data_offline = backupRents.length;
@@ -24,9 +22,11 @@ const Rental = () => {
         >
           <VscSaveAs className="ml-3" /> ايجار
         </button>
+        {!isOnline&&(
         <span className="text-lg font-semibold">
           البيانات الغير متصله({Number_of_data_offline})
-        </span>{" "}
+        </span>
+        )}
       </div>
       <RentalForm closeModal={closeModal} isOpen={isOpen} />
       <RentalTable />

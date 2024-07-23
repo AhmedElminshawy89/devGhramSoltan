@@ -55,7 +55,7 @@ const UpdateWorker = ({ isOpen, closeModal, initialValues ,refetchSearch}) => {
     } catch (error) {
       setNotification({
         type: "error",
-        message: "حدث خطأ أثناء تحديث بيانات الموظف.",
+        message: error.message || "اسم الشغلانه موجوده بالفعل من فضلك ضع اسم اخر",
       });
     }
   };

@@ -156,9 +156,11 @@ const PackageTable = () => {
       name: "status",
       options: {
         customBodyRender: (value, tableMeta, updateValue) => {
-          const packageId = (packages?.data || searchedPackages?.category)?.[
-            tableMeta.rowIndex
-          ]?.id;
+          const packageId =
+          searchQuery
+          ? searchedPackages?.category?.[tableMeta.rowIndex]?.id
+          : packages?.data?.[tableMeta.rowIndex]?.id
+          // packages?.data?.id || searchedPackages?.category?.id
           const isLoading = loadingPackageId === packageId;
           return (
             <button
@@ -218,9 +220,9 @@ const PackageTable = () => {
       label: "تنفيذ",
       options: {
         customBodyRender: (value, tableMeta, updateValue) => {
-          const packageId = (packages?.data || searchedPackages?.category)?.[
-            tableMeta.rowIndex
-          ]?.id;
+          const packageId = searchQuery
+          ? searchedPackages?.category?.[tableMeta.rowIndex]?.id
+          : packages?.data?.[tableMeta.rowIndex]?.id
           return (
             <>
               <button onClick={() => handleEdit(packageId)} className="ml-5">

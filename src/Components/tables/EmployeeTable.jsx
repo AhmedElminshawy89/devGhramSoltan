@@ -146,9 +146,9 @@ const EmployeeTable = () => {
       label: "تنفيذ",
       options: {
         customBodyRender: (value, tableMeta) => {
-          const employee = (employees?.data || searchedEmployees?.employee)?.[
-            tableMeta.rowIndex
-          ]?.id;
+          const employee = searchQuery
+          ? searchedEmployees?.employee?.[tableMeta.rowIndex]?.id
+          : employees?.data?.[tableMeta.rowIndex]?.id
           if (employee) {
             return (
               <>

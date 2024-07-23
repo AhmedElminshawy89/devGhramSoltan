@@ -267,9 +267,10 @@ const StudioTable = () => {
       label: "تنفيذ",
       options: {
         customBodyRender: (value, tableMeta, updateValue) => {
-          const adminId = (employees?.data || searchedEmployees?.studio)?.[
-            tableMeta.rowIndex
-          ]?.id;
+          const adminId = 
+          searchQuery
+          ? searchedEmployees?.studio?.[tableMeta.rowIndex]?.id
+          : employees?.data?.[tableMeta.rowIndex]?.id
           return (
             <>
                          <button onClick={() => handlePrint(adminId)} className="ml-5">

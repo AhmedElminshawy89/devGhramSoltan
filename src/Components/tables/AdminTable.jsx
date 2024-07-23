@@ -161,9 +161,12 @@ const AdminTable = () => {
       label: "تنفيذ",
       options: {
         customBodyRender: (value, tableMeta, updateValue) => {
-          const adminId = (employees?.data || searchedEmployees?.admin)?.[
-            tableMeta.rowIndex
-          ]?.id;
+          const adminId = searchQuery
+          ? searchedEmployees?.admin?.[tableMeta.rowIndex]?.id
+          : employees?.data?.[tableMeta.rowIndex]?.id
+          // (employees?.data || searchedEmployees?.admin)?.[
+          //   tableMeta.rowIndex
+          // ]?.id;
           return (
             <>
               <button onClick={() => handleEdit(adminId)} className="ml-5">
