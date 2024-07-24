@@ -121,7 +121,7 @@ const PackageTable = () => {
           const rowIndex = tableMeta.rowIndex;
           return (
             <img
-              src={value}
+              src={`${value}`}
               alt="package"
               style={{
                 width: "50px",
