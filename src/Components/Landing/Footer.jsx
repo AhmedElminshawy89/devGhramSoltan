@@ -99,9 +99,25 @@ import { FaThreads } from "react-icons/fa6";
         </div>
         <div className="footer__bar">
           <div className="footer__bar__content">
-            <p>حقوق النشر © 2024 جميع الحقوق محفوظة.</p>
-            <div className="footer__socials">
-
+          <p>حقوق النشر © 2024 جميع الحقوق محفوظة. تم الإنشاء بواسطة               
+            <a href="https://www.facebook.com/profile.php?id=100089884247544" target="_blank" rel="noopener noreferrer">
+           {" "} Coding Corner {" "}
+                            </a>.</p>
+          <div className="footer__socials">
+              
+            <a href="https://www.facebook.com/profile.php?id=100089884247544" target="_blank" rel="noopener noreferrer">
+                                <svg
+                                    stroke="#fff"
+                                    fill="#fff"
+                                    strokeWidth="0"
+                                    viewBox="0 0 320 512"
+                                    height="1.4em"
+                                    width="1.4em"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"></path>
+                                </svg>
+                            </a>
             </div>
           </div>
         </div>

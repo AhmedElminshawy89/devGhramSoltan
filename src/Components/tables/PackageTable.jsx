@@ -150,6 +150,11 @@ const PackageTable = () => {
     {
       label: "سعر الباكدج",
       name: "price",
+      options: {
+        customBodyRender: (value) => {
+          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
+        },
+      },
     },
     {
       label: "حالة العرض",

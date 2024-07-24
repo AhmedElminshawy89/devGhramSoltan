@@ -85,12 +85,13 @@ const QuicklyForm = ({ isOpen, closeModal }) => {
 
   useEffect(() => {
     if (jobType.length > 0) {
-      const totalAmount = jobType.reduce((acc, job) => acc + job.price, 0);
+      const totalAmount = jobType.reduce((acc, job) => acc + parseFloat(job.price), 0);
       setAmount(totalAmount);
     } else {
       setAmount("");
     }
   }, [jobType]);
+  
 
 
   const handlePrint = useReactToPrint({

@@ -209,41 +209,68 @@ const Invoice = React.forwardRef((props, ref) => {
     }, [showCategoryStudio, getAllDiscount,packageType]);
   
     useEffect(() => {
+      setSelectedPackageDetails([]);
+      setDiscountType("");
+      if (showCategoryStudio) {
+        const uniqueCategories = showCategoryStudio.reduce((acc, current) => {
+          const existing = acc.find((item) => item.name === current.name);
+          if (!existing) {
+            return [...acc, current];
+          }
+          return acc;
+        }, []);
+        setUniqueCategories(uniqueCategories);
+      }
+  
+      if (getAllDiscount && Array.isArray(getAllDiscount)) {
+        const uniqueDiscounts = Array.from(
+          new Set(getAllDiscount.map((item) => item.discount))
+        ).map((discount) => {
+          return getAllDiscount.find((item) => item.discount === discount);
+        });
+        setAllDiscounts(uniqueDiscounts);
+      } else {
+        console.error("getAllDiscount is not an array or is undefined/null.");
+      }
+    }, [showCategoryStudio, getAllDiscount,packageType]);
+  
+    useEffect(() => {
       const calculateTotal = () => {
         let totalPrice = 0;
+    
         const subCategoryPrices = ShowSubCategory
-          ? [...new Set(ShowSubCategory.map((pckg) => pckg.category.price))]
+          ? [...new Set(ShowSubCategory.map((pckg) => Number(pckg.category.price) || 0))]
           : [];
         const TotalPackage = subCategoryPrices.reduce((acc, price) => acc + price, 0);
         totalPrice += TotalPackage;
-  
+    
         if (additionalServicePrice) {
-          totalPrice += additionalServicePrice;
+          totalPrice += Number(additionalServicePrice) || 0;
         }
-  
+    
         const selectedPackage = uniqueCategories.find(
           (pkg) => pkg.id === packageType
         );
         if (selectedPackage) {
-          totalPrice -= selectedPackage.price;
+          totalPrice -= Number(selectedPackage.price) || 0;
         }
-  
+    
         selectedPackageDetails.forEach((detail) => {
           const subCategory = ShowSubCategory.find(
             (sub) => sub.id === detail.value
           );
           if (subCategory) {
-            totalPrice -= subCategory.price;
+            totalPrice -= Number(subCategory.price) || 0;
           }
         });
-  
+    
         if (discountType && ShowDiscountPrice?.price) {
-          totalPrice -= ShowDiscountPrice.price;
+          totalPrice -= Number(ShowDiscountPrice.price) || 0;
         }
-  
+    
         setTotal(totalPrice);
       };
-  
+    
       calculateTotal();
     }, [
       packageType,
@@ -254,9 +281,9 @@ const Invoice = React.forwardRef((props, ref) => {
       ShowSubCategory,
       discountType,
     ]);
-  
+    
     useEffect(() => {
-      setRemaining(total - payment);
+      setRemaining(Number(total) - Number(payment) || 0);
     }, [total, payment]);
   
     const discountRate = ShowDiscountPrice ? ShowDiscountPrice.price : "";

@@ -207,39 +207,40 @@ const MakeupForm = ({ isOpen, closeModal }) => {
   useEffect(() => {
     const calculateTotal = () => {
       let totalPrice = 0;
+  
       const subCategoryPrices = ShowSubCategory
-        ? [...new Set(ShowSubCategory.map((pckg) => pckg.category.price))]
+        ? [...new Set(ShowSubCategory.map((pckg) => Number(pckg.category.price) || 0))]
         : [];
       const TotalPackage = subCategoryPrices.reduce((acc, price) => acc + price, 0);
       totalPrice += TotalPackage;
-
+  
       if (additionalServicePrice) {
-        totalPrice += additionalServicePrice;
+        totalPrice += Number(additionalServicePrice) || 0;
       }
-
+  
       const selectedPackage = uniqueCategories.find(
         (pkg) => pkg.id === packageType
       );
       if (selectedPackage) {
-        totalPrice -= selectedPackage.price;
+        totalPrice -= Number(selectedPackage.price) || 0;
       }
-
+  
       selectedPackageDetails.forEach((detail) => {
         const subCategory = ShowSubCategory.find(
           (sub) => sub.id === detail.value
         );
         if (subCategory) {
-          totalPrice -= subCategory.price;
+          totalPrice -= Number(subCategory.price) || 0;
         }
       });
-
+  
       if (discountType && ShowDiscountPrice?.price) {
-        totalPrice -= ShowDiscountPrice.price;
+        totalPrice -= Number(ShowDiscountPrice.price) || 0;
       }
-
+  
       setTotal(totalPrice);
     };
-
+  
     calculateTotal();
   }, [
     packageType,
@@ -250,10 +251,11 @@ const MakeupForm = ({ isOpen, closeModal }) => {
     ShowSubCategory,
     discountType,
   ]);
-
+  
   useEffect(() => {
-    setRemaining(total - payment);
+    setRemaining(Number(total) - Number(payment) || 0);
   }, [total, payment]);
+  
 
   const discountRate = ShowDiscountPrice ? ShowDiscountPrice.price : "";
 

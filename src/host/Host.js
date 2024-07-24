@@ -2,7 +2,6 @@
 
 // export default host;
 
-
-const host = "https://www.gharamsoltan.com";
+const host = "https://www.gharamsoltan.com/BackEnd";
 
 export default host;
