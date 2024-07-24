@@ -61,7 +61,7 @@ const StudioTable = () => {
     const PrintInvoices =
       searchQuery === ""
         ? employees.data.find((emp) => emp.id === employeeId)
-        : searchedEmployees.makeup.find((emp) => emp.id === employeeId);
+        : searchedEmployees.studio.find((emp) => emp.id === employeeId);
   
     setPrintInvoice(PrintInvoices);
   
