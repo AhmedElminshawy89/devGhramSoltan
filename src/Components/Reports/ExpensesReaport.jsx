@@ -39,7 +39,7 @@ const ExpensesReaport = () => {
       const dataToDisplay = searchDateData?.expense || employees?.data || [];
   
       dataToDisplay.forEach((item) => {
-        totalPriceLoans += item.price || 0;
+        totalPriceLoans += parseFloat(item.price) || 0;
       });
   
       setTotals({

@@ -286,9 +286,13 @@ const MakeUpTableDaily = () => {
       label: "تنفيذ",
       options: {
         customBodyRender: (value, tableMeta, updateValue) => {
-          const adminId = (employees?.data || searchedEmployees?.makeup)?.[
-            tableMeta.rowIndex
-          ]?.id;
+          const adminId =
+          searchQuery
+          ? searchedEmployees?.makeup?.[tableMeta.rowIndex]?.id
+          : employees?.data?.[tableMeta.rowIndex]?.id
+          //  (employees?.data || searchedEmployees?.makeup)?.[
+          //   tableMeta.rowIndex
+          // ]?.id;
           return (
             <>
                          <button onClick={() => handlePrint(adminId)} className="ml-5">

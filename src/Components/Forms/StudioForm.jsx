@@ -146,7 +146,7 @@ const Invoice = React.forwardRef((props, ref) => {
         <strong>يرجي الاحتفاظ بالايصال للمراجعه</strong>
       </p>
       <p className="mb-1 text-md text-center">
-        <strong>العنوان: دسوق - شارع الجيش <br/> م: 0106853310</strong>
+        <strong>العنوان: دسوق - شارع الجيش <br/> م: 0472570908</strong>
       </p>
     </div>
   );

@@ -40,13 +40,13 @@ const MakeUpReports = () => {
       const dataToDisplay = searchDateData?.makeup || employees?.data || [];
   
       dataToDisplay.forEach((item) => {
-        totalPriceService += item.priceService || 0;
-        totalAmount += item.total || 0;
-        totalPay += item.pay || 0;
-        totalRest += item.rest || 0;
+        totalPriceService += parseFloat(item.priceService) || 0;
+        totalAmount += parseFloat(item.total) || 0;
+        totalPay += parseFloat(item.pay ) || 0;
+        totalRest += parseFloat(item.rest )|| 0;
   
         if (item.reason_discount_id) {
-          totalDiscount += item.discount?.price || 0;
+          totalDiscount += parseFloat(item.discount?.price) || 0;
         }
       });
   

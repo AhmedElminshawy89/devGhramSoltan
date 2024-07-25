@@ -26,12 +26,12 @@ const LoansReports = () => {
 
   const calculateTotals = () => {
     if (searchDateData?.loan || employees?.data || []) {
-     let totalPriceLoans = 0
+      let totalPriceLoans = 0;
   
       const dataToDisplay = searchDateData?.loan || employees?.data || [];
   
       dataToDisplay.forEach((item) => {
-        totalPriceLoans += item.price || 0;
+        totalPriceLoans += parseFloat(item.price) || 0;
       });
   
       setTotals({
@@ -39,6 +39,7 @@ const LoansReports = () => {
       });
     }
   };
+  
   
   
   useEffect(() => {
