@@ -1,5 +1,27 @@
 import React, { forwardRef } from "react";
 import logo from '../../assets/Img/logo.png'
+const convertTo12HourFormat = (time) => {
+  // دالة لتحويل الأرقام إلى النصوص العربية
+  const convertToArabicNumbers = (num) => {
+    const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
+    return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
+  };
+
+  // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
+  if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
+    return '!! الوقت غير صحيح';
+  }
+
+  // تقسيم الوقت إلى ساعات، دقائق وثواني
+  let [hours, minutes, seconds] = time.split(':').map(Number);
+
+  let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
+  hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
+
+  // إعادة تركيب الوقت بصيغة 12 ساعة
+  return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
+};
+
 const PrintInvoice = forwardRef(({ employee }, ref) => {
   
   const now = new Date();
@@ -63,22 +85,22 @@ const PrintInvoice = forwardRef(({ employee }, ref) => {
         <p className="mb-1">
           <strong>الوقت:</strong> {now.toLocaleTimeString('ar-EG')}
         </p>
-        {employee?.enter&&(
+        {employee?.enter && (
         <p className="mb-1 text-lg">
           <strong>معاد الدخول :</strong>{" "}
-          {employee?.enter}
+          {convertTo12HourFormat(employee.enter)}
         </p>
-        )}
+      )}
                 {employee?.arrive&&(
         <p className="mb-1 text-lg">
           <strong>معاد الوصول :</strong>{" "}
-          {employee?.arrive}
+          {convertTo12HourFormat(employee?.arrive)}
         </p>
         )}
 {employee?.exit && (
   <p className="mb-1 text-lg">
     <strong>معاد الخروج :</strong>{" "}
-    {employee.exit}
+    {convertTo12HourFormat(employee.exit)}
   </p>
 )}
 

@@ -164,15 +164,103 @@ const StudioTableDaily = () => {
       {
         name: "enter",
         label: "معاد دخول",
+        options: {
+          customBodyRender: (value) => {
+            // دالة لتحويل الأرقام إلى النصوص العربية
+            const convertToArabicNumbers = (num) => {
+              const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
+              return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
+            };
+      
+            const convertTo12HourFormat = (time) => {
+              // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
+              if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
+                return '';
+              }
+      
+              // تقسيم الوقت إلى ساعات، دقائق وثواني
+              let [hours, minutes, seconds] = time.split(':').map(Number);
+      
+              let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
+              hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
+      
+              // إعادة تركيب الوقت بصيغة 12 ساعة
+              return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
+            };
+      
+            const formattedTime = convertTo12HourFormat(value);
+            return `${formattedTime}`;
+          },
+          wrap: 'nowrap',
+        },
       }
+      
 ,      
       {
         name: "exit",
         label: "معاد خروج",
+        options: {
+          customBodyRender: (value) => {
+            // دالة لتحويل الأرقام إلى النصوص العربية
+            const convertToArabicNumbers = (num) => {
+              const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
+              return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
+            };
+      
+            const convertTo12HourFormat = (time) => {
+              // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
+              if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
+                return '';
+              }
+      
+              // تقسيم الوقت إلى ساعات، دقائق وثواني
+              let [hours, minutes, seconds] = time.split(':').map(Number);
+      
+              let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
+              hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
+      
+              // إعادة تركيب الوقت بصيغة 12 ساعة
+              return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
+            };
+      
+            const formattedTime = convertTo12HourFormat(value);
+            return `${formattedTime}`;
+          },
+          wrap: 'nowrap',
+        },
       },
       {
         name: "arrive",
         label: "معاد وصول",
+        options: {
+          customBodyRender: (value) => {
+            // دالة لتحويل الأرقام إلى النصوص العربية
+            const convertToArabicNumbers = (num) => {
+              const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
+              return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
+            };
+      
+            const convertTo12HourFormat = (time) => {
+              // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
+              if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
+                return '';
+              }
+      
+              // تقسيم الوقت إلى ساعات، دقائق وثواني
+              let [hours, minutes, seconds] = time.split(':').map(Number);
+      
+              let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
+              hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
+      
+              // إعادة تركيب الوقت بصيغة 12 ساعة
+              return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
+            };
+      
+            const formattedTime = convertTo12HourFormat(value);
+            return `${formattedTime}`;
+          },
+          wrap: 'nowrap',
+        },
       },
       {
         label: "حالة الدفع",
