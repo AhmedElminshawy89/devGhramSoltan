@@ -2,14 +2,12 @@ import React, { useState, Fragment, useRef, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { AiOutlineClose, AiOutlineSave } from "react-icons/ai";
 import Select from "react-select";
-import { toast } from "react-toastify";
 import { useReactToPrint } from "react-to-print";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../../assets/Img/logo.png";
 import { useSaveQuickworkMutation } from "../../app/Feature/API/QuickWorks";
 import {
   useGetAllWorkersQuery,
-  useGetPriceWorkQuery,
 } from "../../app/Feature/API/Workers";
 import { useGetAllEmployeesQuery } from "../../app/Feature/API/Emplyee";
 import Spinner from "../../Shared/Spinner";

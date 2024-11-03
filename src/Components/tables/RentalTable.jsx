@@ -13,12 +13,10 @@ import DeleteDialog from "../../Shared/DeleteDialog";
 import { Pagination } from "antd";
 import { setOfflineRents } from "../../app/Feature/offlineRentsSlice";
 import UpdateRental from "../UpdateForm/UpdateRents";
-import { useSearchRentsQuery } from "../../app/Feature/API/Search";
 
 const RentalTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState();
-  const [searchQuery, setSearchQuery] = useState("");
   const { data: loansOnline, refetch: refetchLoansOnline } =
     useGetRentsQuery(currentPage);
   const [deleteLoanId, setDeleteLoanId] = useState(null);
@@ -26,8 +24,6 @@ const RentalTable = () => {
   const [updateCategoryStatus,{isLoading:LoadingStatus}] = useUpdateRentsStatusMutation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editLoan, setEditLoan] = useState(null);
-  const { data: searchedRents, isLoading: loadingSearch, refetch: refetchSearch } =
-  useSearchRentsQuery(searchQuery);
   const [loadingPackageIds, setLoadingPackageIds] = useState([]); 
 
   const isOnline = useContext(OnlineStatusContext);
@@ -49,10 +45,7 @@ const RentalTable = () => {
   const handleEdit = async (loanId) => {
     let loanToEdit;
     if (isOnline) {
-      loanToEdit =
-        searchQuery === ""
-          ? loansOnline.data.find((loan) => loan.id === loanId)
-          : searchedRents?.rent.find((pkg) => pkg.id === loanId);
+      loanToEdit = loansOnline.data.find((loan) => loan.id === loanId)
     } else {
       loanToEdit = offlineRents.find((loan) => loan.id === loanId);
     }
@@ -69,7 +62,6 @@ const RentalTable = () => {
       if (isOnline) {
         await deleteLoan(deleteLoanId);
         refetchLoansOnline();
-      refetchSearch();
       } else {
         const updatedLoans = offlineRents.filter(
           (loan) => loan.id !== deleteLoanId
@@ -100,7 +92,6 @@ const RentalTable = () => {
       const response = await updateCategoryStatus(rentId).unwrap();
       if (response.success) {
         refetchLoansOnline();
-      refetchSearch();
       } else {
         console.error("Error updating package status:", response.message);
       }
@@ -108,15 +99,9 @@ const RentalTable = () => {
       console.error("Error updating package status:", error);
     } finally {
       setLoadingPackageIds((prev) => prev.filter((id) => id !== rentId));
-      refetchSearch();
     }
   };
-  
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1); 
-    refetchSearch();
-  };
+
 
   const columns = [
     {
@@ -139,9 +124,7 @@ const RentalTable = () => {
         customBodyRender: (value, tableMeta) => {
           const packageId = 
           // loansOnline?.data?.[tableMeta.rowIndex]?.id;
-          searchQuery
-          ? searchedRents?.rent?.[tableMeta.rowIndex]?.id
-          : loansOnline?.data?.[tableMeta.rowIndex]?.id
+           loansOnline?.data?.[tableMeta.rowIndex]?.id
           const isLoading = loadingPackageIds.includes(packageId);
 
           return (
@@ -204,9 +187,7 @@ const RentalTable = () => {
         customBodyRender: (value, tableMeta) => {
           const loanId =
             isOnline
-            ? searchQuery
-              ? searchedRents?.rent?.[tableMeta.rowIndex]?.id
-              : loansOnline?.data?.[tableMeta.rowIndex]?.id
+            ?loansOnline?.data?.[tableMeta.rowIndex]?.id
             : offlineRents?.[tableMeta.rowIndex]?.id;
 
           return (
@@ -404,22 +385,9 @@ const RentalTable = () => {
       },
     },
   };
-    const dataToDisplay = searchQuery
-    ? searchedRents?.rent
-    : loansOnline?.data || offlineRents;
+    const dataToDisplay = loansOnline?.data || offlineRents;
   return (
     <>
-          {isOnline && (
-        <div className="mb-4 flex justify-between items-center w-[100%]">
-          <input
-            type="text"
-            placeholder="ابحث ب الاسم "
-            className="w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-        </div>
-      )}
       {isOnline ? (
         loansOnline ? (
           <>
@@ -458,7 +426,6 @@ const RentalTable = () => {
           isOpen={true}
           initialValues={editLoan}
           closeModal={handleCloseEdit}
-          refetchSearch={refetchSearch}
         />
       )}
       <DeleteDialog

@@ -1,11 +1,9 @@
-import React, { useState, Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { AiOutlineClose, AiOutlineSave, AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
+import React, { useState } from "react";
 import { VscSaveAs } from "react-icons/vsc";
-import MUIDataTable from "mui-datatables";
 import WorkersTable from "../../Components/tables/WorkersTable";
-import { toast } from "react-toastify";
 import FormWorkers2 from "../../Components/Forms/FormWorkers";
+import { Link } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
 
 const AddWorkers = () => {
   const [isOpen, setIsOpen] = useState("");
@@ -21,13 +19,20 @@ const AddWorkers = () => {
 
   return (
     <div className="p-4">
-      <button
-        onClick={openModal}
-        className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
-      >
-        <VscSaveAs className="ml-3" />   الشغل الاضافي
-      </button>
+      <div className="flex gap-4 items-center">
+        <button
+          onClick={openModal}
+          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
+        >
+          <VscSaveAs className="ml-3" />   الشغل الاضافي
+        </button>
 
+        <Link to={'/moderator/reservations/works/workers/search'}
+          className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
+        >
+          <FaSearch className="ml-3" /> بحث الشغل الاضافي 
+        </Link>
+      </div>
       <FormWorkers2  closeModal={closeModal} isOpen={isOpen}/>
 
     <WorkersTable/>

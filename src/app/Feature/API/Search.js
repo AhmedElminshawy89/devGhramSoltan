@@ -7,8 +7,8 @@ export const SearchApi = createApi({
   endpoints: (build) => ({
     searchSubCategory: build.query({
       query: (searchTerm) => `/SearchSubCategory?search=${searchTerm}`,
-      transformResponse: (response) => response,
-      providesTags: ["Category"],
+      // transformResponse: (response) => response,
+      // providesTags: ["Category"],
     }),
     searchExpense: build.query({
       query: (searchTerm) => `/SearchExpense?search=${searchTerm}`,
@@ -66,5 +66,20 @@ export const {
   useSearchStudioQuery,
   useSearchMakeUpQuery,
   useSearchMakeUpDateQuery,
-  useSearchStudioDateQuery
+  useSearchStudioDateQuery,
+
+
+  useLazySearchEmployeeQuery,
+  useLazySearchMakeUpQuery,
+  useLazySearchStudioQuery,
+  useLazySearchWorkersQuery,
+  useLazySearchRentsQuery,
+  useLazySearchExpenseQuery,
+  useLazySearchLoansQuery,
+  useLazySearchAdminQuery,
+  useLazySearchJobQuery,
+  useLazySearchDiscountQuery,
+  useLazySearchCategoryQuery,
+  useLazySearchSubCategoryQuery
+
 } = SearchApi;

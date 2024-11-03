@@ -7,7 +7,7 @@ import { Input } from "antd";
 import { useUpdatePasswordAdminMutation } from "../../app/Feature/API/Admin";
 import Spinner from "../../Shared/Spinner";
 
-const UpdatePasswordAdmin = ({ isOpen, closeModal ,initialValues,refetchSearch}) => {
+const UpdatePasswordAdmin = ({ isOpen, closeModal ,initialValues}) => {
   const [email, setEmail] = useState(initialValues.email||"");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -44,7 +44,6 @@ const UpdatePasswordAdmin = ({ isOpen, closeModal ,initialValues,refetchSearch})
         toast.success("تم تحديث كلمه المرور بنجاح!");
         closeModal();
         resetForm();
-        refetchSearch();
       } catch (error) {
         console.error("حدث خطأ أثناء تحديث كلمه المرور:", error);
         setNotification({

@@ -10,7 +10,6 @@ const UpdatePackage = ({
   isOpen,
   closeModal,
   initialValues,
-  refetchSearch,
   refetchSubPackage
 }) => {
   const nameEdit = initialValues.name;
@@ -63,11 +62,9 @@ const UpdatePackage = ({
         toast.success("تم تحديث بيانات الباكدج بنجاح!");
         closeModal();
         resetForm();
-        refetchSearch();
         refetchSubPackage();
       } catch (error) {
         console.error("حدث خطأ أثناء تحديث بيانات الباكدج:", error);
-        toast.error("حدث خطأ أثناء تحديث بيانات الباكدج.");
       }
     } else {
       setNotification({

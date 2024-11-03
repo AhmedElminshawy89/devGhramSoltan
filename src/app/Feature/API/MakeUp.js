@@ -6,7 +6,7 @@ export const MakeupApi = createApi({
   reducerPath: "MakeupApi",
   endpoints: (build) => ({
     getMakeups: build.query({
-      query: (page) => `/show?page=${page}`,
+      query: ({page,search}) => `/show?page=${page}&search=${search}`,
       transformResponse: (response) => response.makeups,
       providesTags: ["Makeup"],
     }),
@@ -33,6 +33,14 @@ export const MakeupApi = createApi({
       }),
       invalidatesTags: ["Makeup"],
     }),
+    updateMakeupInstallment: build.mutation({
+      query: ({ id, makeupData }) => ({
+        url: `/updateInstallment/${id}`,
+        method: "POST",
+        body: makeupData,
+      }),
+      invalidatesTags: ["Makeup"],
+    }),
   }),
 });
 
@@ -41,4 +49,5 @@ export const {
   useSaveMakeupMutation,
   useUpdateMakeupMutation,
   useDeleteMakeupMutation,
+  useUpdateMakeupInstallmentMutation,
 } = MakeupApi;

@@ -4,7 +4,6 @@ import MUIDataTable from "mui-datatables";
 import Spinner from "../../Shared/Spinner";
 import DeleteDialog from "../../Shared/DeleteDialog";
 import { Pagination } from "antd";
-import { useSearchAdminQuery } from "../../app/Feature/API/Search";
 import { useDeleteAdminMutation, useGetAdminsQuery } from "../../app/Feature/API/Admin";
 import UpdateAdmin from './../UpdateForm/UpdateAdmin';
 import { RiLockPasswordFill } from 'react-icons/ri';
@@ -13,17 +12,11 @@ import UpdatePasswordAdmin from './../UpdateForm/UpdatePasswordAdmin';
 const AdminTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState();
-  const [searchQuery, setSearchQuery] = useState("");
-  const { data: employees, refetch: refetchEmployees } = useGetAdminsQuery(currentPage); // Renamed from packages to employees for clarity
-  const {
-    data: searchedEmployees,
-    isLoading: loadingSearch,
-    refetch: refetchSearchResults,
-  } = useSearchAdminQuery(searchQuery);
+  const { data: employees, refetch: refetchEmployees ,isLoading} = useGetAdminsQuery(currentPage);
   const [deleteEmployeeId, setDeleteEmployeeId] = useState(null);
   const [deleteEmployee, { isLoading: isDeleting }] = useDeleteAdminMutation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [editEmployee, setEditEmployee] = useState(null); // Renamed from editPackage to editEmployee for clarity
+  const [editEmployee, setEditEmployee] = useState(null);
   const [updatePasswordValue, setUpdatePasswordValue] = useState(false);
   const [updatePassword, setUpdatePassword] = useState(false);
 
@@ -48,10 +41,7 @@ const AdminTable = () => {
   };
 
   const handleEdit = async (employeeId) => {
-    const employeeToEdit =
-      searchQuery === ""
-        ? employees.data.find((emp) => emp.id === employeeId)
-        : searchedEmployees.admin.find((emp) => emp.id === employeeId);
+    const employeeToEdit = employees.data.find((emp) => emp.id === employeeId)
     setEditEmployee(employeeToEdit);
   };
 
@@ -66,7 +56,6 @@ const AdminTable = () => {
       setDeleteEmployeeId(null);
       setIsDeleteDialogOpen(false);
       refetchEmployees(); // Renamed from refetch to refetchEmployees for clarity
-      refetchSearchResults(); // Renamed from refetchData to refetchSearchResults for clarity
     } catch (error) {
       console.error("Error deleting employee:", error);
     }
@@ -81,12 +70,6 @@ const AdminTable = () => {
     setEditEmployee(null);
   };
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
-    setEditEmployee(null);
-    refetchSearchResults(); // Renamed from refetchData to refetchSearchResults for clarity
-  };
 
   const columns = [
     {
@@ -161,9 +144,7 @@ const AdminTable = () => {
       label: "تنفيذ",
       options: {
         customBodyRender: (value, tableMeta, updateValue) => {
-          const adminId = searchQuery
-          ? searchedEmployees?.admin?.[tableMeta.rowIndex]?.id
-          : employees?.data?.[tableMeta.rowIndex]?.id
+          const adminId =  employees?.data?.[tableMeta.rowIndex]?.id
           // (employees?.data || searchedEmployees?.admin)?.[
           //   tableMeta.rowIndex
           // ]?.id;
@@ -211,7 +192,7 @@ const AdminTable = () => {
     }),
     textLabels: {
       body: {
-        noMatch: loadingSearch ? "جاري البحث..." : "لا توجد بيانات مطابقة",
+        noMatch: isLoading ? "جاري البحث..." : "لا توجد بيانات مطابقة",
         toolTip: "فرز",
         columnHeaderTooltip: (column) => `فرز لـ ${column.label}`,
       },
@@ -245,20 +226,10 @@ const AdminTable = () => {
     },
   };
 
-  const dataToDisplay = searchQuery ? searchedEmployees?.admin : employees?.data;
+  const dataToDisplay =  employees?.data;
 
   return (
     <>
-      <div className="mb-4 flex justify-between items-center w-[100%]">
-        <input
-          type="text"
-          placeholder=" ابحث اسم الادمن او البريد الالكتروني"
-          className="w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
-      </div>
-
       {employees ? (
         <>
           <MUIDataTable
@@ -289,7 +260,6 @@ const AdminTable = () => {
           isOpen={true}
           initialValues={editEmployee}
           closeModal={handleCloseEdit}
-          refetchSearch={refetchSearchResults}
         />
       )}
       {updatePassword && (
@@ -297,7 +267,6 @@ const AdminTable = () => {
           isOpen={true}
           closeModal={handleCloseUpdatePassword}
           initialValues={updatePasswordValue}
-          refetchSearch={refetchSearchResults}
         />
       )}
       <DeleteDialog

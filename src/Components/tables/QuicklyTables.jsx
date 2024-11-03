@@ -5,11 +5,8 @@ import Spinner from "../../Shared/Spinner";
 import DeleteDialog from "../../Shared/DeleteDialog";
 import { Pagination } from "antd";
 import { useDeleteQuickworkMutation, useGetQuickworksQuery } from "../../app/Feature/API/QuickWorks";
-import { useSearchWorkersQuery } from "../../app/Feature/API/Search";
-import UpdateWorker from './../UpdateForm/UpdateWorker';
 import UpdateQuickWorks from './../UpdateForm/UpdateQuickWorks';
 import { IoPrint } from "react-icons/io5";
-import PrintInvoice from "../Prints/PrintInvoice";
 import { useReactToPrint } from "react-to-print";
 import PrintInvoiceQuickWork from "../Prints/PrintInvoiceQuickWork";
 
@@ -18,13 +15,7 @@ const QuicklyTable = () => {
   const [printInvoice, setPrintInvoice] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState();
-  const [searchQuery, setSearchQuery] = useState("");
-  const { data: packages, refetch } = useGetQuickworksQuery(currentPage);
-  const {
-    data: searchedPackages,
-    isLoading: loadingSearch,
-    refetch: refetchData,
-  } = useSearchWorkersQuery(searchQuery);
+  const { data: packages, refetch ,isLoading} = useGetQuickworksQuery(currentPage);
   const [deletePackageId, setDeletePackageId] = useState(null);
   const [deletePackage, { isLoading: isDeleting }] =
   useDeleteQuickworkMutation();
@@ -44,9 +35,7 @@ const QuicklyTable = () => {
 
   const handleEdit = async (packageId) => {
     const packageToEdit =
-      searchQuery === ""
-        ? packages.data.find((pkg) => pkg.id === packageId)
-        : searchedPackages.work.find((pkg) => pkg.id === packageId);
+    packages.data.find((pkg) => pkg.id === packageId)
     setEditPackage(packageToEdit);
   };
 
@@ -56,9 +45,7 @@ const QuicklyTable = () => {
 
   const handlePrint = async (packageId) => {
     const packageToInvoice =
-      searchQuery === ""
-        ? packages.data.find((pkg) => pkg.id === packageId)
-        : searchedPackages.work.find((pkg) => pkg.id === packageId);
+    packages.data.find((pkg) => pkg.id === packageId)
   
     setPrintInvoice(packageToInvoice);
   
@@ -77,7 +64,6 @@ const QuicklyTable = () => {
       setDeletePackageId(null);
       setIsDeleteDialogOpen(false);
       refetch();
-      refetchData();
     } catch (error) {
       console.error("Error deleting package:", error);
     }
@@ -90,12 +76,6 @@ const QuicklyTable = () => {
 
   const handleCloseEdit = () => {
     setEditPackage(null);
-  };
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
-    setEditPackage(null);
-    refetchData();
   };
 
   const columns = [
@@ -113,9 +93,7 @@ const QuicklyTable = () => {
       name:'employee.employee_name',
       options: {
         customBodyRender: (value, tableMeta, updateValue) => {
-          const studioData = searchQuery === ""
-            ? packages?.data?.[tableMeta.rowIndex]
-            : searchedPackages?.work?.[tableMeta.rowIndex];
+          const studioData = packages?.data?.[tableMeta.rowIndex]
           
           return studioData?.employee?.employee_name || "N/A";
         },
@@ -172,10 +150,7 @@ const QuicklyTable = () => {
       label: "تنفيذ",
       options: {
         customBodyRender: (value, tableMeta) => {
-          const discountId =
-          searchQuery === ""
-            ? packages.data[tableMeta.rowIndex].id
-            : searchedPackages?.work[tableMeta.rowIndex]?.id;
+          const discountId = packages.data[tableMeta.rowIndex].id
           return (
             <>
                          <button onClick={() => handlePrint(discountId)} className="ml-5">
@@ -214,7 +189,7 @@ const QuicklyTable = () => {
     }),
     textLabels: {
       body: {
-        noMatch: loadingSearch ? "جاري البحث..." : "لا توجد بيانات مطابقة",
+        noMatch: isLoading ? "جاري البحث..." : "لا توجد بيانات مطابقة",
         toolTip: "فرز",
         columnHeaderTooltip: (column) => `فرز لـ ${column.label}`,
       },
@@ -248,22 +223,10 @@ const QuicklyTable = () => {
     },
   };
 
-  const dataToDisplay = searchQuery
-    ? searchedPackages?.work
-    : packages?.data;
+  const dataToDisplay = packages?.data;
 
   return (
     <>
-      <div className="mb-4 flex justify-between items-center w-[100%]">
-        <input
-          type="text"
-          placeholder="ابحث ب اسم الموظف"
-          className="w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
-      </div>
-
       {packages ? (
         <>
           <MUIDataTable
@@ -294,7 +257,6 @@ const QuicklyTable = () => {
           isOpen={true}
           initialValues={editPackage}
           closeModal={handleCloseEdit}
-          refetchSearch={refetchData}
         />
       )}
       <div style={{display:'none'}}>

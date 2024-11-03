@@ -4,13 +4,15 @@ import MUIDataTable from "mui-datatables";
 import Spinner from "../../Shared/Spinner";
 import DeleteDialog from "../../Shared/DeleteDialog";
 import { Pagination } from "antd";
-import { useSearchStudioQuery } from "../../app/Feature/API/Search";
 import { useDeleteStudioMutation, useGetStudiosQuery } from "../../app/Feature/API/Studio";
 import UpdateStudio from "../UpdateForm/UpdateStudio";
 import { useGetStudioDailyQuery } from "../../app/Feature/API/Daily";
 import { IoPrint } from "react-icons/io5";
 import PrintInvoice from "../Prints/PrintInvoice";
 import { useReactToPrint } from "react-to-print";
+import { FaMoneyBillAlt, FaRegEye } from "react-icons/fa";
+import DetailsStudio from "./DetailsStudio";
+import StudioInstallMent from "../Forms/StudioInstallMent";
 
 const StudioTable = () => {
  const invoiceRef = useRef();
@@ -18,18 +20,15 @@ const StudioTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState();
   const [searchQuery, setSearchQuery] = useState("");
-  const { data: employees, refetch: refetchEmployees } = useGetStudiosQuery(currentPage);
-  const {
-    data: searchedEmployees,
-    isLoading: loadingSearch,
-    refetch: refetchSearchResults,
-  } = useSearchStudioQuery(searchQuery);
+  const { data: employees, refetch: refetchEmployees ,isLoading} = useGetStudiosQuery(currentPage);
   const [deleteEmployeeId, setDeleteEmployeeId] = useState(null);
   const [deleteEmployee, { isLoading: isDeleting }] = useDeleteStudioMutation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editEmployee, setEditEmployee] = useState(null);
   const { refetch: refetchStudioDaily } = useGetStudioDailyQuery();
   const [printInvoice, setPrintInvoice] = useState(null);
+  const [editMakeupInstallMent, setEditMakeupInstallMent] = useState(null);
+  const [editMakeupDetails, setEditMakeupDetails] = useState(null);
 
   useEffect(() => {
     if (employees?.data?.length === 0 && currentPage > 1) {
@@ -42,12 +41,21 @@ const StudioTable = () => {
     setPerPage(pageSize);
   };
 
+  const handleDetails = async (employeeId) => {
+    const employeeToEdit =
+       employees.data.find((emp) => emp.id === employeeId)
+       setEditMakeupDetails(employeeToEdit);
+  };
 
+  const handleEditInstallMent = async (employeeId) => {
+    const employeeToEdit =
+    employees.data.find((emp) => emp.id === employeeId)
+    setEditMakeupInstallMent(employeeToEdit);
+  };
+  
   const handleEdit = async (employeeId) => {
     const employeeToEdit =
-      searchQuery === ""
-        ? employees.data.find((emp) => emp.id === employeeId)
-        : searchedEmployees.studio.find((emp) => emp.id === employeeId);
+     employees.data.find((emp) => emp.id === employeeId)
     setEditEmployee(employeeToEdit);
   };
 
@@ -59,9 +67,7 @@ const StudioTable = () => {
 
   const handlePrint = async (employeeId) => {
     const PrintInvoices =
-      searchQuery === ""
-        ? employees.data.find((emp) => emp.id === employeeId)
-        : searchedEmployees.studio.find((emp) => emp.id === employeeId);
+    employees.data.find((emp) => emp.id === employeeId)
   
     setPrintInvoice(PrintInvoices);
   
@@ -82,7 +88,6 @@ const StudioTable = () => {
       setDeleteEmployeeId(null);
       setIsDeleteDialogOpen(false);
       refetchEmployees(); // Renamed from refetch to refetchEmployees for clarity
-      refetchSearchResults(); // Renamed from refetchData to refetchSearchResults for clarity
       refetchStudioDaily()
     } catch (error) {
       console.error("Error deleting employee:", error);
@@ -95,15 +100,17 @@ const StudioTable = () => {
   };
 
   const handleCloseEdit = () => {
-    setEditEmployee(null);
+    setEditEmployee(null); 
+    setEditMakeupInstallMent(null);
+    setEditMakeupDetails(null);
   };
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
     setCurrentPage(1);
     setEditEmployee(null);
-    refetchSearchResults(); // Renamed from refetchData to refetchSearchResults for clarity
   };
+
 
   const columns = [
     {
@@ -116,15 +123,49 @@ const StudioTable = () => {
       },
     },
     {
-      name: "category.name",
-      label: "اسم الباكدج",
+      name: "actions",
+      label: "تنفيذ",
       options: {
         customBodyRender: (value, tableMeta, updateValue) => {
-          const studioData = searchQuery === ""
-            ? employees?.data?.[tableMeta.rowIndex]
-            : searchedEmployees?.studio?.[tableMeta.rowIndex];
-          
-          return studioData?.category?.name || "";
+          const adminId = employees?.data?.[tableMeta.rowIndex]?.id
+          return (
+            <>
+             <button onClick={() => handlePrint(adminId)} className="ml-5">
+                <IoPrint
+                  title="طباعه الفاتوره"
+                  className="text-2xl text-black"
+                />
+              </button>
+              <button onClick={() => handleEdit(adminId)} className="ml-5">
+                <AiOutlineEdit
+                  title="تعديل  البيانات"
+                  className="text-2xl text-black"
+                />
+              </button>
+              <button onClick={() => handleDetails(adminId)} className="ml-5">
+                <FaRegEye
+                  title="عرض  البيانات"
+                  className="text-2xl text-black"
+                />
+              </button>
+              <button onClick={() => handleEditInstallMent(adminId)} className="ml-5">
+                <FaMoneyBillAlt 
+                  title="تعديل  الاقساط"
+                  className="text-2xl text-black"
+                />
+              </button>
+              <button onClick={() => handleDelete(adminId)}>
+                {isDeleting && deleteEmployeeId === adminId ? (
+                  <Spinner />
+                ) : (
+                  <AiOutlineDelete
+                    title="حذف العنصر"
+                    className="text-2xl text-[#ef4444]"
+                  />
+                )}
+              </button>
+            </>
+          );
         },
       },
     },
@@ -133,54 +174,63 @@ const StudioTable = () => {
       label: "اسم العميل",
     },
     {
-      name: "phone",
-      label: "رقم الهاتف",
-    },
-    {
-      name: "address",
-      label: "العنوان",
-    },
-    {
-      name: "appropriate",
-      label: "تاريخ المناسبه",
-                    options: {
-        customBodyRender: (value) => {
-          const date = new Date(value);
-          const formattedDate = date.toLocaleDateString("ar-EG");
-          return `${formattedDate}`;
-        },
-        wrap: 'nowrap',
-      },
-    },
-    {
-      name: "receivedDate",
-      label: "تاريخ الاستلام",
-                    options: {
-        customBodyRender: (value) => {
-          const date = new Date(value);
-          const formattedDate = date.toLocaleDateString("ar-EG");
-          return `${formattedDate}`;
-        },
-        wrap: 'nowrap',
-      },
-    },
-    {
-      name: "notes",
-      label: "مرتجع من الباكدج",
-    },
-    {
-      name: "addService",
-      label: "الخدمه الاضافيه",
-    },
-    {
-      name: "priceService",
-      label: "سعر الخدمه الاضافيه",
-            options: {
-        customBodyRender: (value) => {
-          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
+      name: "category.name",
+      label: "اسم الباكدج",
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const studioData =employees?.data?.[tableMeta.rowIndex]
+          
+          return studioData?.category?.name || "";
         },
       },
     },
+    // {
+    //   name: "phone",
+    //   label: "رقم الهاتف",
+    // },
+    // {
+    //   name: "address",
+    //   label: "العنوان",
+    // },
+    // {
+    //   name: "appropriate",
+    //   label: "تاريخ المناسبه",
+    //                 options: {
+    //     customBodyRender: (value) => {
+    //       const date = new Date(value);
+    //       const formattedDate = date.toLocaleDateString("ar-EG");
+    //       return `${formattedDate}`;
+    //     },
+    //     wrap: 'nowrap',
+    //   },
+    // },
+    // {
+    //   name: "notes",
+    //   label: "مرتجع من الباكدج",
+    //   options: {
+    //     customBodyRender: (value) => {
+    //       if (!value || value.length === 0) {
+    //         return 'لا يوجد';
+    //       }
+    //       return `${value.map((e) => e.key).join(', ')}`;
+    //     },
+    //     wrap: 'nowrap',
+    //   }
+      
+    // },
+    // {
+    //   name: "addService",
+    //   label: "الخدمه الاضافيه",
+    // },
+    // {
+    //   name: "priceService",
+    //   label: "سعر الخدمه الاضافيه",
+    //         options: {
+    //     customBodyRender: (value) => {
+    //       return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
+    //     },
+    //   },
+    // },
     {
       name: "total",
       label: "الاجمالي",
@@ -208,98 +258,60 @@ const StudioTable = () => {
         },
       },
     },
-    {
-      label: "نوع الخصم",
-      name: "discount.discount",
-      options: {
-        customBodyRender: (value, tableMeta, updateValue) => {
-          const studioData = searchQuery === ""
-            ? employees?.data?.[tableMeta.rowIndex]
-            : searchedEmployees?.studio?.[tableMeta.rowIndex];
+    // {
+    //   label: "نوع الخصم",
+    //   name: "discount.discount",
+    //   options: {
+    //     customBodyRender: (value, tableMeta, updateValue) => {
+    //       const studioData = searchQuery === ""
+    //         ? employees?.data?.[tableMeta.rowIndex]
+    //         : searchedEmployees?.studio?.[tableMeta.rowIndex];
           
-          return studioData?.discount?.discount || "";
-        },
-      },
-    },
-    {
-      label: "نسبه الخصم",
-      name: "price",
-            options: {
-        customBodyRender: (value) => {
-          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
-        },
-      },
-    },
-    {
-      name: "created_at",
-      label: "تاريخ العملية",
-      options: {
-        customBodyRender: (value) => {
-          const date = new Date(value);
-          const formattedDate = date.toLocaleDateString("ar-EG");
-          const formattedTime = date.toLocaleTimeString("ar-EG", {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-          return `${formattedDate}(${formattedTime})`;
-        },
-        wrap: 'nowrap',
-      },
-    },
-    {
-      name: "updated_at",
-      label: "تاريخ التحديث",
-      options: {
-        customBodyRender: (value) => {
-          const date = new Date(value);
-          const formattedDate = date.toLocaleDateString("ar-EG");
-          const formattedTime = date.toLocaleTimeString("ar-EG", {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-          return `${formattedDate}(${formattedTime})`;
-        },
-        wrap: 'nowrap',
-      },
-    },
-    {
-      name: "actions",
-      label: "تنفيذ",
-      options: {
-        customBodyRender: (value, tableMeta, updateValue) => {
-          const adminId = 
-          searchQuery
-          ? searchedEmployees?.studio?.[tableMeta.rowIndex]?.id
-          : employees?.data?.[tableMeta.rowIndex]?.id
-          return (
-            <>
-                         <button onClick={() => handlePrint(adminId)} className="ml-5">
-                <IoPrint
-                  title="طباعه الفاتوره"
-                  className="text-2xl text-black"
-                />
-              </button>
-              <button onClick={() => handleEdit(adminId)} className="ml-5">
-                <AiOutlineEdit
-                  title="تعديل  البيانات"
-                  className="text-2xl text-black"
-                />
-              </button>
-              <button onClick={() => handleDelete(adminId)}>
-                {isDeleting && deleteEmployeeId === adminId ? (
-                  <Spinner />
-                ) : (
-                  <AiOutlineDelete
-                    title="حذف العنصر"
-                    className="text-2xl text-[#ef4444]"
-                  />
-                )}
-              </button>
-            </>
-          );
-        },
-      },
-    },
+    //       return studioData?.discount?.discount || "";
+    //     },
+    //   },
+    // },
+    // {
+    //   label: "نسبه الخصم",
+    //   name: "price",
+    //         options: {
+    //     customBodyRender: (value) => {
+    //       return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
+    //     },
+    //   },
+    // },
+    // {
+    //   name: "created_at",
+    //   label: "تاريخ العملية",
+    //   options: {
+    //     customBodyRender: (value) => {
+    //       const date = new Date(value);
+    //       const formattedDate = date.toLocaleDateString("ar-EG");
+    //       const formattedTime = date.toLocaleTimeString("ar-EG", {
+    //         hour: "2-digit",
+    //         minute: "2-digit",
+    //       });
+    //       return `${formattedDate}(${formattedTime})`;
+    //     },
+    //     wrap: 'nowrap',
+    //   },
+    // },
+    // {
+    //   name: "updated_at",
+    //   label: "تاريخ التحديث",
+    //   options: {
+    //     customBodyRender: (value) => {
+    //       const date = new Date(value);
+    //       const formattedDate = date.toLocaleDateString("ar-EG");
+    //       const formattedTime = date.toLocaleTimeString("ar-EG", {
+    //         hour: "2-digit",
+    //         minute: "2-digit",
+    //       });
+    //       return `${formattedDate}(${formattedTime})`;
+    //     },
+    //     wrap: 'nowrap',
+    //   },
+    // },
   ];
 
   const options = {
@@ -316,7 +328,7 @@ const StudioTable = () => {
     }),
     textLabels: {
       body: {
-        noMatch: loadingSearch ? "جاري البحث..." : "لا توجد بيانات مطابقة",
+        noMatch: isLoading ? "جاري البحث..." : "لا توجد بيانات مطابقة",
         toolTip: "فرز",
         columnHeaderTooltip: (column) => `فرز لـ ${column.label}`,
       },
@@ -350,20 +362,10 @@ const StudioTable = () => {
     },
   };
 
-  const dataToDisplay = searchQuery ? searchedEmployees?.studio : employees?.data;
+  const dataToDisplay =  employees?.data;
 
   return (
     <>
-      <div className="mb-4 flex justify-between items-center w-[100%]">
-        <input
-          type="text"
-          placeholder="ابحث اسم العميل"
-          className="w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
-      </div>
-
       {employees ? (
         <>
           <MUIDataTable
@@ -396,7 +398,20 @@ const StudioTable = () => {
           isOpen={true}
           closeModal={handleCloseEdit}
           initialValues={editEmployee}
-          refetchSearch={refetchSearchResults}
+        />
+      )}
+      {editMakeupDetails && (
+        <DetailsStudio
+          isOpen={true}
+          closeModal={handleCloseEdit}
+          initialValues={editMakeupDetails}
+        />
+      )}
+      {editMakeupInstallMent && (
+        <StudioInstallMent
+          isOpen={true}
+          closeModal={handleCloseEdit}
+          initialValues={editMakeupInstallMent}
         />
       )}
       <DeleteDialog

@@ -61,6 +61,7 @@ const Sidebar = () => {
     { to: "/moderator/reservations/rental", icon: <IoTimer />, label: "ايجار" },
     { to: "/moderator/expenses", icon: <FaFileInvoiceDollar />, label: "المصروفات" },
     { to: "/moderator/Loans", icon: <FaHandHoldingUsd />, label: "سلفة الموظف" },
+    { to: "/moderator/reports/daily", icon: <IoIosToday />, label: "التقارير اليوميه" },
     ...(type !== "admin"
       ? [
           { to: "/moderator/add-admin", icon: <RiAdminFill />, label: "إضافة أدمن" },
@@ -69,6 +70,7 @@ const Sidebar = () => {
           { to: "/moderator/add-discount", icon: <RiDiscountPercentFill />, label: "إضافة الخصم" },
           { to: "/moderator/add-package", icon: <LuPackagePlus />, label: "إضافة باكدج" },
           { to: "/moderator/add-subpackage", icon: <BiCategory />, label: "إضافة باكدج فرعي" },
+          { to: "/moderator/reports/monthly-employee-reports", icon: <TbReportAnalytics />, label: "تقارير شهريه للموظف" },
           { to: "/moderator/reports", icon: <TbReportAnalytics />, label: "التقارير" },
         ]
       : [])

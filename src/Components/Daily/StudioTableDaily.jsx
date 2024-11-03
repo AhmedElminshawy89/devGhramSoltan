@@ -12,6 +12,9 @@ import { useLocation } from "react-router-dom";
 import { IoPrint } from "react-icons/io5";
 import PrintInvoice from "../Prints/PrintInvoice";
 import { useReactToPrint } from "react-to-print";
+import { FaMoneyBillAlt, FaRegEye } from "react-icons/fa";
+import DetailsStudio from "../tables/DetailsStudio";
+import StudioInstallMent from "../Forms/StudioInstallMent";
 
 const StudioTableDaily = () => {
   const invoiceRef = useRef();
@@ -20,7 +23,8 @@ const StudioTableDaily = () => {
   const [perPage, setPerPage] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const { data: employees, refetch: refetchEmployees } = useGetStudioDailyQuery(currentPage);
-  const {
+  const [editMakeupInstallMent, setEditMakeupInstallMent] = useState(null);
+  const [editMakeupDetails, setEditMakeupDetails] = useState(null);const {
     data: searchedEmployees,
     isLoading: loadingSearch,
     refetch: refetchSearchResults,
@@ -93,6 +97,18 @@ const StudioTableDaily = () => {
     }
   };
 
+  const handleDetails = async (employeeId) => {
+    const employeeToEdit =
+       employees.data.find((emp) => emp.id === employeeId)
+       setEditMakeupDetails(employeeToEdit);
+  };
+
+  const handleEditInstallMent = async (employeeId) => {
+    const employeeToEdit =
+    employees.data.find((emp) => emp.id === employeeId)
+    setEditMakeupInstallMent(employeeToEdit);
+  };
+  
   const handleCancelDelete = () => {
     setDeleteEmployeeId(null);
     setIsDeleteDialogOpen(false);
@@ -100,7 +116,9 @@ const StudioTableDaily = () => {
   };
 
   const handleCloseEdit = () => {
-    setEditEmployee(null);
+    setEditEmployee(null); 
+    setEditMakeupInstallMent(null);
+    setEditMakeupDetails(null);
   };
 
 
@@ -122,6 +140,63 @@ const StudioTableDaily = () => {
       },
     },
     {
+      name: "actions",
+      label: "تنفيذ",
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const adminId = 
+          searchQuery
+              ? searchedEmployees?.studio?.[tableMeta.rowIndex]?.id
+              : employees?.data?.[tableMeta.rowIndex]?.id
+          // (employees?.data || searchedEmployees?.studio)?.[
+          //   tableMeta.rowIndex
+          // ]?.id;
+          return (
+            <>
+             <button onClick={() => handlePrint(adminId)} className="ml-5">
+                <IoPrint
+                  title="طباعه الفاتوره"
+                  className="text-2xl text-black"
+                />
+              </button>
+              <button onClick={() => handleEdit(adminId)} className="ml-5">
+                <AiOutlineEdit
+                  title="تعديل  البيانات"
+                  className="text-2xl text-black"
+                />
+              </button>
+              <button onClick={() => handleDetails(adminId)} className="ml-5">
+                <FaRegEye
+                  title="عرض  البيانات"
+                  className="text-2xl text-black"
+                />
+              </button>
+              <button onClick={() => handleEditInstallMent(adminId)} className="ml-5">
+                <FaMoneyBillAlt 
+                  title="تعديل  الاقساط"
+                  className="text-2xl text-black"
+                />
+              </button>
+              <button onClick={() => handleDelete(adminId)}>
+                {isDeleting && deleteEmployeeId === adminId ? (
+                  <Spinner />
+                ) : (
+                  <AiOutlineDelete
+                    title="حذف العنصر"
+                    className="text-2xl text-[#ef4444]"
+                  />
+                )}
+              </button>
+            </>
+          );
+        },
+      },
+    },
+    {
+      name: "name",
+      label: "اسم العميل",
+    },
+    {
       name: "category.name",
       label: "اسم الباكدج",
       options: {
@@ -133,135 +208,131 @@ const StudioTableDaily = () => {
         },
       },
     },
-    {
-      name: "name",
-      label: "اسم العميل",
-    },
-    {
-      name: "appropriate",
-      label: "تاريخ المناسبه",
-      options: {
-        customBodyRender: (value) => {
-          const date = new Date(value);
-          const formattedDate = date.toLocaleDateString("ar-EG");
-          return `${formattedDate}`;
-        },
-        wrap: 'nowrap',
-      },
-    },
-    {
-        name: "receivedDate",
-        label: "تاريخ الاستلام",
-              options: {
-        customBodyRender: (value) => {
-          const date = new Date(value);
-          const formattedDate = date.toLocaleDateString("ar-EG");
-          return `${formattedDate}`;
-        },
-        wrap: 'nowrap',
-      },
-      },
-      {
-        name: "enter",
-        label: "معاد دخول",
-        options: {
-          customBodyRender: (value) => {
-            // دالة لتحويل الأرقام إلى النصوص العربية
-            const convertToArabicNumbers = (num) => {
-              const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
-              return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
-            };
+//     {
+//       name: "appropriate",
+//       label: "تاريخ المناسبه",
+//       options: {
+//         customBodyRender: (value) => {
+//           const date = new Date(value);
+//           const formattedDate = date.toLocaleDateString("ar-EG");
+//           return `${formattedDate}`;
+//         },
+//         wrap: 'nowrap',
+//       },
+//     },
+//     {
+//         name: "receivedDate",
+//         label: "تاريخ الاستلام",
+//               options: {
+//         customBodyRender: (value) => {
+//           const date = new Date(value);
+//           const formattedDate = date.toLocaleDateString("ar-EG");
+//           return `${formattedDate}`;
+//         },
+//         wrap: 'nowrap',
+//       },
+//       },
+//       {
+//         name: "enter",
+//         label: "معاد دخول",
+//         options: {
+//           customBodyRender: (value) => {
+//             // دالة لتحويل الأرقام إلى النصوص العربية
+//             const convertToArabicNumbers = (num) => {
+//               const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
+//               return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
+//             };
       
-            const convertTo12HourFormat = (time) => {
-              // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
-              if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
-                return '';
-              }
+//             const convertTo12HourFormat = (time) => {
+//               // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
+//               if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
+//                 return '';
+//               }
       
-              // تقسيم الوقت إلى ساعات، دقائق وثواني
-              let [hours, minutes, seconds] = time.split(':').map(Number);
+//               // تقسيم الوقت إلى ساعات، دقائق وثواني
+//               let [hours, minutes, seconds] = time.split(':').map(Number);
       
-              let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
-              hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
+//               let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
+//               hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
       
-              // إعادة تركيب الوقت بصيغة 12 ساعة
-              return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
-            };
+//               // إعادة تركيب الوقت بصيغة 12 ساعة
+//               return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
+//             };
       
-            const formattedTime = convertTo12HourFormat(value);
-            return `${formattedTime}`;
-          },
-          wrap: 'nowrap',
-        },
-      }
+//             const formattedTime = convertTo12HourFormat(value);
+//             return `${formattedTime}`;
+//           },
+//           wrap: 'nowrap',
+//         },
+//       }
       
-,      
-      {
-        name: "exit",
-        label: "معاد خروج",
-        options: {
-          customBodyRender: (value) => {
-            // دالة لتحويل الأرقام إلى النصوص العربية
-            const convertToArabicNumbers = (num) => {
-              const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
-              return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
-            };
+// ,      
+//       {
+//         name: "exit",
+//         label: "معاد خروج",
+//         options: {
+//           customBodyRender: (value) => {
+//             // دالة لتحويل الأرقام إلى النصوص العربية
+//             const convertToArabicNumbers = (num) => {
+//               const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
+//               return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
+//             };
       
-            const convertTo12HourFormat = (time) => {
-              // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
-              if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
-                return '';
-              }
+//             const convertTo12HourFormat = (time) => {
+//               // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
+//               if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
+//                 return '';
+//               }
       
-              // تقسيم الوقت إلى ساعات، دقائق وثواني
-              let [hours, minutes, seconds] = time.split(':').map(Number);
+//               // تقسيم الوقت إلى ساعات، دقائق وثواني
+//               let [hours, minutes, seconds] = time.split(':').map(Number);
       
-              let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
-              hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
+//               let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
+//               hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
       
-              // إعادة تركيب الوقت بصيغة 12 ساعة
-              return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
-            };
+//               // إعادة تركيب الوقت بصيغة 12 ساعة
+//               return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
+//             };
       
-            const formattedTime = convertTo12HourFormat(value);
-            return `${formattedTime}`;
-          },
-          wrap: 'nowrap',
-        },
-      },
-      {
-        name: "arrive",
-        label: "معاد وصول",
-        options: {
-          customBodyRender: (value) => {
-            // دالة لتحويل الأرقام إلى النصوص العربية
-            const convertToArabicNumbers = (num) => {
-              const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
-              return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
-            };
+//             const formattedTime = convertTo12HourFormat(value);
+//             return `${formattedTime}`;
+//           },
+//           wrap: 'nowrap',
+//         },
+//       },
+//       {
+//         name: "arrive",
+//         label: "معاد وصول",
+//         options: {
+//           customBodyRender: (value) => {
+//             // دالة لتحويل الأرقام إلى النصوص العربية
+//             const convertToArabicNumbers = (num) => {
+//               const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
+//               return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
+//             };
       
-            const convertTo12HourFormat = (time) => {
-              // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
-              if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
-                return '';
-              }
+//             const convertTo12HourFormat = (time) => {
+//               // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
+//               if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
+//                 return '';
+//               }
       
-              // تقسيم الوقت إلى ساعات، دقائق وثواني
-              let [hours, minutes, seconds] = time.split(':').map(Number);
+//               // تقسيم الوقت إلى ساعات، دقائق وثواني
+//               let [hours, minutes, seconds] = time.split(':').map(Number);
       
-              let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
-              hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
+//               let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
+//               hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
       
-              // إعادة تركيب الوقت بصيغة 12 ساعة
-              return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
-            };
+//               // إعادة تركيب الوقت بصيغة 12 ساعة
+//               return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
+//             };
       
-            const formattedTime = convertTo12HourFormat(value);
-            return `${formattedTime}`;
-          },
-          wrap: 'nowrap',
-        },
-      },
+//             const formattedTime = convertTo12HourFormat(value);
+//             return `${formattedTime}`;
+//           },
+//           wrap: 'nowrap',
+//         },
+//       },
       {
         label: "حالة الدفع",
         name: "status",
@@ -348,79 +419,38 @@ const StudioTableDaily = () => {
     //     },
     //   },
     // },
-    {
-      name: "created_at",
-      label: "تاريخ العملية",
-      options: {
-        customBodyRender: (value) => {
-          const date = new Date(value);
-          const formattedDate = date.toLocaleDateString("ar-EG");
-          const formattedTime = date.toLocaleTimeString("ar-EG", {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-          return `${formattedDate}(${formattedTime})`;
-        },
-        wrap: 'nowrap',
-      },
-    },
-    {
-      name: "updated_at",
-      label: "تاريخ التحديث",
-      options: {
-        customBodyRender: (value) => {
-          const date = new Date(value);
-          const formattedDate = date.toLocaleDateString("ar-EG");
-          const formattedTime = date.toLocaleTimeString("ar-EG", {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-          return `${formattedDate}(${formattedTime})`;
-        },
-        wrap: 'nowrap',
-      },
-    },
-    {
-      name: "actions",
-      label: "تنفيذ",
-      options: {
-        customBodyRender: (value, tableMeta, updateValue) => {
-          const adminId = 
-          searchQuery
-              ? searchedEmployees?.studio?.[tableMeta.rowIndex]?.id
-              : employees?.data?.[tableMeta.rowIndex]?.id
-          // (employees?.data || searchedEmployees?.studio)?.[
-          //   tableMeta.rowIndex
-          // ]?.id;
-          return (
-            <>
-                         <button onClick={() => handlePrint(adminId)} className="ml-5">
-                <IoPrint
-                  title="طباعه الفاتوره"
-                  className="text-2xl text-black"
-                />
-              </button>
-              <button onClick={() => handleEdit(adminId)} className="ml-5">
-                <AiOutlineEdit
-                  title="تعديل  البيانات"
-                  className="text-2xl text-black"
-                />
-              </button>
-              <button onClick={() => handleDelete(adminId)}>
-                {isDeleting && deleteEmployeeId === adminId ? (
-                  <Spinner />
-                ) : (
-                  <AiOutlineDelete
-                    title="حذف العنصر"
-                    className="text-2xl text-[#ef4444]"
-                  />
-                )}
-              </button>
-            </>
-          );
-        },
-      },
-    },
+    // {
+    //   name: "created_at",
+    //   label: "تاريخ العملية",
+    //   options: {
+    //     customBodyRender: (value) => {
+    //       const date = new Date(value);
+    //       const formattedDate = date.toLocaleDateString("ar-EG");
+    //       const formattedTime = date.toLocaleTimeString("ar-EG", {
+    //         hour: "2-digit",
+    //         minute: "2-digit",
+    //       });
+    //       return `${formattedDate}(${formattedTime})`;
+    //     },
+    //     wrap: 'nowrap',
+    //   },
+    // },
+    // {
+    //   name: "updated_at",
+    //   label: "تاريخ التحديث",
+    //   options: {
+    //     customBodyRender: (value) => {
+    //       const date = new Date(value);
+    //       const formattedDate = date.toLocaleDateString("ar-EG");
+    //       const formattedTime = date.toLocaleTimeString("ar-EG", {
+    //         hour: "2-digit",
+    //         minute: "2-digit",
+    //       });
+    //       return `${formattedDate}(${formattedTime})`;
+    //     },
+    //     wrap: 'nowrap',
+    //   },
+    // },
 
   ];
 
@@ -533,6 +563,20 @@ const StudioTableDaily = () => {
           initialValues={editEmployee}
           refetchSearch={refetchSearchResults}
           refetchEmployees={refetchEmployees}
+        />
+      )}
+            {editMakeupDetails && (
+        <DetailsStudio
+          isOpen={true}
+          closeModal={handleCloseEdit}
+          initialValues={editMakeupDetails}
+        />
+      )}
+      {editMakeupInstallMent && (
+        <StudioInstallMent
+          isOpen={true}
+          closeModal={handleCloseEdit}
+          initialValues={editMakeupInstallMent}
         />
       )}
       <DeleteDialog

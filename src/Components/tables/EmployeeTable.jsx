@@ -4,24 +4,18 @@ import MUIDataTable from "mui-datatables";
 import Spinner from "../../Shared/Spinner";
 import DeleteDialog from "../../Shared/DeleteDialog";
 import { Pagination } from "antd";
-import { useSearchEmployeeQuery } from "../../app/Feature/API/Search";
-import UpdateEmployee from "./../UpdateForm/UpdateEmployee"; // Corrected path
+import UpdateEmployee from "./../UpdateForm/UpdateEmployee"; 
 import { useDeleteEmployeeMutation, useGetEmployeesQuery } from "../../app/Feature/API/Emplyee";
 
 const EmployeeTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState();
-  const [searchQuery, setSearchQuery] = useState("");
-  const { data: employees, refetch: refetchEmployees } = useGetEmployeesQuery(currentPage); // Renamed from packages to employees for clarity
-  const {
-    data: searchedEmployees,
-    isLoading: loadingSearch,
-    refetch: refetchSearchResults,
-  } = useSearchEmployeeQuery(searchQuery);
+  
+  const { data: employees, refetch: refetchEmployees ,isLoading} = useGetEmployeesQuery(currentPage);
   const [deleteEmployeeId, setDeleteEmployeeId] = useState(null);
   const [deleteEmployee, { isLoading: isDeleting }] = useDeleteEmployeeMutation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [editEmployee, setEditEmployee] = useState(null); // Renamed from editPackage to editEmployee for clarity
+  const [editEmployee, setEditEmployee] = useState(null);
 
   useEffect(() => {
     if (employees?.data?.length === 0 && currentPage > 1) {
@@ -35,10 +29,7 @@ const EmployeeTable = () => {
   };
 
   const handleEdit = async (employeeId) => {
-    const employeeToEdit =
-      searchQuery === ""
-        ? employees.data.find((emp) => emp.id === employeeId)
-        : searchedEmployees.employee.find((emp) => emp.id === employeeId);
+    const employeeToEdit = employees.data.find((emp) => emp.id === employeeId)
     setEditEmployee(employeeToEdit);
   };
 
@@ -52,8 +43,7 @@ const EmployeeTable = () => {
       await deleteEmployee(deleteEmployeeId);
       setDeleteEmployeeId(null);
       setIsDeleteDialogOpen(false);
-      refetchEmployees(); // Renamed from refetch to refetchEmployees for clarity
-      refetchSearchResults(); // Renamed from refetchData to refetchSearchResults for clarity
+      refetchEmployees();
     } catch (error) {
       console.error("Error deleting employee:", error);
     }
@@ -68,21 +58,12 @@ const EmployeeTable = () => {
     setEditEmployee(null);
   };
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
-    setEditEmployee(null);
-    refetchSearchResults(); // Renamed from refetchData to refetchSearchResults for clarity
-  };
-
   const columns = [
     {
-      name:'#',
-      label:'',
+      name: "#",
+      label: "",
       options: {
-        customBodyRender: (value, tableMeta, updateValue) => {
-          return tableMeta.rowIndex + 1;
-        },
+        customBodyRender: (value, tableMeta) => tableMeta.rowIndex + 1,
       },
     },
     {
@@ -93,9 +74,7 @@ const EmployeeTable = () => {
       name: "num",
       label: "رقم البصمة",
       options: {
-        customBodyRender: (value) => {
-          return `${new Intl.NumberFormat("ar-EG").format(value)}`;
-        },
+        customBodyRender: (value) => `${new Intl.NumberFormat("ar-EG").format(value)}`,
       },
     },
     {
@@ -106,9 +85,7 @@ const EmployeeTable = () => {
       name: "salary",
       label: "الراتب",
       options: {
-        customBodyRender: (value) => {
-          return `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`;
-        },
+        customBodyRender: (value) => `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`,
       },
     },
     {
@@ -146,17 +123,16 @@ const EmployeeTable = () => {
       label: "تنفيذ",
       options: {
         customBodyRender: (value, tableMeta) => {
-          const employee = searchQuery
-          ? searchedEmployees?.employee?.[tableMeta.rowIndex]?.id
-          : employees?.data?.[tableMeta.rowIndex]?.id
-          if (employee) {
+          const employeeId = employees?.data?.[tableMeta.rowIndex]?.id;
+
+          if (employeeId) {
             return (
               <>
-                <button onClick={() => handleEdit(employee)} className="ml-5">
+                <button onClick={() => handleEdit(employeeId)} className="ml-5">
                   <AiOutlineEdit className="text-2xl text-black" />
                 </button>
-                <button onClick={() => handleDelete(employee)}>
-                  {isDeleting && deleteEmployeeId === employee ? (
+                <button onClick={() => handleDelete(employeeId)}>
+                  {isDeleting && deleteEmployeeId === employeeId ? (
                     <AiOutlineLoading className="text-2xl animate-spin" />
                   ) : (
                     <AiOutlineDelete className="text-2xl text-[#ef4444]" />
@@ -184,7 +160,7 @@ const EmployeeTable = () => {
     }),
     textLabels: {
       body: {
-        noMatch: loadingSearch ? "جاري البحث..." : "لا توجد بيانات مطابقة",
+        noMatch: isLoading ? "جاري البحث..." : "لا توجد بيانات مطابقة",
         toolTip: "فرز",
         columnHeaderTooltip: (column) => `فرز لـ ${column.label}`,
       },
@@ -218,20 +194,10 @@ const EmployeeTable = () => {
     },
   };
 
-  const dataToDisplay = searchQuery ? searchedEmployees?.employee : employees?.data;
+  const dataToDisplay = employees?.data;
 
   return (
     <>
-      <div className="mb-4 flex justify-between items-center w-[100%]">
-        <input
-          type="text"
-          placeholder="ابحث اسم الموظف"
-          className="w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
-      </div>
-
       {employees ? (
         <>
           <MUIDataTable
@@ -262,7 +228,6 @@ const EmployeeTable = () => {
           isOpen={true}
           initialValues={editEmployee}
           closeModal={handleCloseEdit}
-          refetchSearch={refetchSearchResults}
         />
       )}
 

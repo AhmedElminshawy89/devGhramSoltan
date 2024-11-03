@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../../Shared/Spinner";
 import { useUpdateDiscountMutation } from "../../app/Feature/API/Discount";
 
-const UpdateDiscount = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
+const UpdateDiscount = ({ isOpen, closeModal, initialValues }) => {
   const [name, setName] = useState(initialValues.discount || "");
   const nameEdit = initialValues.discount
   const [discount, setDiscount] = useState(initialValues.price || "");
@@ -40,7 +40,6 @@ const UpdateDiscount = ({ isOpen, closeModal, initialValues,refetchSearch }) => 
         toast.success("تم تحديث بيانات الخصم بنجاح!");
         closeModal();
         resetForm();
-        refetchSearch();
       } catch (error) {
         console.error("حدث خطأ أثناء تحديث بيانات الخصم:", error);
         setNotification({

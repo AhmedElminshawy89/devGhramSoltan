@@ -152,7 +152,11 @@ return (
 const MakeupForm = ({ isOpen, closeModal }) => {
 
   const [discountType, setDiscountType] = useState("");
-  const [discountName, setDiscountName] = useState("");
+  const [henaDate, setHenaDate] = useState("");
+  const [secOther, setSecOther] = useState("");
+  const [secOtherPrice, setSecOtherPrice] = useState("");
+  const [secOtherDate, setSecOtherDate] = useState("");
+  const [henaFound, setHenaFound] = useState(false);
   const { data: ShowDiscountPrice } = useGetDiscountsPriceQuery(discountType&&discountType.value);
   const { data: getAllDiscount } = useGetallDiscountsWithoutPaginationQuery("");
   const [packageType, setPackageType] = useState("");
@@ -237,25 +241,27 @@ const MakeupForm = ({ isOpen, closeModal }) => {
       if (discountType && ShowDiscountPrice?.price) {
         totalPrice -= Number(ShowDiscountPrice.price) || 0;
       }
+      if (secOtherPrice) {
+        totalPrice += Number(secOtherPrice) || 0;
+      }
   
       setTotal(totalPrice);
     };
   
     calculateTotal();
-  }, [
-    packageType,
-    selectedPackageDetails,
-    additionalServicePrice,
-    ShowDiscountPrice,
-    uniqueCategories,
-    ShowSubCategory,
-    discountType,
-  ]);
+  }, [packageType, selectedPackageDetails, additionalServicePrice, ShowDiscountPrice, uniqueCategories, ShowSubCategory, discountType, secOtherPrice]);
   
   useEffect(() => {
     setRemaining(Number(total) - Number(payment) || 0);
   }, [total, payment]);
   
+  useEffect(()=>{
+    if(henaFound===true){
+      return
+    }else{
+      setHenaDate("")
+    }
+  },[henaFound])
 
   const discountRate = ShowDiscountPrice ? ShowDiscountPrice.price : "";
 
@@ -263,7 +269,7 @@ const MakeupForm = ({ isOpen, closeModal }) => {
   const handlePhoneChange = (e) => setPhone(e.target.value);
   const handleCityChange = (e) => setCity(e.target.value);
   const handleEventDateChange = (e) => setEventDate(e.target.value);
-  const handleReceiveDateChange = (e) => setReceiveDate(e.target.value);
+  const handleHenaDateChange = (e) => setHenaDate(e.target.value);
   const handleTotalChange = (value) => setTotal(value);
   const handlePaymentChange = (value) => setPayment(value);
   const handleAdditionalServiceChange = (e) => setAdditionalService(e.target.value);
@@ -281,8 +287,11 @@ const MakeupForm = ({ isOpen, closeModal }) => {
         });
         return;
       }
-      const notes = selectedPackageDetails.map((detail) => detail.label).join(', ')
-      try {
+      const notes = selectedPackageDetails.map((detail) => ({
+        key: detail.label,
+        value: detail.value
+      }));
+            try {
         const response = await saveStudio({
           category_id:packageType&&packageType.value,
           notes,
@@ -297,6 +306,10 @@ const MakeupForm = ({ isOpen, closeModal }) => {
           addService:additionalService,
           priceService:additionalServicePrice,
           price:discountRate,
+          dateService:henaDate,
+          typeHair:secOther,
+          priceHair:secOtherPrice,
+          dateHair:secOtherDate,
         });
 
         if (response.error) {
@@ -353,6 +366,11 @@ const MakeupForm = ({ isOpen, closeModal }) => {
     setPackageType('')
     setSelectedPackageDetails([])
     setFormSubmitted(false);
+    setHenaDate('')
+    setHenaFound(false);
+    setSecOther('')
+    setSecOtherDate('')
+    setSecOtherPrice('')
 
     const formElements = document.getElementsByClassName("ant-input");
     for (let element of formElements) {
@@ -450,11 +468,7 @@ const MakeupForm = ({ isOpen, closeModal }) => {
                               options={
                                 ShowSubCategory?.map((subCategory) => ({
                                   value: subCategory.id,
-                                  label: `${
-                                    subCategory.item
-                                  } - ${subCategory.price.toLocaleString(
-                                    "ar-EG"
-                                  )} جنيه`,
+                                  label: subCategory.item,
                                 })) || []
                               }
                               isMulti
@@ -669,7 +683,87 @@ isClearable
                           />
                         </div>
                       )}
-
+                      <div className="mb-4 flex items-center">
+                              <input
+                                id="hena"
+                                type="checkbox"
+                                checked={henaFound}
+                                onChange={(e) => setHenaFound(e.target.checked)}
+                              />
+                              <label
+                                className="block text-gray-700 text-xl font-bold mb-2 text-start"
+                                htmlFor="hena"
+                              >
+                                هل يوجد حنه ام لا؟
+                              </label>
+                            </div>  
+                            {henaFound&&(
+                              <div className="mb-4">
+                                <label
+                                  className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                                  htmlFor="hena"
+                                >
+                                  تاريخ الحنة
+                                </label>
+                                <input
+                                  id="hena"
+                                  type="date"
+                                  value={henaDate}
+                                  onChange={handleHenaDateChange}
+                                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
+                                />
+                              </div>
+                            )}                  
+                       <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="sec"
+                        >
+                           اسم القسم الاخر 
+                        </label>
+                        <input
+                          id="sec"
+                          value={secOther}
+                          onChange = {(e)=>setSecOther(e.target.value)}
+                          className={`shadow appearance-none border
+                            rounded w-full py-2 px-3 text-gray-700 leading-tight
+                             focus:outline-none focus:shadow-outline `}  
+                        />
+                      </div>
+                    
+                       <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="sec"
+                        >
+                           تاريخ القسم الاخر 
+                        </label>
+                        <input
+                          id="sec"
+                          value={secOtherDate}
+                          onChange={(e)=>setSecOtherDate(e.target.value)}
+                          type="date"
+                          className={`shadow appearance-none border
+                            rounded w-full py-2 px-3 text-gray-700 leading-tight
+                             focus:outline-none focus:shadow-outline `}  
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="sec"
+                        >
+                          سعر القسم الاخر 
+                        </label>
+                        <InputNumber
+                          id="sec"
+                          value={secOtherPrice}
+                          onChange={(value) => setSecOtherPrice(value)}
+                          className={`shadow appearance-none border
+                            rounded w-full py-2 px-3 text-gray-700 leading-tight
+                            focus:outline-none focus:shadow-outline`}  
+                        />
+                      </div>
                       </div>
                       <div className="flex items-center justify-start gap-4 mt-4">
                   <button

@@ -17,136 +17,161 @@ import Spinner from "../../Shared/Spinner";
 import { useGetStudioDailyQuery } from "../../app/Feature/API/Daily";
 
 const Invoice = React.forwardRef((props, ref) => {
-  const {
-    packageType,
-    selectedPackageDetails,
-    brideName,
-    phone,
-    city,
-    eventDate,
-    receiveDate,
-    total,
-    payment,
-    remaining,
-    discountName,
-    additionalService,
-    additionalServicePrice,
-    discountRate,
-    logo,
-  } = props;
+const {
+  packageType,
+  selectedPackageDetails,
+  brideName,
+  phone,
+  city,
+  eventDate,
+  receiveDate,
+  total,
+  payment,
+  remaining,
+  discountName,
+  additionalService,
+  additionalServicePrice,
+  discountRate,
+  logo,
+} = props;
 
-  return (
-    <div
-      ref={ref}
-      style={{
-        width: "80mm",
-        padding: "10mm",
-        fontFamily: "Arial, sans-serif",
-        direction:'rtl'
-      }}
-    >
-      <div style={{ textAlign: "center" }}>
-        <img
-          src={logo}
-          alt="Logo"
-          style={{ width: "30mm", height: "auto", margin: "0 auto" }}
-        />
+const isValidDate = (date) => {
+  return date instanceof Date && !isNaN(date);
+};
+
+const now = new Date();
+const options = {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+};
+
+return (
+  <div
+    ref={ref}
+    style={{
+      // width: "80mm",
+      padding: "10mm",
+      fontFamily: "Arial, sans-serif",
+      direction: 'rtl',
+       textAlign: "center"
+    }}
+  >
+      <div         style={{
+      display:'flex', justifyContent:'center',
+      alignItems: 'center'
+
+      }}>
+      <img
+        src={logo}
+        alt="Logo"
+        style={{ width: "30mm", height: "auto", marginBottom: "2px" }}
+      />
       </div>
-      <div>
-        <div
-          style={{
-            borderBottom: "1px solid #eee",
-            padding: "4mm 0",
-          }}
-        >
-          <p className="mb-1 text-lg">
-            <strong>اسم العميل:</strong> {brideName}
-          </p>
-          <p className="mb-1 text-lg">
-            <strong>رقم التليفون:</strong> {phone}
-          </p>
-          <p className="mb-1 text-lg">
-            <strong>البلد:</strong> {city}
-          </p>
-          <p className="mb-1 text-lg">
-            <strong>تاريخ اليوم:</strong>
-            {new Date().toLocaleDateString("ar-EG")}
-          </p>
-          <p className="mb-1 text-lg">
-            <strong>تاريخ المناسبة:</strong> {eventDate}
-          </p>
-          <p className="mb-1 text-lg">
-            <strong>تاريخ الاستلام:</strong> {receiveDate}
-          </p>
-        </div>
-        <div
-          style={{
-            padding: "4mm 0",
-          }}
-        >
-          <p className="mb-1">
-            <strong>نوع الباكدج:</strong> {packageType}
-          </p>
-          <p className="mb-1">
-            <strong>مرتجع من الباكدج:</strong> {selectedPackageDetails.map((detail) => detail.label).join(', ')}
-          </p>
-          <p className="mb-1">
-            <strong>خدمة إضافية:</strong> {additionalService}
-          </p>
-          <p className="mb-1">
-            <strong>سعر الخدمة الإضافية:</strong> {additionalServicePrice}
-          </p>
-          <p className="mb-1">
-            <strong>إجمالي :</strong> {total}
-          </p>
-          <p className="mb-1">
-            <strong>المبلغ المدفوع:</strong> {payment}
-          </p>
-          <p className="mb-1">
-            <strong>المبلغ المتبقي:</strong> {remaining}
-          </p>
-          <p className="mb-1">
-            <strong>نوع الخصم:</strong> {discountName}
-          </p>
-          <p className="mb-1">
-            <strong>قيمة الخصم:</strong> {discountRate}
-          </p>
-        </div>
+    <div>
+      <div
+        style={{
+          borderBottom: "1px solid #eee",
+          padding: "4mm 0",
+        }}
+      >
+        <p className="mb-1 text-lg">
+          <strong>اسم العميل:</strong> {brideName}
+        </p>
+        <p className="mb-1 text-lg">
+          <strong>رقم التليفون:</strong> {phone}
+        </p>
+        <p className="mb-1 text-lg">
+          <strong>البلد:</strong> {city}
+        </p>
+        <p className="mb-1 text-lg">
+          <strong>تاريخ المناسبة:</strong>{" "}
+          {isValidDate(new Date(eventDate)) ? new Date(eventDate).toLocaleDateString('ar-EG') : "تاريخ غير صالح"}
+        </p>
+        <p className="mb-1 text-lg">
+          <strong>تاريخ الاستلام:</strong>{" "}
+          {isValidDate(new Date(receiveDate)) ? new Date(receiveDate).toLocaleDateString('ar-EG') : "تاريخ غير صالح"}
+        </p>
+        <p className="mb-1">
+          <strong>تاريخ اليوم:</strong> {now.toLocaleDateString('ar-EG', options)}
+        </p>
+        <p className="mb-1">
+          <strong>الوقت:</strong> {now.toLocaleTimeString('ar-EG')}
+        </p>
       </div>
-      <p className="mb-1 text-md text-center">
-        <strong>في حاله الالغاء لا يسترد المبلغ المدفوع</strong>
-      </p>
-      <p className="mb-1 text-md text-center">
-        <strong>يرجي الاحتفاظ بالايصال للمراجعه</strong>
-      </p>
-      <p className="mb-1 text-md text-center">
-        <strong>العنوان:دسوق - شارع الجيش م:0106853310</strong>
-      </p>
+      <div
+        style={{
+          padding: "4mm 0",
+        }}
+      >
+        <p className="mb-1">
+          <strong>نوع الباكدج:</strong> {packageType}
+        </p>
+        <p className="mb-1">
+          <strong>مرتجع من الباكدج:</strong>{" "}
+          {selectedPackageDetails.map((detail) => detail.label).join(', ')}
+        </p>
+        <p className="mb-1">
+          <strong>خدمة إضافية:</strong> {additionalService}
+        </p>
+        <p className="mb-1">
+          <strong>سعر الخدمة الإضافية:</strong>{" "}
+          {`${additionalServicePrice ? `${additionalServicePrice.toLocaleString('ar-EG')} جنيه` : ''}`}
+          </p>
+        <p className="mb-1">
+          <strong>إجمالي :</strong> {`${total.toLocaleString('ar-EG')} جنيه`}
+        </p>
+        <p className="mb-1">
+          <strong>المبلغ المدفوع:</strong>{" "}
+          {`${payment ? `${payment.toLocaleString('ar-EG')} جنيه` : ''}`}
+          </p>
+        <p className="mb-1">
+          <strong>المبلغ المتبقي:</strong>{" "}
+          {`${remaining ? `${remaining.toLocaleString('ar-EG')} جنيه` : ''}`}
+        </p>
+        <p className="mb-1">
+          <strong>نوع الخصم:</strong> {discountName?discountName:""}
+        </p>
+        <p className="mb-1">
+          <strong>قيمة الخصم:</strong>{" "}
+          {`${discountRate ? `${discountRate.toLocaleString('ar-EG')} جنيه` : ''}`}
+        </p>
+      </div>
     </div>
-  );
+    <p className="mb-1 text-md text-center">
+      <strong>في حاله الالغاء لا يسترد المبلغ المدفوع</strong>
+    </p>
+    <p className="mb-1 text-md text-center">
+      <strong>يرجي الاحتفاظ بالايصال للمراجعه</strong>
+    </p>
+    <p className="mb-1 text-md text-center">
+      <strong>العنوان: دسوق - شارع الجيش <br/> م: 0472570908</strong>
+    </p>
+  </div>
+);
 });
 
-const UpdateStudio = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
+
+const UpdateStudio = ({ isOpen, closeModal , initialValues }) => {
 
   const [discountType, setDiscountType] = useState("");
-  const [discountName, setDiscountName] = useState("");
-  const [CategoryName, setCategoryName] = useState("");
-  const { data: ShowDiscountPrice } = useGetDiscountsPriceQuery(discountType);
+  const { data: ShowDiscountPrice } = useGetDiscountsPriceQuery(discountType&&discountType.value);
   const { data: getAllDiscount } = useGetallDiscountsWithoutPaginationQuery("");
   const [packageType, setPackageType] = useState("");
-  const { data: ShowSubCategory } = useGetSubCategoriesBasedOnCategoryQuery(packageType);
+  const { data: ShowSubCategory } = useGetSubCategoriesBasedOnCategoryQuery(packageType&&packageType.value);
   const [selectedPackageDetails, setSelectedPackageDetails] = useState([]);
   const [uniqueCategories, setUniqueCategories] = useState([]);
-  const [brideName, setBrideName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [city, setCity] = useState("");
-  const [eventDate, setEventDate] = useState("");
-  const [receiveDate, setReceiveDate] = useState("");
+  const [brideName, setBrideName] = useState(initialValues.name ||"");
+  const [phone, setPhone] = useState(initialValues.phone ||"");
+  const [city, setCity] = useState(initialValues.address ||"");
+  const [eventDate, setEventDate] = useState(initialValues.appropriate ||"");
+  const [receiveDate, setReceiveDate] = useState(initialValues.receivedDate ||"");
   const [total, setTotal] = useState(0);
-  const [payment, setPayment] = useState(0);
+  const [payment, setPayment] = useState(initialValues.pay |0);
   const [remaining, setRemaining] = useState(0);
-  const [additionalService, setAdditionalService] = useState("");
-  const [additionalServicePrice, setAdditionalServicePrice] = useState(0);
+  const [additionalService, setAdditionalService] = useState(initialValues.addService ||"");
+  const [additionalServicePrice, setAdditionalServicePrice] = useState(initialValues.priceService ||0);
   const [allDiscounts, setAllDiscounts] = useState([]);
   const { data: showCategoryStudio } = useGetCategoriesStudioQuery("");
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -155,10 +180,10 @@ const UpdateStudio = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
   const { refetch: refetchStudioDaily } = useGetStudioDailyQuery();
 
   const invoiceRef = useRef();
+
   useEffect(() => {
     setSelectedPackageDetails([]);
     setDiscountType("");
-  
     if (showCategoryStudio) {
       const uniqueCategories = showCategoryStudio.reduce((acc, current) => {
         const existing = acc.find((item) => item.name === current.name);
@@ -168,15 +193,8 @@ const UpdateStudio = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
         return acc;
       }, []);
       setUniqueCategories(uniqueCategories);
-  
-      const selectedCategory = uniqueCategories.find(
-        (category) => category.id === initialValues.category_id
-      );
-      if (selectedCategory) {
-        setCategoryName(selectedCategory.name);
-      }
     }
-  
+
     if (getAllDiscount && Array.isArray(getAllDiscount)) {
       const uniqueDiscounts = Array.from(
         new Set(getAllDiscount.map((item) => item.discount))
@@ -184,47 +202,61 @@ const UpdateStudio = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
         return getAllDiscount.find((item) => item.discount === discount);
       });
       setAllDiscounts(uniqueDiscounts);
-  
-      const selectedDiscount = getAllDiscount.find(
-        (discount) => discount.id === initialValues.reason_discount_id
-      );
-      if (selectedDiscount) {
-        setDiscountName(selectedDiscount.discount);
-      }
     } else {
       console.error("getAllDiscount is not an array or is undefined/null.");
     }
-  }, [showCategoryStudio, getAllDiscount, initialValues.category_id, initialValues.reason_discount_id]);
-  
-  
-
+  }, [showCategoryStudio, getAllDiscount]);
 
   useEffect(() => {
-const notesString = initialValues.notes; 
-const notesArray = notesString?.split(',').map((note) => ({
-  label: note.trim(),
-  value: note.trim(),
-}));
-    if (initialValues) {
-      setPackageType(initialValues.category_id)
-      setSelectedPackageDetails(notesArray?notesArray:[])
-      setDiscountType(initialValues.reason_discount?initialValues.reason_discount:"")
-      setBrideName(initialValues.name)
-      setPhone(initialValues.phone)
-      setCity(initialValues.address)
-      setEventDate(initialValues.appropriate)
-      setReceiveDate(initialValues.receivedDate)
-      setTotal(initialValues.total)
-      setPayment(initialValues.pay)
-      setRemaining(initialValues.rest)
-      setAdditionalService(initialValues.addService?initialValues.addService:"")
-      setAdditionalServicePrice(initialValues.priceService?initialValues.priceService:"")
-    }
-  }, [initialValues]);
-
-
+    const calculateTotal = () => {
+      let totalPrice = 0;
+  
+     const subCategoryPrices = ShowSubCategory
+        ? [...new Set(ShowSubCategory.map((pckg) => Number(pckg.category.price) || 0))]
+        : [];
+      const TotalPackage = subCategoryPrices.reduce((acc, price) => acc + price, 0);
+      totalPrice += TotalPackage;
+  
+      if (additionalServicePrice) {
+        totalPrice += Number(additionalServicePrice) || 0;
+      }
+  
+      const selectedPackage = uniqueCategories.find(
+        (pkg) => pkg.id === packageType
+      );
+      if (selectedPackage) {
+        totalPrice -= Number(selectedPackage.price) || 0;
+      }
+  
+      selectedPackageDetails.forEach((detail) => {
+        const subCategory = ShowSubCategory.find(
+          (sub) => sub.id === detail.value
+        );
+        if (subCategory) {
+          totalPrice -= Number(subCategory.price) || 0;
+        }
+      });
+  
+      if (discountType && ShowDiscountPrice?.price) {
+        totalPrice -= Number(ShowDiscountPrice.price) || 0;
+      }
+  
+      setTotal(totalPrice);
+    };
+  
+    calculateTotal();
+  }, [
+    packageType,
+    selectedPackageDetails,
+    additionalServicePrice,
+    ShowDiscountPrice,
+    uniqueCategories,
+    ShowSubCategory,
+    discountType,
+  ]);
+  
   useEffect(() => {
-    setRemaining(total - payment);
+    setRemaining(Number(total) - Number(payment) || 0);
   }, [total, payment]);
 
   const discountRate = ShowDiscountPrice ? ShowDiscountPrice.price : "";
@@ -236,12 +268,48 @@ const notesArray = notesString?.split(',').map((note) => ({
   const handleReceiveDateChange = (e) => setReceiveDate(e.target.value);
   const handleTotalChange = (value) => setTotal(value);
   const handlePaymentChange = (value) => setPayment(value);
+  const handleAdditionalServiceChange = (e) => setAdditionalService(e.target.value);
+  const handleAdditionalServicePriceChange = (value) => setAdditionalServicePrice(value);
+  useEffect(() => {
+    if (isOpen) {
+      const initialCategory = uniqueCategories.find(category => category.id === initialValues.category_id);
+      setPackageType(initialCategory ? { label: `${initialCategory.name} - ${initialCategory.price.toLocaleString("ar-EG")} جنيه`, value: initialCategory.id } : '');
+    }
 
+  }, [isOpen, initialValues.category_id, uniqueCategories]);
+
+useEffect(() => {
+  if (isOpen) {
+    const initialDiscount = allDiscounts.find(disc => disc.id === initialValues.reason_discount_id);
+    setDiscountType(initialDiscount ? { label: `${initialDiscount.discount}`, value: initialDiscount.id } : null);
+  }
+}, [isOpen, allDiscounts, initialValues.reason_discount_id]);
+
+
+
+  useEffect(() => {
+    if (Array.isArray(ShowSubCategory) && Array.isArray(initialValues.notes)) {
+      const initialSelectedDetails = initialValues.notes.reduce((acc, note) => {
+        const subCategory = ShowSubCategory.find(sub => sub.item === note.key);
+        if (subCategory) {
+          acc.push({ value: subCategory.id, label: subCategory.item });
+        }
+        return acc;
+      }, []);
+      
+      setSelectedPackageDetails(initialSelectedDetails);
+    } else {
+      setSelectedPackageDetails([]);
+    }
+  }, [initialValues.notes, ShowSubCategory]);
+  
+ 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
     const phoneRegex = /^(\+?\d{1,3}[- ]?)?\d{10}$/;
-    if (brideName && phone && city && eventDate && receiveDate  && total) {
+    if (packageType && brideName && phone && city && eventDate && receiveDate && total) {
       if (!phone.match(phoneRegex)) {
         setNotification({
           type: "error",
@@ -249,29 +317,47 @@ const notesArray = notesString?.split(',').map((note) => ({
         });
         return;
       }
+      const notes = selectedPackageDetails.map((detail) => ({
+        key: detail.label,
+        value: detail.value
+      }));   
       try {
-        const formData2 = new FormData();
-        formData2.append('name', brideName);
-        formData2.append('phone', phone);
-        formData2.append('address', city);
-        formData2.append('appropriate', eventDate);
-        formData2.append('receivedDate', receiveDate);
-        formData2.append('total', total);
-        formData2.append('pay', payment);
-        formData2.append('rest', remaining);
-        await saveStudio2({
-          id: initialValues.id,
-          studioData: formData2,
-        }).unwrap();
+        const formData = {          
+          category_id:packageType&&packageType.value,
+          notes,
+          name:brideName || initialValues.name,
+          phone:phone,
+          address:city,
+          appropriate:eventDate,
+          receivedDate:receiveDate,
+          total,
+          pay:payment,
+          rest:remaining,
+          reason_discount_id:discountType&&discountType.value,
+          addService:additionalService,
+          priceService:additionalServicePrice,
+          price:discountRate,}
+        const response = await saveStudio2({
+          id:initialValues?.id,
+          studioData:formData
+        });
+
+        if (response.error) {
+          setNotification({
+            type: "error",
+            message: response.error.message || "حدث خطأ أثناء حفظ البيانات.",
+          });
+        } else {
           setNotification({
             type: "success",
-            message: "تم تحديث البيانات بنجاح!",
+            message: "تم حفظ البيانات بنجاح!",
           });
-          toast.success("تم تحديث البيانات بنجاح!");
+          toast.success("تم حفظ البيانات بنجاح!");
           resetForm();
+          handlePrint();
           closeModal();
-          refetchSearch();
           refetchStudioDaily()
+        }
       } catch (error) {
         setNotification({
           type: "error",
@@ -285,7 +371,14 @@ const notesArray = notesString?.split(',').map((note) => ({
         message: "الرجاء ملء جميع الحقول!",
       });
     }
-    // console.log(discountName)
+  };
+
+  const handlePrint = useReactToPrint({
+    content: () => invoiceRef.current,
+  });
+
+  const handleDetailSelection = (selectedOptions) => {
+    setSelectedPackageDetails(selectedOptions);
   };
 
   const resetForm = () => {
@@ -301,6 +394,8 @@ const notesArray = notesString?.split(',').map((note) => ({
     setAdditionalService("");
     setAdditionalServicePrice(0);
     setFormSubmitted(false);
+    setPackageType('')
+    setSelectedPackageDetails([])
 
     const formElements = document.getElementsByClassName("ant-input");
     for (let element of formElements) {
@@ -342,7 +437,7 @@ const notesArray = notesString?.split(',').map((note) => ({
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 text-start"
                   >
-                    تعديل حجز استوديو
+                    حجز استوديو
                   </Dialog.Title>
                   <div className="mt-2 overflow-y-auto overflow-x-hidden h-full">
                   {notification && (
@@ -357,15 +452,98 @@ const notesArray = notesString?.split(',').map((note) => ({
                     </div>
                   )}
                     <form
-                      className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
                       onSubmit={handleSubmit}
                     >
+                      <div  className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="category"
+                        >
+                          نوع الباكدج <span className="text-xl text-red-500 mt-4">*</span>
+                        </label>
+                        <Select
+                      id="category"
+                            value={packageType}
+                            onChange={(e) => {
+                              setPackageType(e);
+                            }}
+                      options={
+                        uniqueCategories&&uniqueCategories.map((cta) => ({
+                            label:`${cta.name} - ${cta.price.toLocaleString("ar-EG")} جنيه`,
+                            value:cta.id,
+                        }))
+                      }
+                      className={`shadow ${
+                        formSubmitted && !packageType ? "border-red-500" : "border-gray-400"
+                      } rounded`}
+                      placeholder="اختر اسم الباكدج"
+                    />
+                      </div>
+                      {packageType && (
+                        <>
+                          <div className="mb-4">
+                            <label
+                              className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                              htmlFor="packageDetails"
+                            >
+                              مرتجع من الباكدج <span className="text-xl text-white mt-4">*</span>
+                            </label>
+                            <Select
+                              options={
+                                ShowSubCategory?.map((subCategory) => ({
+                                  value: subCategory.id,
+                                  label: subCategory.item,
+                                })) || []
+                              }
+                              isMulti
+                              placeholder="اختر"
+                              value={selectedPackageDetails}
+                              onChange={handleDetailSelection}
+                            />
+                          </div>
+                        </>
+                      )}
+                      {packageType && (
+                        <>
+                          <div className="mb-4">
+                            <label
+                              className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                              htmlFor="additionalService"
+                            >
+                              خدمة إضافية <span className="text-xl text-white mt-4">*</span>
+                            </label>
+                            <input
+                              id="additionalService"
+                              type="text"
+                              value={additionalService}
+                              onChange={handleAdditionalServiceChange}
+                              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            />
+                          </div>
+                          <div className="mb-4">
+                            <label
+                              className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                              htmlFor="additionalServicePrice"
+                            >
+                              سعر الخدمة الإضافية <span className="text-xl text-white mt-4">*</span>
+                            </label>
+                            <InputNumber
+                              id="additionalServicePrice"
+                              value={additionalServicePrice}
+                              onChange={handleAdditionalServicePriceChange}
+                              min={0}
+                              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            />
+                          </div>
+                        </>
+                      )}
                       <div className="mb-4">
                         <label
                           className="block text-gray-700 text-sm font-bold mb-2 text-start"
                           htmlFor="brideName"
                         >
-                          اسم العروسة<span className="text-xl text-red-500">*</span>
+                          اسم العميل<span className="text-xl text-red-500">*</span>
                         </label>
                         <input
                           id="brideName"
@@ -508,27 +686,73 @@ const notesArray = notesString?.split(',').map((note) => ({
                              focus:outline-none focus:shadow-outline `}                            readOnly
                         />
                       </div>
-                      <div className="flex items-center justify-start gap-4 mt-4">
-                        <button
-                          type="button"
-                          onClick={closeModal}
-                          className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center"
+                      <div className="mb-4">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                          htmlFor="discount"
                         >
-                          <AiOutlineClose className="ml-3" /> إلغاء
-                        </button>
-                        <button
-                          type="submit"
-                          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
-                          disabled={isLoading}
-                        >
-                          {!isLoading ? (
-                            <AiOutlineSave className="ml-3" />
-                          ) : (
-                            <Spinner />
-                          )}
-                          حفظ
-                        </button>
+                          خصم <span className="text-xl text-white mt-4">*</span>
+                        </label>
+                        <Select
+id="discount"
+value={discountType}
+onChange={(e) => {
+  setDiscountType(e ? e : null);
+}}
+options={
+  allDiscounts && allDiscounts.map((discount) => ({
+    label: `${discount.discount}`,
+    value: discount.id,
+  }))
+}
+className={`shadow ${
+  formSubmitted && !discountType ? "border-red-500" : "border-gray-400"
+} rounded`}
+placeholder="اختر الخصم"
+isClearable
+/>
                       </div>
+                      {discountType && (
+                        <div className="mb-4">
+                          <label
+                            className="block text-gray-700 text-sm font-bold mb-2 text-start"
+                            htmlFor="discountRate"
+                          >
+                            قيمة الخصم <span className="text-xl text-white mt-4">*</span>
+                          </label>
+                          <InputNumber
+                            id="discountRate"
+                            value={ShowDiscountPrice ? ShowDiscountPrice.price : ""}
+                            readOnly
+                            min={0}
+                            max={10000}
+                            className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          />
+                        </div>
+                      )}  
+                      </div>
+                      <div className="flex items-center justify-start gap-4 mt-4">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center"
+                  >
+                    <AiOutlineClose className="ml-3" /> إلغاء
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
+                  >
+                        {isLoading ? (
+                          <Spinner />
+                        ) : (
+                          <>
+                            <AiOutlineSave className="ml-1" />
+                            حفظ
+                          </>
+                        )}
+                  </button>
+                </div>
                     </form>
                   </div>
                 </Dialog.Panel>
@@ -540,7 +764,7 @@ const notesArray = notesString?.split(',').map((note) => ({
       <div style={{ display: "none" }}>
       <Invoice
         ref={invoiceRef}
-        packageType={CategoryName}
+        packageType={packageType.label}
         selectedPackageDetails={selectedPackageDetails}
         brideName={brideName}
         phone={phone}
@@ -550,7 +774,7 @@ const notesArray = notesString?.split(',').map((note) => ({
         total={total}
         payment={payment}
         remaining={remaining}
-        discountName={discountName}
+        discountName={discountType&&discountType.label}
         additionalService={additionalService}
         additionalServicePrice={additionalServicePrice}
         discountRate={discountRate}
@@ -561,4 +785,4 @@ const notesArray = notesString?.split(',').map((note) => ({
   );
 };
 
-export default UpdateStudio;
+export default UpdateStudio

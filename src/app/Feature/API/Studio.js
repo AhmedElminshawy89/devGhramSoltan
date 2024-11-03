@@ -7,7 +7,7 @@ export const StudioApi = createApi({
   endpoints: (build) => ({
     getStudios: build.query({
       query: (page) => `/show?page=${page}`,
-      transformResponse: (response) => response.studio,
+      transformResponse: (response) => response.studios,
       providesTags: ["Studio"],
     }),
     saveStudio: build.mutation({
@@ -21,6 +21,14 @@ export const StudioApi = createApi({
     updateStudio: build.mutation({
       query: ({ id, studioData }) => ({
         url: `/update/${id}`,
+        method: "POST",
+        body: studioData,
+      }),
+      invalidatesTags: ["Studio"],
+    }),
+    updateStudioInstallment: build.mutation({
+      query: ({ id, studioData }) => ({
+        url: `/updateInstallment/${id}`,
         method: "POST",
         body: studioData,
       }),
@@ -41,4 +49,5 @@ export const {
   useSaveStudioMutation,
   useUpdateStudioMutation,
   useDeleteStudioMutation,
+  useUpdateStudioInstallmentMutation,
 } = StudioApi;

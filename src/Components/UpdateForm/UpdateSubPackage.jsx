@@ -14,7 +14,6 @@ const UpdateSubPackage = ({
   isOpen,
   closeModal,
   initialValues,
-  refetchSearch,
 }) => {
   const {
     data: packageOptions,
@@ -59,7 +58,6 @@ const UpdateSubPackage = ({
         toast.success("تم تحديث بيانات الخصم بنجاح!");
         closeModal();
         resetForm();
-        refetchSearch();
       } catch (error) {
         console.error("حدث خطأ أثناء تحديث بيانات الخصم:", error);
         setNotification({

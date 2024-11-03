@@ -4,7 +4,6 @@ import MUIDataTable from "mui-datatables";
 import Spinner from "../../Shared/Spinner";
 import DeleteDialog from "../../Shared/DeleteDialog";
 import { Pagination } from "antd";
-import { useSearchLoansQuery } from "../../app/Feature/API/Search";
 import {
   useDeleteLoanMutation,
   useGetLoansQuery,
@@ -17,14 +16,8 @@ import { setOfflineLoans } from "../../app/Feature/offlineSlice";
 const LoansTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState();
-  const [searchQuery, setSearchQuery] = useState("");
-  const { data: loansOnline, refetch: refetchLoansOnline } =
+  const { data: loansOnline, refetch: refetchLoansOnline ,isLoading} =
     useGetLoansQuery(currentPage);
-  const {
-    data: searchedLoansOnline,
-    isLoading: loadingSearchOnline,
-    refetch: refetchSearchResultsOnline,
-  } = useSearchLoansQuery(searchQuery);
   const [deleteLoanId, setDeleteLoanId] = useState(null);
   const [deleteLoan, { isLoading: isDeleting }] = useDeleteLoanMutation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -48,10 +41,7 @@ const LoansTable = () => {
   const handleEdit = async (loanId) => {
     let loanToEdit;
     if (isOnline) {
-      loanToEdit =
-        searchQuery === ""
-          ? loansOnline.data.find((loan) => loan.id === loanId)
-          : searchedLoansOnline?.loan.find((loan) => loan.id === loanId);
+      loanToEdit = loansOnline.data.find((loan) => loan.id === loanId)
     } else {
       loanToEdit = loansOffline.find((loan) => loan.id === loanId);
     }
@@ -68,7 +58,6 @@ const LoansTable = () => {
       if (isOnline) {
         await deleteLoan(deleteLoanId);
         refetchLoansOnline();
-        refetchSearchResultsOnline();
       } else {
         const updatedLoans = loansOffline.filter(
           (loan) => loan.id !== deleteLoanId
@@ -92,11 +81,6 @@ const LoansTable = () => {
     setEditLoan(null);
   };
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
-    refetchSearchResultsOnline();
-  };
   
   const columns = [
     {
@@ -161,9 +145,7 @@ const LoansTable = () => {
       options: {
         customBodyRender: (value, tableMeta) => {
           const loanId = isOnline
-            ? searchQuery
-              ? searchedLoansOnline?.loan?.[tableMeta.rowIndex]?.id
-              : loansOnline?.data?.[tableMeta.rowIndex]?.id
+            ? loansOnline?.data?.[tableMeta.rowIndex]?.id
             : loansOffline?.[tableMeta.rowIndex]?.id;
           return (
             <>
@@ -203,7 +185,7 @@ const LoansTable = () => {
     }),
     textLabels: {
       body: {
-        noMatch: loadingSearchOnline
+        noMatch: isLoading
           ? "جاري البحث..."
           : "لا توجد بيانات مطابقة",
         toolTip: "فرز",
@@ -252,7 +234,7 @@ const LoansTable = () => {
     }),
     textLabels: {
       body: {
-        noMatch: loadingSearchOnline
+        noMatch: isLoading
           ? "جاري البحث..."
           : "لا توجد بيانات مطابقة",
         toolTip: "فرز",
@@ -288,23 +270,11 @@ const LoansTable = () => {
     },
   };
 
-  const dataToDisplay = searchQuery
-    ? searchedLoansOnline?.loan
-    : loansOnline?.data || loansOffline;
+  const dataToDisplay = loansOnline?.data || loansOffline;
 
   return (
     <>
-      {isOnline && (
-        <div className="mb-4 flex justify-between items-center w-[100%]">
-          <input
-            type="text"
-            placeholder="ابحث اسم الموظف"
-            className="w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-        </div>
-      )}
+
       {isOnline ? (
         loansOnline ? (
           <>
@@ -343,7 +313,6 @@ const LoansTable = () => {
           isOpen={true}
           initialValues={editLoan}
           closeModal={handleCloseEdit}
-          refetchSearch={refetchSearchResultsOnline}
         />
       )}
       <DeleteDialog

@@ -10,17 +10,13 @@ import {
 import DeleteDialog from "../../Shared/DeleteDialog";
 import UpdatePackage from "../UpdateForm/UpdatePackage";
 import { Pagination } from "antd";
-import { useSearchCategoryQuery } from "../../app/Feature/API/Search";
 import { useGetSubCategoriesQuery } from "../../app/Feature/API/SubPackage";
 
 const PackageTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState();
-  const [searchQuery, setSearchQuery] = useState("");
-  const { data: packages, refetch } = useGetCategoriesQuery(currentPage);
+  const { data: packages, refetch ,isLoading} = useGetCategoriesQuery(currentPage);
   const { refetch:refetchSubPackage } = useGetSubCategoriesQuery(currentPage);
-  const { data: searchedPackages, isLoading: loadingSearch, refetch: refetchSearch } =
-    useSearchCategoryQuery(searchQuery);
   const [deletePackageId, setDeletePackageId] = useState(null);
   const [deletePackage, { isLoading: isDeleting }] =
     useDeleteCategoryMutation();
@@ -41,10 +37,7 @@ const PackageTable = () => {
   };
 
   const handleEdit = (packageId) => {
-    const packageToEdit =
-      searchQuery === ""
-        ? packages.data.find((pkg) => pkg.id === packageId)
-        : searchedPackages?.category.find((pkg) => pkg.id === packageId);
+    const packageToEdit = packages.data.find((pkg) => pkg.id === packageId)
     setEditPackage(packageToEdit);
   };
 
@@ -59,7 +52,6 @@ const PackageTable = () => {
       setDeletePackageId(null);
       setIsDeleteDialogOpen(false);
       refetch();
-      refetchSearch();
       refetchSubPackage();
     } catch (error) {
       console.error("Error deleting package:", error);
@@ -80,7 +72,6 @@ const PackageTable = () => {
     try {
       await updateCategoryStatus(packageId);
       refetch();
-      refetchSearch();
       refetchSubPackage();
     } catch (error) {
       console.error("Error updating package status:", error);
@@ -89,11 +80,6 @@ const PackageTable = () => {
     }
   };
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1); // Reset page to 1 when search query changes
-    refetchSearch();
-  };
 
   const columns = [
     {
@@ -161,10 +147,7 @@ const PackageTable = () => {
       name: "status",
       options: {
         customBodyRender: (value, tableMeta, updateValue) => {
-          const packageId =
-          searchQuery
-          ? searchedPackages?.category?.[tableMeta.rowIndex]?.id
-          : packages?.data?.[tableMeta.rowIndex]?.id
+          const packageId =  packages?.data?.[tableMeta.rowIndex]?.id
           // packages?.data?.id || searchedPackages?.category?.id
           const isLoading = loadingPackageId === packageId;
           return (
@@ -225,9 +208,7 @@ const PackageTable = () => {
       label: "تنفيذ",
       options: {
         customBodyRender: (value, tableMeta, updateValue) => {
-          const packageId = searchQuery
-          ? searchedPackages?.category?.[tableMeta.rowIndex]?.id
-          : packages?.data?.[tableMeta.rowIndex]?.id
+          const packageId = packages?.data?.[tableMeta.rowIndex]?.id
           return (
             <>
               <button onClick={() => handleEdit(packageId)} className="ml-5">
@@ -262,7 +243,7 @@ const PackageTable = () => {
     },
     textLabels: {
       body: {
-        noMatch: loadingSearch ? "جاري البحث..." : "لا توجد بيانات مطابقة",
+        noMatch: isLoading ? "جاري البحث..." : "لا توجد بيانات مطابقة",
         toolTip: "فرز",
         columnHeaderTooltip: (column) => `فرز لـ ${column.label}`,
       },
@@ -296,21 +277,9 @@ const PackageTable = () => {
     },
   };
 
-  const dataToDisplay = searchQuery
-    ? searchedPackages?.category
-    : packages?.data;
+  const dataToDisplay = packages?.data;
   return (
     <>
-      <div className="mb-4 flex justify-between items-center w-[100%]">
-        <input
-          type="text"
-          placeholder="ابحث ب اسم الباكدج"
-          className=" w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
-      </div>
-
       {packages ? (
         <>
           <MUIDataTable
@@ -341,7 +310,6 @@ const PackageTable = () => {
           isOpen={true}
           initialValues={editPackage}
           closeModal={handleCloseEdit}
-          refetchSearch = {refetchSearch}
       refetchSubPackage={refetchSubPackage}
         />
       )}

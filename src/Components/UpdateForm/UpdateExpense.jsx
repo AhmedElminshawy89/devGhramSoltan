@@ -12,7 +12,6 @@ const UpdateExpenses = ({
   isOpen,
   closeModal,
   initialValues,
-  refetchSearch,
 }) => {
   const [employeeName, setEmployeeName] = useState(initialValues.side || "");
   const [expenseReason, setExpenseReason] = useState(
@@ -45,7 +44,6 @@ const UpdateExpenses = ({
         closeModal();
         toast.success("تم تحديث البيانات بنجاح!");
         resetForm();
-        refetchSearch();
       } catch (error) {
         console.error("Error saving loan:", error);
         dispatch(updateOfflineExpense(UpdateExpenses));

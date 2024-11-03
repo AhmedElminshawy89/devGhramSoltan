@@ -6,18 +6,11 @@ import DeleteDialog from "../../Shared/DeleteDialog";
 import { Pagination } from "antd";
 import { useDeleteWorkerMutation, useGetWorkersQuery } from "../../app/Feature/API/Workers";
 import UpdateWorker from './../UpdateForm/UpdateWorker';
-import { useSearchJobQuery } from "../../app/Feature/API/Search";
 
 const WorkTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState();
-  const [searchQuery, setSearchQuery] = useState("");
-  const { data: packages, refetch } = useGetWorkersQuery(currentPage);
-  const {
-    data: searchedPackages,
-    isLoading: loadingSearch,
-    refetch: refetchData,
-  } = useSearchJobQuery(searchQuery);
+  const { data: packages, refetch ,isLoading} = useGetWorkersQuery(currentPage);
   const [deletePackageId, setDeletePackageId] = useState(null);
   const [deletePackage, { isLoading: isDeleting }] =
     useDeleteWorkerMutation();
@@ -36,10 +29,7 @@ const WorkTable = () => {
   };
 
   const handleEdit = async (packageId) => {
-    const packageToEdit =
-      searchQuery === ""
-        ? packages.data.find((pkg) => pkg.id === packageId)
-        : searchedPackages.job.find((pkg) => pkg.id === packageId);
+    const packageToEdit =packages.data.find((pkg) => pkg.id === packageId)
     setEditPackage(packageToEdit);
   };
 
@@ -54,7 +44,6 @@ const WorkTable = () => {
       setDeletePackageId(null);
       setIsDeleteDialogOpen(false);
       refetch();
-      refetchData();
     } catch (error) {
       console.error("Error deleting package:", error);
     }
@@ -68,12 +57,7 @@ const WorkTable = () => {
   const handleCloseEdit = () => {
     setEditPackage(null);
   };
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
-    setEditPackage(null);
-    refetchData();
-  };
+
 
   const columns = [
     {
@@ -135,9 +119,7 @@ const WorkTable = () => {
       name: "تنفيذ",
       options: {
         customBodyRender: (value, tableMeta) => {
-          const workerId = searchQuery
-          ? searchedPackages?.job?.[tableMeta.rowIndex]?.id
-          : packages?.data?.[tableMeta.rowIndex]?.id
+          const workerId = packages?.data?.[tableMeta.rowIndex]?.id
           return (
             <>
               <button onClick={() => handleEdit(workerId)} className="ml-5">
@@ -170,7 +152,7 @@ const WorkTable = () => {
     }),
     textLabels: {
       body: {
-        noMatch: loadingSearch ? "جاري البحث..." : "لا توجد بيانات مطابقة",
+        noMatch: isLoading ? "جاري البحث..." : "لا توجد بيانات مطابقة",
         toolTip: "فرز",
         columnHeaderTooltip: (column) => `فرز لـ ${column.label}`,
       },
@@ -204,21 +186,10 @@ const WorkTable = () => {
     },
   };
 
-  const dataToDisplay = searchQuery
-    ? searchedPackages?.job
-    : packages?.data;
+  const dataToDisplay = packages?.data;
 
   return (
     <>
-      <div className="mb-4 flex justify-between items-center w-[100%]">
-        <input
-          type="text"
-          placeholder="ابحث ب اسم الشغل"
-          className="w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
-      </div>
 
       {packages ? (
         <>
@@ -250,7 +221,6 @@ const WorkTable = () => {
           isOpen={true}
           initialValues={editPackage}
           closeModal={handleCloseEdit}
-          refetchSearch={refetchData}
         />
       )}
 

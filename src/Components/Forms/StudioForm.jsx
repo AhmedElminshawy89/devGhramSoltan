@@ -310,7 +310,10 @@ const Invoice = React.forwardRef((props, ref) => {
           });
           return;
         }
-        const notes = selectedPackageDetails.map((detail) => detail.label).join(', ')
+        const notes = selectedPackageDetails.map((detail) => ({
+          key: detail.label,
+          value: detail.value
+        }));        
         try {
           const response = await saveStudio({
             category_id:packageType&&packageType.value,
@@ -477,16 +480,12 @@ const Invoice = React.forwardRef((props, ref) => {
                                 مرتجع من الباكدج <span className="text-xl text-white mt-4">*</span>
                               </label>
                               <Select
-                                options={
-                                  ShowSubCategory?.map((subCategory) => ({
-                                    value: subCategory.id,
-                                    label: `${
-                                      subCategory.item
-                                    } - ${subCategory.price.toLocaleString(
-                                      "ar-EG"
-                                    )} جنيه`,
-                                  })) || []
-                                }
+                              options={
+                                ShowSubCategory?.map((subCategory) => ({
+                                  value: subCategory.id,
+                                  label: subCategory.item,
+                                })) || []
+                              }
                                 isMulti
                                 placeholder="اختر"
                                 value={selectedPackageDetails}

@@ -4,7 +4,6 @@ import MUIDataTable from "mui-datatables";
 import Spinner from "../../Shared/Spinner";
 import DeleteDialog from "../../Shared/DeleteDialog";
 import { Pagination } from "antd";
-import { useSearchExpenseQuery } from "../../app/Feature/API/Search";
 import {
   useDeleteExpenseMutation,
   useGetExpensesQuery,
@@ -18,14 +17,8 @@ import { setOfflineExpenses } from "../../app/Feature/offlineExpensesSlice";
 const ExpensesTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState();
-  const [searchQuery, setSearchQuery] = useState("");
-  const { data: loansOnline, refetch: refetchLoansOnline } =
+  const { data: loansOnline, refetch: refetchLoansOnline ,isLoading} =
     useGetExpensesQuery(currentPage);
-  const {
-    data: searchedLoansOnline,
-    isLoading: loadingSearchOnline,
-    refetch: refetchSearchResultsOnline,
-  } = useSearchExpenseQuery(searchQuery);
   const [deleteLoanId, setDeleteLoanId] = useState(null);
   const [deleteLoan, { isLoading: isDeleting }] = useDeleteExpenseMutation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -51,10 +44,7 @@ const ExpensesTable = () => {
   const handleEdit = async (loanId) => {
     let loanToEdit;
     if (isOnline) {
-      loanToEdit =
-        searchQuery === ""
-          ? loansOnline.data.find((loan) => loan.id === loanId)
-          : searchedLoansOnline?.expense.find((loan) => loan.id === loanId);
+      loanToEdit = loansOnline.data.find((loan) => loan.id === loanId)
     } else {
       loanToEdit = offlineExpenses.find((loan) => loan.id === loanId);
     }
@@ -71,7 +61,6 @@ const ExpensesTable = () => {
       if (isOnline) {
         await deleteLoan(deleteLoanId);
         refetchLoansOnline();
-        refetchSearchResultsOnline();
       } else {
         const updatedLoans = offlineExpenses.filter(
           (loan) => loan.id !== deleteLoanId
@@ -94,11 +83,6 @@ const ExpensesTable = () => {
     setEditLoan(null);
   };
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
-    refetchSearchResultsOnline();
-  };
   const columns = [
     {
       name:'#',
@@ -162,9 +146,7 @@ const ExpensesTable = () => {
       options: {
         customBodyRender: (value, tableMeta) => {
           const loanId = isOnline
-            ? searchQuery
-              ? searchedLoansOnline?.expense?.[tableMeta.rowIndex]?.id
-              : loansOnline?.data?.[tableMeta.rowIndex]?.id
+            ?  loansOnline?.data?.[tableMeta.rowIndex]?.id
             : offlineExpenses?.[tableMeta.rowIndex]?.id;
           return (
             <>
@@ -204,7 +186,7 @@ const ExpensesTable = () => {
     }),
     textLabels: {
       body: {
-        noMatch: loadingSearchOnline
+        noMatch: isLoading
           ? "جاري البحث..."
           : "لا توجد بيانات مطابقة",
         toolTip: "فرز",
@@ -253,7 +235,7 @@ const ExpensesTable = () => {
     }),
     textLabels: {
       body: {
-        noMatch: loadingSearchOnline
+        noMatch: isLoading
           ? "جاري البحث..."
           : "لا توجد بيانات مطابقة",
         toolTip: "فرز",
@@ -289,23 +271,10 @@ const ExpensesTable = () => {
     },
   };
 
-  const dataToDisplay = searchQuery
-    ? searchedLoansOnline?.expense
-    : loansOnline?.data || offlineExpenses;
+  const dataToDisplay = loansOnline?.data || offlineExpenses;
 
   return (
     <>
-      {isOnline && (
-        <div className="mb-4 flex justify-between items-center w-[100%]">
-          <input
-            type="text"
-            placeholder="ابحث ب الجهه "
-            className="w-[100%] border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-        </div>
-      )}
       {isOnline ? (
         loansOnline ? (
           <>
@@ -344,7 +313,6 @@ const ExpensesTable = () => {
           isOpen={true}
           initialValues={editLoan}
           closeModal={handleCloseEdit}
-          refetchSearch={refetchSearchResultsOnline}
         />
       )}
       <DeleteDialog

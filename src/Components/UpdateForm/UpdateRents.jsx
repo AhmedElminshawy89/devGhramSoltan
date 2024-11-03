@@ -5,18 +5,16 @@ import Select from "react-select";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
-  useSaveRentsMutation,
   useUpdateRentsMutation,
 } from "../../app/Feature/API/Rents";
 import Spinner from "../../Shared/Spinner";
 import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
 import { useDispatch } from "react-redux";
 import {
-  addOfflineRent,
   updateOfflineRent,
 } from "../../app/Feature/offlineRentsSlice";
 
-const UpdateRental = ({ isOpen, closeModal, initialValues , refetchSearch}) => {
+const UpdateRental = ({ isOpen, closeModal, initialValues }) => {
   const [name, setName] = useState(initialValues.name || "");
   const [categories, setCategories] = useState(
     initialValues.category ? initialValues.category.split(" و ") : []
@@ -98,7 +96,6 @@ const UpdateRental = ({ isOpen, closeModal, initialValues , refetchSearch}) => {
 
         closeModal();
         resetForm();
-        refetchSearch();
       } catch (error) {
         dispatch(updateOfflineRent(newOfflineData));
         setNotification({

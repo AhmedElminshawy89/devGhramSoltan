@@ -14,7 +14,6 @@ const UpdateLoans = ({
   isOpen,
   closeModal,
   initialValues,
-  refetchSearch,
 }) => {
   const [employeeName, setEmployeeName] = useState(
     initialValues.employee_name || ""
@@ -51,7 +50,6 @@ const UpdateLoans = ({
         closeModal();
         toast.success("تم تحديث البيانات بنجاح!");
         resetForm();
-        refetchSearch();
       } catch (error) {
         console.error("Error saving loan:", error);
         dispatch(updateOfflineLoan(updatedPackage));

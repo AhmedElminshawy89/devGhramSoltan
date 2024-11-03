@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { VscSaveAs } from "react-icons/vsc";
 import QuicklyTable from "../../Components/tables/QuicklyTables";
 import QuicklyForm from "../../Components/Forms/QuicklyFrom";
+import { Link } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
 
 const Quickly = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,14 +18,20 @@ const Quickly = () => {
   }
   return (
     <div className="p-4">
-      <button
-        onClick={openModal}
-        className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
-      >
-        <VscSaveAs className="ml-3" /> الشغل السريع
-      </button>
+      <div className="flex gap-4 items-center">
+        <button
+          onClick={openModal}
+          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
+        >
+          <VscSaveAs className="ml-3" /> الشغل السريع
+        </button>
+        <Link to={'/moderator/reservations/works/quick-work'}
+          className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
+        >
+          <FaSearch className="ml-3" /> بحث الشغل السريع
+        </Link>
+      </div>
       <QuicklyForm closeModal={closeModal} isOpen={isOpen} />
-
       <QuicklyTable />
     </div>
   );

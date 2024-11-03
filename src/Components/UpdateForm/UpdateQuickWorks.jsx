@@ -65,8 +65,7 @@ const Invoice = React.forwardRef((props, ref) => {
 
 const UpdateQuicklyWorks = ({ isOpen,
   initialValues,
-  closeModal,
-  refetchSearch }) => {
+  closeModal, }) => {
   const [employeeId, setEmployeeId] = useState("");
   const [employeeName, setEmployeeName] = useState("");
   const [jobType, setJobType] = useState([]);
@@ -143,7 +142,6 @@ const notesArray = notesString.split(',').map((note) => ({
       handlePrint();
       closeModal();
       resetForm();
-      refetchSearch()
     } catch (error) {
       setNotification({
         type: "error",

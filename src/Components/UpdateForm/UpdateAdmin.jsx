@@ -7,7 +7,7 @@ import { Input } from "antd";
 import { useUpdateAdminMutation } from "../../app/Feature/API/Admin";
 import Spinner from "../../Shared/Spinner";
 
-const UpdateAdmin = ({ isOpen, closeModal, initialValues ,refetchSearch}) => {
+const UpdateAdmin = ({ isOpen, closeModal, initialValues }) => {
   const [name, setName] = useState(initialValues.name || "");
   const [email, setEmail] = useState(initialValues.email || "");
   const [phone, setPhone] = useState(initialValues.phone || "");
@@ -69,7 +69,6 @@ const UpdateAdmin = ({ isOpen, closeModal, initialValues ,refetchSearch}) => {
             toast.success("تم تحديث بيانات الأدمن بنجاح!");
             closeModal();
             resetForm();
-            refetchSearch()
           }
       } catch (error) {
         console.error("حدث خطأ أثناء تحديث بيانات الأدمن:", error);

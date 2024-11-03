@@ -175,6 +175,13 @@ const StudioReports = () => {
     {
       name: "notes",
       label: "مرتجع من الباكدج",
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const studioData = employees?.data?.[tableMeta.rowIndex]
+          
+          return studioData?.notes?.key || "";
+        },
+      },
     },
     {
       name: "addService",

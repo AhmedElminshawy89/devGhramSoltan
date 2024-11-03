@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../../Shared/Spinner";
 import { useUpdateWorkerMutation } from "../../app/Feature/API/Workers";
 
-const UpdateWorker = ({ isOpen, closeModal, initialValues ,refetchSearch}) => {
+const UpdateWorker = ({ isOpen, closeModal, initialValues }) => {
   const [employeeName, setEmployeeName] = useState(initialValues.name || "");
   const nameEdit = initialValues.name
   const [amount, setAmount] = useState(initialValues.price || "");
@@ -51,7 +51,6 @@ const UpdateWorker = ({ isOpen, closeModal, initialValues ,refetchSearch}) => {
       toast.success("تم تحديث بيانات الموظف بنجاح!");
       closeModal();
       resetForm();
-      refetchSearch()
     } catch (error) {
       setNotification({
         type: "error",

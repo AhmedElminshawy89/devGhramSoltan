@@ -12,6 +12,9 @@ import UpdateMakeUpDaily from './../UpdateForm/UpdateMakeUpDaily';
 import { IoPrint } from "react-icons/io5";
 import PrintInvoice from "../Prints/PrintInvoice";
 import { useReactToPrint } from "react-to-print";
+import { FaMoneyBillAlt, FaRegEye } from "react-icons/fa";
+import MakeUpInstallment from "../Forms/MakeUpInstallment";
+import DetailsMakeUp from "../tables/DetailsMakeUp";
 
 const MakeUpTableDaily = () => {
   const invoiceRef = useRef();
@@ -32,6 +35,8 @@ const MakeUpTableDaily = () => {
   const [editEmployee, setEditEmployee] = useState(null);
   const [loadingPackageId, setLoadingPackageId] = useState(null);
   const [printInvoice, setPrintInvoice] = useState(null);
+  const [editMakeupInstallMent, setEditMakeupInstallMent] = useState(null);
+  const [editMakeupDetails, setEditMakeupDetails] = useState(null);
 
   useEffect(() => {
     refetchEmployees();
@@ -51,11 +56,21 @@ const MakeUpTableDaily = () => {
   const handleEdit = async (employeeId) => {
     const employeeToEdit =
       searchQuery === ""
-        ? employees.data.find((emp) => emp.id === employeeId)
+        ? employees?.makeups?.data.find((emp) => emp.id === employeeId)
         : searchedEmployees.makeup.find((emp) => emp.id === employeeId);
     setEditEmployee(employeeToEdit);
   };
+  const handleDetails = async (employeeId) => {
+    const employeeToEdit =
+       employees?.makeups?.data.find((emp) => emp.id === employeeId)
+       setEditMakeupDetails(employeeToEdit);
+  };
 
+  const handleEditInstallMent = async (employeeId) => {
+    const employeeToEdit =
+    employees?.makeups?.data.find((emp) => emp.id === employeeId)
+    setEditMakeupInstallMent(employeeToEdit);
+  };
   
   const handlePrintRef = useReactToPrint({
     content: () => invoiceRef.current,
@@ -64,7 +79,7 @@ const MakeUpTableDaily = () => {
   const handlePrint = async (employeeId) => {
     const PrintInvoices =
       searchQuery === ""
-        ? employees.data.find((emp) => emp.id === employeeId)
+        ? employees?.makeups?.data.find((emp) => emp.id === employeeId)
         : searchedEmployees.makeup.find((emp) => emp.id === employeeId);
   
     setPrintInvoice(PrintInvoices);
@@ -100,8 +115,11 @@ const MakeUpTableDaily = () => {
     setLoadingPackageId(null)
   };
 
+
   const handleCloseEdit = () => {
-    setEditEmployee(null);
+    setEditEmployee(null); 
+    setEditMakeupInstallMent(null);
+    setEditMakeupDetails(null);
   };
 
 
@@ -123,14 +141,52 @@ const MakeUpTableDaily = () => {
       },
     },
     {
-      name: "category.name",
-      label: "اسم الباكدج",
+      name: "actions",
+      label: "تنفيذ",
       options: {
         customBodyRender: (value, tableMeta, updateValue) => {
-          const studioData = searchQuery === ""
-            ? employees?.data?.[tableMeta.rowIndex]
-            : searchedEmployees?.makeup?.[tableMeta.rowIndex];
-          return studioData?.category?.name || "";
+          const adminId =
+          searchQuery
+          ? searchedEmployees?.makeup?.[tableMeta.rowIndex]?.id
+          : employees?.makeups?.data?.[tableMeta.rowIndex]?.id
+          return (
+            <>
+             <button onClick={() => handlePrint(adminId)} className="ml-5">
+                <IoPrint
+                  title="طباعه الفاتوره"
+                  className="text-2xl text-black"
+                />
+              </button>
+              <button onClick={() => handleEdit(adminId)} className="ml-5">
+                <AiOutlineEdit
+                  title="تعديل  البيانات"
+                  className="text-2xl text-black"
+                />
+              </button>
+              <button onClick={() => handleDetails(adminId)} className="ml-5">
+                <FaRegEye
+                  title="عرض  البيانات"
+                  className="text-2xl text-black"
+                />
+              </button>
+              <button onClick={() => handleEditInstallMent(adminId)} className="ml-5">
+                <FaMoneyBillAlt 
+                  title="تعديل  الاقساط"
+                  className="text-2xl text-black"
+                />
+              </button>
+              <button onClick={() => handleDelete(adminId)}>
+                {isDeleting && deleteEmployeeId === adminId ? (
+                  <Spinner />
+                ) : (
+                  <AiOutlineDelete
+                    title="حذف العنصر"
+                    className="text-2xl text-[#ef4444]"
+                  />
+                )}
+              </button>
+            </>
+          );
         },
       },
     },
@@ -139,117 +195,129 @@ const MakeUpTableDaily = () => {
       label: "اسم العميل",
     },
     {
-      name: "appropriate",
-      label: "تاريخ المناسبه",
+      name: "category.name",
+      label: "اسم الباكدج",
       options: {
-        customBodyRender: (value) => {
-          const date = new Date(value);
-          const formattedDate = date.toLocaleDateString("ar-EG");
-          return `${formattedDate}`;
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const studioData = searchQuery === ""
+            ? employees?.makeups?.data?.[tableMeta.rowIndex]
+            : searchedEmployees?.makeup?.[tableMeta.rowIndex];
+          return studioData?.category?.name || "";
         },
-        wrap: 'nowrap',
       },
     },
-      {
-        name: "enter",
-        label: "معاد دخول",
-        options: {
-          customBodyRender: (value) => {
-            // دالة لتحويل الأرقام إلى النصوص العربية
-            const convertToArabicNumbers = (num) => {
-              const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
-              return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
-            };
+    // {
+    //   name: "appropriate",
+    //   label: "تاريخ المناسبه",
+    //   options: {
+    //     customBodyRender: (value) => {
+    //       const date = new Date(value);
+    //       const formattedDate = date.toLocaleDateString("ar-EG");
+    //       return `${formattedDate}`;
+    //     },
+    //     wrap: 'nowrap',
+    //   },
+    // },
+//       {
+//         name: "enter",
+//         label: "معاد دخول",
+//         options: {
+//           customBodyRender: (value) => {
+//             // دالة لتحويل الأرقام إلى النصوص العربية
+//             const convertToArabicNumbers = (num) => {
+//               const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
+//               return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
+//             };
       
-            const convertTo12HourFormat = (time) => {
-              // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
-              if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
-                return '';
-              }
+//             const convertTo12HourFormat = (time) => {
+//               // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
+//               if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
+//                 return '';
+//               }
       
-              // تقسيم الوقت إلى ساعات، دقائق وثواني
-              let [hours, minutes, seconds] = time.split(':').map(Number);
+//               // تقسيم الوقت إلى ساعات، دقائق وثواني
+//               let [hours, minutes, seconds] = time.split(':').map(Number);
       
-              let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
-              hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
+//               let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
+//               hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
       
-              // إعادة تركيب الوقت بصيغة 12 ساعة
-              return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
-            };
+//               // إعادة تركيب الوقت بصيغة 12 ساعة
+//               return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
+//             };
       
-            const formattedTime = convertTo12HourFormat(value);
-            return `${formattedTime}`;
-          },
-          wrap: 'nowrap',
-        },
-      }
-,      
-      {
-        name: "exit",
-        label: "معاد خروج",
-                options: {
-          customBodyRender: (value) => {
-            // دالة لتحويل الأرقام إلى النصوص العربية
-            const convertToArabicNumbers = (num) => {
-              const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
-              return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
-            };
+//             const formattedTime = convertTo12HourFormat(value);
+//             return `${formattedTime}`;
+//           },
+//           wrap: 'nowrap',
+//         },
+//       }
+// ,      
+      // {
+      //   name: "exit",
+      //   label: "معاد خروج",
+      //           options: {
+      //     customBodyRender: (value) => {
+      //       // دالة لتحويل الأرقام إلى النصوص العربية
+      //       const convertToArabicNumbers = (num) => {
+      //         const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
+      //         return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
+      //       };
       
-            const convertTo12HourFormat = (time) => {
-              // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
-              if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
-                return '';
-              }
+      //       const convertTo12HourFormat = (time) => {
+      //         // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
+      //         if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
+      //           return '';
+      //         }
       
-              // تقسيم الوقت إلى ساعات، دقائق وثواني
-              let [hours, minutes, seconds] = time.split(':').map(Number);
+      //         // تقسيم الوقت إلى ساعات، دقائق وثواني
+      //         let [hours, minutes, seconds] = time.split(':').map(Number);
       
-              let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
-              hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
+      //         let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
+      //         hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
       
-              // إعادة تركيب الوقت بصيغة 12 ساعة
-              return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
-            };
+      //         // إعادة تركيب الوقت بصيغة 12 ساعة
+      //         return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
+      //       };
       
-            const formattedTime = convertTo12HourFormat(value);
-            return `${formattedTime}`;
-          },
-          wrap: 'nowrap',
-        },
-      },
-      {
-        name: "arrive",
-        label: "معاد وصول",
-                options: {
-          customBodyRender: (value) => {
-            // دالة لتحويل الأرقام إلى النصوص العربية
-            const convertToArabicNumbers = (num) => {
-              const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
-              return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
-            };
+      //       const formattedTime = convertTo12HourFormat(value);
+      //       return `${formattedTime}`;
+      //     },
+      //     wrap: 'nowrap',
+      //   },
+      // },
+      // {
+      //   name: "arrive",
+      //   label: "معاد وصول",
+      //           options: {
+      //     customBodyRender: (value) => {
+      //       // دالة لتحويل الأرقام إلى النصوص العربية
+      //       const convertToArabicNumbers = (num) => {
+      //         const arabicDigits = '٠١٢٣٤٥٦٧٨٩'; // النصوص العربية للأرقام
+      //         return num.toString().split('').map(digit => arabicDigits[parseInt(digit)]).join('');
+      //       };
       
-            const convertTo12HourFormat = (time) => {
-              // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
-              if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
-                return '';
-              }
+      //       const convertTo12HourFormat = (time) => {
+      //         // تأكد من أن القيمة هي نص صالح لصيغة وقت 24 ساعة (مثل "20:00:00")
+      //         if (typeof time !== 'string' || !time.match(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)) {
+      //           return '';
+      //         }
       
-              // تقسيم الوقت إلى ساعات، دقائق وثواني
-              let [hours, minutes, seconds] = time.split(':').map(Number);
+      //         // تقسيم الوقت إلى ساعات، دقائق وثواني
+      //         let [hours, minutes, seconds] = time.split(':').map(Number);
       
-              let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
-              hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
+      //         let period = hours >= 12 ? 'م' : 'ص'; // تحديد ص أو م
+      //         hours = hours % 12 || 12; // تحويل الساعات إلى صيغة 12 ساعة
       
-              // إعادة تركيب الوقت بصيغة 12 ساعة
-              return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
-            };
+      //         // إعادة تركيب الوقت بصيغة 12 ساعة
+      //         return `${convertToArabicNumbers(hours)}:${convertToArabicNumbers(minutes < 10 ? '0' + minutes : minutes)}:${convertToArabicNumbers(seconds < 10 ? '0' + seconds : seconds)} ${period}`;
+      //       };
       
-            const formattedTime = convertTo12HourFormat(value);
-            return `${formattedTime}`;
-          },
-          wrap: 'nowrap',
-        },
-      },
+      //       const formattedTime = convertTo12HourFormat(value);
+      //       return `${formattedTime}`;
+      //     },
+      //     wrap: 'nowrap',
+      //   },
+      // },
       {
         label: "حالة الدفع",
         name: "status",
@@ -266,12 +334,29 @@ const MakeUpTableDaily = () => {
                     : "bg-[#f3c74d] text-black"
                 }`}
               >
-                {/* { value === "لم يتم الدفع" ? (
-                  "لم يتم الدفع"
-                ) : (
-                  "تم الدفع"
-                )} */}
                 {value}
+              </p>
+            );
+          },
+        },
+      },
+      {
+        label: "هل يوجد حنه؟",
+        name: "dateService",
+        options: {
+          customBodyRender: (value, tableMeta, updateValue) => {
+            const displayValue = value !== null ? "نعم" : "لا"; 
+            return (
+              <p
+                className={`${
+                  displayValue === "لا" ? "py-1 px-4" : "py-1 px-4"
+                } font-semibold text-lg rounded-full whitespace-nowrap ${
+                  displayValue === "لا"
+                    ? "bg-black text-white"
+                    : "bg-[#f3c74d] text-black"
+                }`}
+              >
+                {displayValue}
               </p>
             );
           },
@@ -336,79 +421,38 @@ const MakeUpTableDaily = () => {
     //     },
     //   },
     // },
-    {
-      name: "created_at",
-      label: "تاريخ العملية",
-      options: {
-        customBodyRender: (value) => {
-          const date = new Date(value);
-          const formattedDate = date.toLocaleDateString("ar-EG");
-          const formattedTime = date.toLocaleTimeString("ar-EG", {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-          return `${formattedDate}(${formattedTime})`;
-        },
-        wrap: 'nowrap',
-      },
-    },
-    {
-      name: "updated_at",
-      label: "تاريخ التحديث",
-      options: {
-        customBodyRender: (value) => {
-          const date = new Date(value);
-          const formattedDate = date.toLocaleDateString("ar-EG");
-          const formattedTime = date.toLocaleTimeString("ar-EG", {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-          return `${formattedDate}(${formattedTime})`;
-        },
-        wrap: 'nowrap',
-      },
-    },
-    {
-      name: "actions",
-      label: "تنفيذ",
-      options: {
-        customBodyRender: (value, tableMeta, updateValue) => {
-          const adminId =
-          searchQuery
-          ? searchedEmployees?.makeup?.[tableMeta.rowIndex]?.id
-          : employees?.data?.[tableMeta.rowIndex]?.id
-          //  (employees?.data || searchedEmployees?.makeup)?.[
-          //   tableMeta.rowIndex
-          // ]?.id;
-          return (
-            <>
-                         <button onClick={() => handlePrint(adminId)} className="ml-5">
-                <IoPrint
-                  title="طباعه الفاتوره"
-                  className="text-2xl text-black"
-                />
-              </button>
-              <button onClick={() => handleEdit(adminId)} className="ml-5">
-                <AiOutlineEdit
-                  title="تعديل  البيانات"
-                  className="text-2xl text-black"
-                />
-              </button>
-              <button onClick={() => handleDelete(adminId)}>
-                {isDeleting && deleteEmployeeId === adminId ? (
-                  <Spinner />
-                ) : (
-                  <AiOutlineDelete
-                    title="حذف العنصر"
-                    className="text-2xl text-[#ef4444]"
-                  />
-                )}
-              </button>
-            </>
-          );
-        },
-      },
-    },
+    // {
+    //   name: "created_at",
+    //   label: "تاريخ العملية",
+    //   options: {
+    //     customBodyRender: (value) => {
+    //       const date = new Date(value);
+    //       const formattedDate = date.toLocaleDateString("ar-EG");
+    //       const formattedTime = date.toLocaleTimeString("ar-EG", {
+    //         hour: "2-digit",
+    //         minute: "2-digit",
+    //       });
+    //       return `${formattedDate}(${formattedTime})`;
+    //     },
+    //     wrap: 'nowrap',
+    //   },
+    // },
+    // {
+    //   name: "updated_at",
+    //   label: "تاريخ التحديث",
+    //   options: {
+    //     customBodyRender: (value) => {
+    //       const date = new Date(value);
+    //       const formattedDate = date.toLocaleDateString("ar-EG");
+    //       const formattedTime = date.toLocaleTimeString("ar-EG", {
+    //         hour: "2-digit",
+    //         minute: "2-digit",
+    //       });
+    //       return `${formattedDate}(${formattedTime})`;
+    //     },
+    //     wrap: 'nowrap',
+    //   },
+    // },
 
   ];
 
@@ -467,7 +511,7 @@ const MakeUpTableDaily = () => {
     search: false,
   };
 
-  const dataToDisplay = searchQuery ? searchedEmployees?.makeup : employees?.data;
+  const dataToDisplay = searchQuery ? searchedEmployees?.makeup : employees?.makeups?.data;
 
   return (
     <>
@@ -521,6 +565,20 @@ const MakeUpTableDaily = () => {
           initialValues={editEmployee}
           refetchSearch={refetchSearchResults}
           refetchEmployees={refetchEmployees}
+        />
+      )}
+      {editMakeupInstallMent && (
+        <MakeUpInstallment
+          isOpen={true}
+          closeModal={handleCloseEdit}
+          initialValues={editMakeupInstallMent}
+        />
+      )}
+      {editMakeupDetails && (
+        <DetailsMakeUp
+          isOpen={true}
+          closeModal={handleCloseEdit}
+          initialValues={editMakeupDetails}
         />
       )}
       <DeleteDialog

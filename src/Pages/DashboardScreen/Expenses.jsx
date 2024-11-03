@@ -3,6 +3,8 @@ import { VscSaveAs } from "react-icons/vsc";
 import ExpensesTable from "../../Components/tables/ExpensesTable";
 import ExpensesForm from "../../Components/Forms/ExpensesForm";
 import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
+import { Link } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
 
 const Expenses = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,12 +25,20 @@ const Expenses = () => {
   return (
     <div className="p-4">
       <div className="flex justify-between items-start">
+        <div className="flex gap-4 items-center">
         <button
           onClick={openModal}
           className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
         >
           <VscSaveAs className="ml-3" /> المصروفات
         </button>
+
+        <Link to={'/moderator/reservations/works/expenses/search'}
+          className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
+        >
+          <FaSearch className="ml-3" /> بحث المصروفات 
+        </Link>
+      </div>
         {!isOnline&&(
         <span className="text-lg font-semibold">
           البيانات الغير متصله({Number_of_data_offline})

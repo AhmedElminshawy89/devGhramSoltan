@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useUpdateEmployeeMutation } from "../../app/Feature/API/Emplyee";
 import Spinner from "../../Shared/Spinner";
 
-const UpdateEmployee = ({ isOpen, closeModal, initialValues,refetchSearch }) => {
+const UpdateEmployee = ({ isOpen, closeModal, initialValues }) => {
   const [name, setName] = useState(initialValues.employee_name);
   const nameEdit = initialValues.employee_name
   const [fingerprintNumber, setFingerprintNumber] = useState(initialValues.num);
@@ -63,7 +63,7 @@ const UpdateEmployee = ({ isOpen, closeModal, initialValues,refetchSearch }) => 
         });
         toast.success("تم تحديث بيانات الموظف بنجاح!");
         closeModal();
-        resetForm();refetchSearch();
+        resetForm();
       } catch (error) {
         // console.error("حدث خطأ أثناء تحديث بيانات الموظف:", error);
         setNotification({

@@ -12,10 +12,15 @@ export const DailyApi = createApi({
     }),
     getMakeUpDaily: build.query({
       query: (page) => `/showMakeup?page=${page}`,
-      transformResponse: (response) => response.makeup,
+      transformResponse: (response) => response.data,
+      providesTags: ['Daily'],
+    }),
+    getHairDaily: build.query({
+      query: (page) => `/showHair?page=${page}`,
+      transformResponse: (response) => response,
       providesTags: ['Daily'],
     }),
   }),
 });
 
-export const { useGetMakeUpDailyQuery, useGetStudioDailyQuery } = DailyApi;
+export const { useGetMakeUpDailyQuery, useGetStudioDailyQuery,useGetHairDailyQuery } = DailyApi;
