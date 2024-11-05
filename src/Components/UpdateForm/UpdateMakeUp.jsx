@@ -179,7 +179,10 @@ const UpdateMakeUp = ({ isOpen, closeModal ,initialValues }) => {
   const [notification, setNotification] = useState(null);
   const [updateMakeup, { isLoading }] = useUpdateMakeupMutation();
   const {refetch: refetchMakeupDaily } = useGetMakeUpDailyQuery();
-
+  const [enter, setEnter] = useState(initialValues.enter ||"");
+  const [exit, setExit] = useState(initialValues.exit ||"");
+  const [arrive, setArrive] = useState(initialValues.arrive ||"");
+  
   const invoiceRef = useRef();
   useEffect(() => {
     setSelectedPackageDetails([]);
@@ -351,6 +354,9 @@ useEffect(() => {
       makeupData.append('typeHair', secOther);
       makeupData.append('priceHair', secOtherPrice);
       makeupData.append('dateHair', secOtherDate);
+      makeupData.append('enter', enter);
+      makeupData.append('exit', exit);
+      makeupData.append('arrive', arrive);
   
       try {
         const response = await updateMakeup({

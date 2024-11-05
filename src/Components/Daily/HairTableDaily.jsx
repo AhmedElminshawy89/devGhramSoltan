@@ -12,10 +12,11 @@ const HairTableDaily = () => {
     refetchEmployees();
   }, [refetchEmployees]);
   useEffect(() => {
-    if (employees?.data?.length === 0 && currentPage > 1) {
+    if (employees?.hairs?.data?.length === 0 && currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   }, [employees, currentPage]);
+
 
   const handlePageChange = (page, pageSize) => {
     setCurrentPage(page);
@@ -44,7 +45,7 @@ const HairTableDaily = () => {
       options: {
         customBodyRender: (value, tableMeta, updateValue) => {
           const studioData = employees?.hairs?.data?.[tableMeta.rowIndex]
-          return studioData?.typeHair || "";
+          return studioData?.typeHair || "لا يوجد";
         },
       },
     },
@@ -54,7 +55,7 @@ const HairTableDaily = () => {
         options: {
           customBodyRender: (value, tableMeta, updateValue) => {
             const studioData = employees?.hairs?.data?.[tableMeta.rowIndex]
-            return studioData?.priceHair || "";
+            return studioData?.priceHair || "لا يوجد";
           },
         },
       },
@@ -326,7 +327,7 @@ const HairTableDaily = () => {
     search: false,
   };
 
-  const dataToDisplay = employees?.data;
+  const dataToDisplay = employees?.hairs?.data
 
   return (
     <>

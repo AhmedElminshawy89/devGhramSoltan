@@ -7,7 +7,7 @@ import Spinner from "../../Shared/Spinner";
 import { useUpdateMakeupInstallmentMutation } from "../../app/Feature/API/MakeUp";
 import { useGetMakeUpDailyQuery } from "../../app/Feature/API/Daily";
 
-const MakeUpInstallment = ({ isOpen, closeModal, initialValues }) => {
+const MakeUpInstallment = ({ isOpen, closeModal, initialValues ,refetchSearch,refetchEmployees }) => {
   const [total, setTotal] = useState(initialValues?.total || 0);
   const [payment, setPayment] = useState(initialValues?.pay || 0);
   const [secondInstallment, setSecondInstallment] = useState(initialValues?.secondInstallment || 0);
@@ -63,7 +63,7 @@ const MakeUpInstallment = ({ isOpen, closeModal, initialValues }) => {
     e.preventDefault();
     setFormSubmitted(true);
 
-    if (total && payment && remaining >= 0) {
+    if (total && remaining >= 0) {
       const formData = new FormData();
       formData.append("id", initialValues?.id);
       formData.append("total", total);
@@ -92,6 +92,8 @@ const MakeUpInstallment = ({ isOpen, closeModal, initialValues }) => {
           resetForm();
           closeModal();
           refetchMakeupDaily();
+          refetchSearch?.();
+          refetchEmployees?.();
         }
       } catch (error) {
         setNotification({

@@ -178,6 +178,9 @@ const UpdateStudio = ({ isOpen, closeModal , initialValues }) => {
   const [notification, setNotification] = useState(null);
   const [saveStudio2, { isLoading }] = useUpdateStudioMutation();
   const { refetch: refetchStudioDaily } = useGetStudioDailyQuery();
+  const [enter, setEnter] = useState(initialValues.enter ||"");
+  const [exit, setExit] = useState(initialValues.exit ||"");
+  const [arrive, setArrive] = useState(initialValues.arrive ||"");
 
   const invoiceRef = useRef();
 
@@ -336,7 +339,11 @@ useEffect(() => {
           reason_discount_id:discountType&&discountType.value,
           addService:additionalService,
           priceService:additionalServicePrice,
-          price:discountRate,}
+          price:discountRate,
+          enter:enter,
+          arrive: arrive,
+          exit:exit
+        }
         const response = await saveStudio2({
           id:initialValues?.id,
           studioData:formData

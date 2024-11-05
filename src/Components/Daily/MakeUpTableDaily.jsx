@@ -86,6 +86,8 @@ const MakeUpTableDaily = () => {
   
     setTimeout(() => {
       handlePrintRef();
+      refetchEmployees()
+      refetchSearchResults()
     }, 300);
   };
 
@@ -93,8 +95,8 @@ const MakeUpTableDaily = () => {
     setDeleteEmployeeId(employeeId);
     setIsDeleteDialogOpen(true);
     setLoadingPackageId(employeeId);
-    refetchSearchResults()
-  };
+    refetchEmployees()
+    refetchSearchResults()  };
 
   const handleDeleteConfirmed = async () => {
     try {
@@ -102,8 +104,8 @@ const MakeUpTableDaily = () => {
       setDeleteEmployeeId(null);
       setIsDeleteDialogOpen(false);
       setLoadingPackageId(null)
-      refetchEmployees();
-      refetchSearchResults();
+      refetchEmployees()
+      refetchSearchResults()
     } catch (error) {
       console.error("Error deleting employee:", error);
     }
@@ -113,6 +115,7 @@ const MakeUpTableDaily = () => {
     setDeleteEmployeeId(null);
     setIsDeleteDialogOpen(false);
     setLoadingPackageId(null)
+    
   };
 
 
@@ -127,8 +130,8 @@ const MakeUpTableDaily = () => {
     setSearchQuery(e.target.value);
     setCurrentPage(1);
     setEditEmployee(null);
-    refetchSearchResults();
-  };
+    refetchEmployees()
+    refetchSearchResults()  };
 
   const columns = [
     {
@@ -572,6 +575,8 @@ const MakeUpTableDaily = () => {
           isOpen={true}
           closeModal={handleCloseEdit}
           initialValues={editMakeupInstallMent}
+          refetchSearch={refetchSearchResults}
+          refetchEmployees={refetchEmployees}
         />
       )}
       {editMakeupDetails && (

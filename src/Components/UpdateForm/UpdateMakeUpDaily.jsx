@@ -149,7 +149,7 @@ return (
 });
 
 
-const UpdateMakeUpDaily = ({ isOpen, closeModal ,initialValues }) => {
+const UpdateMakeUpDaily = ({ isOpen, closeModal ,initialValues,refetchSearch,refetchEmployees }) => {
 
   const [discountType, setDiscountType] = useState("");
   const [henaDate, setHenaDate] = useState(initialValues.dateService || "");
@@ -179,9 +179,9 @@ const UpdateMakeUpDaily = ({ isOpen, closeModal ,initialValues }) => {
   const [notification, setNotification] = useState(null);
   const [updateMakeup, { isLoading }] = useUpdateMakeupMutation();
   const {refetch: refetchMakeupDaily } = useGetMakeUpDailyQuery();
-  const [enter, setEnter] = useState("");
-  const [exit, setExit] = useState("");
-  const [arrive, setArrive] = useState("");
+  const [enter, setEnter] = useState(initialValues.enter ||"");
+  const [exit, setExit] = useState(initialValues.exit ||"");
+  const [arrive, setArrive] = useState(initialValues.arrive ||"");
 
 
   const invoiceRef = useRef();
@@ -355,6 +355,9 @@ useEffect(() => {
       makeupData.append('typeHair', secOther);
       makeupData.append('priceHair', secOtherPrice);
       makeupData.append('dateHair', secOtherDate);
+      makeupData.append('enter', enter);
+      makeupData.append('exit', exit);
+      makeupData.append('arrive', arrive);
   
       try {
         const response = await updateMakeup({
@@ -377,6 +380,8 @@ useEffect(() => {
           handlePrint();
           closeModal();
           refetchMakeupDaily();
+          refetchSearch?.();
+          refetchEmployees?.();
         }
       } catch (error) {
         setNotification({

@@ -7,7 +7,7 @@ export const DailyApi = createApi({
   endpoints: (build) => ({
     getStudioDaily: build.query({
       query: (page) => `/showStudio?page=${page}`,
-      transformResponse: (response) => response.studio,
+      transformResponse: (response) => response.studios,
       providesTags: ['Daily'],
     }),
     getMakeUpDaily: build.query({
