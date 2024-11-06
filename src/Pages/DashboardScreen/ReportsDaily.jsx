@@ -55,11 +55,27 @@ const ReportsDaily = () => {
       ...(data?.works || []).map(item => ({
           serviceType: "شغل",
           customerName: item.employee?.employee_name || "",
-          phone: "", // إذا كانت بيانات الهاتف غير متاحة هنا
+          phone: "", 
           total: item.total,
           date: item.created_at,
-          status: "", // إذا كانت الحالة غير متاحة هنا
+          status: "", 
       })),
+      ...(data?.expenses || []).map(item => ({
+        serviceType: "المصروفات",
+        customerName: item?.side || "",
+        reason: item?.reason||"", 
+        total: item.price,
+        date: item.created_at,
+        status: "", 
+    })),
+      ...(data?.loans || []).map(item => ({
+        serviceType: "سلف الموظف",
+        customerName: item?.employee_name || "",
+        reason: item?.reason||"", 
+        total: item.price,
+        date: item.created_at,
+        status: "", 
+    })),
   ];
 
   const columns = [
@@ -75,6 +91,10 @@ const ReportsDaily = () => {
           name: "phone",
           label: "رقم الهاتف",
       },
+      {
+        name: "reason",
+        label: "سبب",
+    },
       {
           name: "total",
           label: "الإجمالي",

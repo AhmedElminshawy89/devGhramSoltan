@@ -39,16 +39,16 @@ const Routing = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // useEffect(() => {
-  //   const jwtToken = CookieService.get("jwt");
-  //   const type = JSON.parse(localStorage.getItem("type"));
+  useEffect(() => {
+    const jwtToken = CookieService.get("jwt");
+    const type = JSON.parse(localStorage.getItem("type"));
 
-  //   const isModeratorPath = location.pathname.startsWith("/moderator");
+    const isModeratorPath = location.pathname.startsWith("/moderator");
 
-  //   if (!jwtToken && isModeratorPath) {
-  //     navigate("/login");
-  //   }
-  // }, [navigate, location.pathname]);
+    if (!jwtToken && isModeratorPath) {
+      navigate("/login");
+    }
+  }, [navigate, location.pathname]);
   
   return (
     <>

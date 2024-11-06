@@ -323,34 +323,34 @@ const StudioReports = () => {
         deleteAria: "حذف الصفوف المحددة",
       },
     },
-    customFooter: () => (
-<>
-<tr>
-        <td colSpan={3} className="font-semibold text-lg">
-          <div className="flex justify-start gap-4 mt-2">
-            <span>إجمالي سعر الخدمات المضافه:</span>
-            <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalPriceService)} جنيه`}</span>
-          </div>
-          <div className="flex justify-start gap-4 mt-2">
-            <span>الاجمالي:</span>
-            <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalAmount)} جنيه`}</span>
-          </div>
-          <div className="flex justify-start gap-4 mt-2">
-            <span>إجمالي المدفوع:</span>
-            <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalPay)} جنيه`}</span>
-          </div>
-          <div className="flex justify-start gap-4 mt-2">
-            <span>إجمالي المتبقي:</span>
-            <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalRest)} جنيه`}</span>
-          </div>
-          <div className="flex justify-start gap-4 mt-2">
-            <span>إجمالي الخصم:</span>
-            <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalDiscount)} جنيه`}</span>
-          </div>
-        </td>
-      </tr>
-</>
-    ),
+//     customFooter: () => (
+// <>
+// <tr>
+//         <td colSpan={3} className="font-semibold text-lg">
+//           <div className="flex justify-start gap-4 mt-2">
+//             <span>إجمالي سعر الخدمات المضافه:</span>
+//             <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalPriceService)} جنيه`}</span>
+//           </div>
+//           <div className="flex justify-start gap-4 mt-2">
+//             <span>الاجمالي:</span>
+//             <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalAmount)} جنيه`}</span>
+//           </div>
+//           <div className="flex justify-start gap-4 mt-2">
+//             <span>إجمالي المدفوع:</span>
+//             <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalPay)} جنيه`}</span>
+//           </div>
+//           <div className="flex justify-start gap-4 mt-2">
+//             <span>إجمالي المتبقي:</span>
+//             <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalRest)} جنيه`}</span>
+//           </div>
+//           <div className="flex justify-start gap-4 mt-2">
+//             <span>إجمالي الخصم:</span>
+//             <span>{`${new Intl.NumberFormat("ar-EG").format(totals.totalDiscount)} جنيه`}</span>
+//           </div>
+//         </td>
+//       </tr>
+// </>
+//     ),
   };
 
   const dataToDisplay = searchDateData?.studio || employees?.data || [];

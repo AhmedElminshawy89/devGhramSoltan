@@ -31,7 +31,7 @@ const Daily = () => {
                     : "text-black hover:bg-white/[0.12] hover:text-black"
                 }`}
               >
-                حجوزات استوديو
+                حجوزات الشعر
               </button>
             )}
           </Tab>
@@ -44,7 +44,7 @@ const Daily = () => {
                     : "text-black hover:bg-white/[0.12] hover:text-black"
                 }`}
               >
-                حجوزات الشعر
+                حجوزات استوديو
               </button>
             )}
           </Tab>
@@ -54,10 +54,10 @@ const Daily = () => {
             <MakeUpTableDaily/>
           </Tab.Panel>
           <Tab.Panel>
-            <StudioTableDaily />
+            <HairTableDaily />
           </Tab.Panel>
           <Tab.Panel>
-            <HairTableDaily />
+            <StudioTableDaily />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
