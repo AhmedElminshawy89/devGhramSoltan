@@ -10,7 +10,7 @@ import a from '../../assets/Img/bg1.jpg';
 const SecServices = () => {
   const [services, setServices] = useState([]);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const [expanded, setExpanded] = useState({}); // State for expanded chapters
+  const [expanded, setExpanded] = useState({});
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
@@ -59,41 +59,30 @@ const SecServices = () => {
         {services.map((e) => (
           <div className={`flex flex-col gap-8`} data-aos="fade-up" data-aos-delay={10 * e.id} key={e.id}>
             <div className={`relative w-full flex flex-col ${isDarkMode ? 'dark-mode' : 'bg-white'} shadow-lg rounded-lg overflow-hidden`}>
-              <div className='relative md:max-w-64'>
-                <img src={e.photo} alt={e.name} className={`w-full h-40 object-cover object-top`} />
+              <div className='relative'>
+                <img src={e.photo} alt={e.name} className={`w-full h-[260px] object-cover object-center`} />
               </div>
               <div className="p-4 pt-8 flex-grow">
-                <p className="text-lg font-semibold mb-2">
-                  <span className={`${isDarkMode ? 'text-text-dark' : 'text-text-light'} hover:text-primary-yellow duration-300`}>
-                    {e.name}
-                  </span>
+                <p className="text-xl font-semibold mb-2">
+                <h3 className="text-2xl font-semibold text-gray-800 mb-2">
+                {e.name}
+              </h3>
                 </p>
-                <p className={`${isDarkMode ? 'text-text-dark' : 'text-text-light'} text-sm pb-4`}>
-                  {expanded[e.id] ? e.desc : truncateText(e.desc, 60)}
-                  {e.desc.length > 60 && (
+                <p className={`${isDarkMode ? 'text-text-dark' : 'text-text-light'} text-md pb-4`}>
                     <span
-                      className="text-primary-yellow cursor-pointer"
-                      onClick={() => toggleReadMore(e.id)}
+                      className="text-gray-600"
                     >
-                      {expanded[e.id] ? " قراءة أقل" : " قراءة المزيد"}
+                      {e?.desc}
                     </span>
-                  )}
                 </p>
               </div>
+              <div className={`bg-[goldenrod] rounded-full w-[50px] mx-3 h-[50px] absolute top-[235px] text-lg text-white font-bold flex justify-center items-center`}>
+                  {`${e?.price ? `${e?.price.toLocaleString('ar-EG')}` : ''}`} 
+              </div>
               <div className={`flex flex-row items-center justify-between pt-2 mt-auto px-3 py-2 border-t`}>
-                <Link
-                  to={`/lesson/${e.id}`}
-                  className={`flex items-center text-nowrap w-[200px] px-3 w-[fit-content] py-1 bg-primary-yellow rounded-3xl ${isDarkMode ? 'text-text-dark' : 'text-text-light'} hover:bg-[#edb904] duration-300`}
-                >
-                  <p className={`text-bold text-md flex ${isDarkMode ? 'text-text-dark' : 'text-text-light'} duration-300`}>
-                    <span className={`flex-grow`}>
-                      مشاهده الأن
-                    </span>
-                    <div className={`bg-white mr-3 w-[25px] h-[25px] flex justify-center items-center rounded-3xl`}>
-                      {`${e?.price ? `${e?.price.toLocaleString('ar-EG')} جنيه` : ''}`} 
-                    </div>
-                  </p>
-                </Link>
+              <a className="btn w-full text-center" href="https://wa.me/+201092527126" target="_blank">
+              تواصل معنا
+            </a>
               </div>
             </div>
           </div>

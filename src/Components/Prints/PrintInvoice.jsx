@@ -47,10 +47,10 @@ const PrintInvoice = forwardRef(({ employee }, ref) => {
 
       <table className="min-w-full divide-y divide-gray-200 text-right">
         <tbody className="bg-white divide-y divide-gray-200">
-          <tr>
+          {/* <tr>
             <td className="font-semibold px-4 py-2">رقم الفاتورة:</td>
             <td className="px-4 py-2">{employee?.id || 'غير متوفر'}</td>
-          </tr>
+          </tr> */}
           <tr>
             <td className="font-semibold px-4 py-2">تاريخ اليوم:</td>
             <td className="px-4 py-2">{now.toLocaleDateString('ar-EG', options)}</td>
@@ -172,7 +172,7 @@ const PrintInvoice = forwardRef(({ employee }, ref) => {
         <strong>العنوان: دسوق - شارع الجيش <br /> م: 0472570908</strong>
       </p>
 
-      <div className="mt-4">
+      <div className="mt-2">
         <p className="text-md" style={{ textAlign: 'center', fontSize: '18px', marginTop: '20px' }}>
           <strong>
             تم تصميم وتطوير هذه المنصة بواسطة Coding Corner
