@@ -41,7 +41,7 @@ const ReportsDaily = () => {
           customerName: item.name,
           phone: item.phone,
           total: item.total,
-          date: item.created_at,
+        //   date: item.created_at,
           status: item.status,
       })),
       ...(data?.studio || []).map(item => ({
@@ -49,7 +49,7 @@ const ReportsDaily = () => {
           customerName: item.name,
           phone: item.phone,
           total: item.total,
-          date: item.receivedDate,
+        //   date: item.receivedDate,
           status: item.status,
       })),
       ...(data?.works || []).map(item => ({
@@ -57,7 +57,7 @@ const ReportsDaily = () => {
           customerName: item.employee?.employee_name || "",
           phone: "", 
           total: item.total,
-          date: item.created_at,
+        //   date: item.created_at,
           status: "", 
       })),
       ...(data?.expenses || []).map(item => ({
@@ -65,7 +65,7 @@ const ReportsDaily = () => {
         customerName: item?.side || "",
         reason: item?.reason||"", 
         total: item.price,
-        date: item.created_at,
+        // date: item.created_at,
         status: "", 
     })),
       ...(data?.loans || []).map(item => ({
@@ -73,7 +73,7 @@ const ReportsDaily = () => {
         customerName: item?.employee_name || "",
         reason: item?.reason||"", 
         total: item.price,
-        date: item.created_at,
+        // date: item.created_at,
         status: "", 
     })),
   ];
@@ -99,16 +99,16 @@ const ReportsDaily = () => {
           name: "total",
           label: "الإجمالي",
       },
-      {
-          name: "date",
-          label: "تاريخ",
-          options: {
-              customBodyRender: (value) => {
-                  const date = new Date(value);
-                  return date.toLocaleDateString("ar-EG");
-              },
-          },
-      },
+    //   {
+    //       name: "date",
+    //       label: "تاريخ",
+    //       options: {
+    //           customBodyRender: (value) => {
+    //               const date = new Date(value);
+    //               return date.toLocaleDateString("ar-EG");
+    //           },
+    //       },
+    //   },
       {
           name: "status",
           label: "الحالة",

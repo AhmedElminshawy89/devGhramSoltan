@@ -577,6 +577,8 @@ const StudioTableDaily = () => {
           isOpen={true}
           closeModal={handleCloseEdit}
           initialValues={editMakeupInstallMent}
+          refetchSearch={refetchSearchResults}
+          refetchEmployees={refetchEmployees}
         />
       )}
       <DeleteDialog

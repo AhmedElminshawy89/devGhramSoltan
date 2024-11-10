@@ -63,7 +63,7 @@ const Header = () => {
   if (isError) return;
 
   const backgroundImage =
-    mainLand && mainLand[activeSlide]?.photo ? mainLand[activeSlide].photo : hero;
+    mainLand && mainLand[activeSlide]?.photo ? mainLand[activeSlide].photo : '';
 
   // Handle next and previous slide manually
   const handleNext = () => {

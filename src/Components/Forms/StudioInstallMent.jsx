@@ -7,7 +7,7 @@ import Spinner from "../../Shared/Spinner";
 import { useGetMakeUpDailyQuery } from "../../app/Feature/API/Daily";
 import { useUpdateStudioInstallmentMutation } from "../../app/Feature/API/Studio";
 
-const StudioInstallMent = ({ isOpen, closeModal, initialValues }) => {
+const StudioInstallMent = ({ isOpen, closeModal, initialValues,refetchSearch,refetchEmployees }) => {
   const [total, setTotal] = useState(initialValues?.total || 0);
   const [payment, setPayment] = useState(initialValues?.pay || 0);
   const [secondInstallment, setSecondInstallment] = useState(initialValues?.secondInstallment || 0);
@@ -63,7 +63,7 @@ const StudioInstallMent = ({ isOpen, closeModal, initialValues }) => {
     e.preventDefault();
     setFormSubmitted(true);
 
-    if (total && payment && remaining >= 0) {
+    if (total  && remaining >= 0) {
       const formData = new FormData();
       formData.append("id", initialValues?.id);
       formData.append("total", total);
@@ -71,13 +71,11 @@ const StudioInstallMent = ({ isOpen, closeModal, initialValues }) => {
       formData.append("rest", remaining);
       formData.append("secondInstallment", secondInstallment);
       formData.append("thirdInstallment", thirdInstallment);
-
       try {
         const response = await saveStudio({
             id: initialValues.id,
             studioData: formData,
         });
-
         if (response.error) {
           setNotification({
             type: "error",
@@ -92,6 +90,8 @@ const StudioInstallMent = ({ isOpen, closeModal, initialValues }) => {
           resetForm();
           closeModal();
           refetchMakeupDaily();
+          refetchSearch?.();
+          refetchEmployees?.();
         }
       } catch (error) {
         setNotification({
