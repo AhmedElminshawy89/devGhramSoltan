@@ -34,6 +34,10 @@ import DiscountSearch from "../Components/tables/DiscountSearch";
 import PackagesSearch from "../Components/tables/PackagesSearch";
 import SubPackagesSearch from "../Components/tables/SubPackagesSearch";
 import ReportsDaily from "../Pages/DashboardScreen/ReportsDaily";
+import AddBanner from "../Pages/DashboardScreen/AddBanner";
+import AddImportantLand from "../Pages/DashboardScreen/AddImportantLand";
+import AddAdvantage from "../Pages/DashboardScreen/AddAdvantage";
+import AddAdditionsalRents from "../Pages/DashboardScreen/AddAdditionsalRents";
 
 const Routing = () => {
   const navigate = useNavigate();
@@ -79,7 +83,11 @@ const Routing = () => {
           <Route path="reservations/packages/search" element={<PackagesSearch />} />
           <Route path="reservations/discount/search" element={<DiscountSearch />} />
           <Route path="reservations/sub-packages/search" element={<SubPackagesSearch />} />
+          <Route path="packages/add-main-rents" element={<AddAdditionsalRents />} />
           <Route path="add-employee" element={<AddEmployee />} />
+          <Route path="landing-page/add-banner" element={<AddBanner />} />
+          <Route path="landing-page/add-important-section" element={<AddImportantLand />} />
+          <Route path="landing-page/what-distinguishes-us-section" element={<AddAdvantage />} />
           <Route path="add-work" element={<AddWorkers />} />
           <Route path="add-discount" element={<AddDiscount />} />
           <Route path="add-package" element={<AddPackage />} />

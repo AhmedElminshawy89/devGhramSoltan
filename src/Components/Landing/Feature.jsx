@@ -1,16 +1,33 @@
 import React from 'react';
-import img from '../../assets/Img/about.jpg'
 import img2 from '../../assets/Img/t.jpg'
-import img3 from '../../assets/Img/q.jpg'
+import { useGetAdvantageLandUserQuery } from '../../app/Feature/API/Land';
 const FeaturesSection = () => {
+    const {data:FeaturesSectionData , isLoading , isError} = useGetAdvantageLandUserQuery()
     return (
         <section className="section__container  features" id="ما_يميزنا">
         <div className="service__header__content">
           <h2 className="section__header">ما يميزنا</h2>
 
-        </div>            <div  style={{display:'flex',justifyContent:'center'}}>
+        </div>
+        <div  style={{display:'flex',justifyContent:'center'}}>
             <div className="container">
-                <div className="box quality">
+            {FeaturesSectionData?.map((data,idx)=>(
+                <div className="box time" key={idx}>
+                            <div className="img-holder">
+                                <img src={data?.photo} alt="" />
+                            </div>
+                            <h2>{data?.name }</h2>
+        <p>{data?.desc}</p>           
+        <a className="btn-sec" href="https://wa.me/Gharam" target="_blank" data-aos="fade-up" data-aos-delay="300">
+                    تواصل معنا
+                    </a>                
+                </div>
+            ))}
+
+
+
+
+                {/* <div className="box quality">
                     <div className="img-holder">
                         <img src={img3} alt="" />
                     </div>
@@ -23,7 +40,8 @@ const FeaturesSection = () => {
                     <a className="btn-sec" href="https://wa.me/+201092527126" target="_blank" data-aos="fade-up" data-aos-delay="300">
               تواصل معنا
             </a>                   </div>
-                <div className="box time">
+             */}
+                {/* <div className="box time">
                     <div className="img-holder">
                         <img src={img2} alt="" />
                     </div>
@@ -34,8 +52,8 @@ const FeaturesSection = () => {
 الاستجابة السريعة: الرد على استفسارات العملاء وحجوزاتهم بسرعة.
 إدارة الوقت بفعالية: تنظيم الوقت بشكل يضمن تقديم أفضل خدمة ممكنة.</p>                    <a className="btn-sec" href="https://wa.me/+201092527126" target="_blank" data-aos="fade-up" data-aos-delay="300">
               تواصل معنا
-            </a>                </div>
-                <div className="box passion">
+            </a>                </div> */}
+                {/* <div className="box passion">
                     <div className="img-holder">
                         <img src={img} alt="" />
                     </div>
@@ -43,7 +61,8 @@ const FeaturesSection = () => {
                     <p>منذ عام 2017، نمتلك خبرة واسعة في مجال التجميل، مع شهادات معتمدة تعكس احترافيتنا. لقد واجهنا العديد من التحديات والضغوطات التي ساهمت في تعزيز خبرتنا وقدرتنا على التعامل مع مشكلات كل عميل بشكل فردي وفعال.</p>
                     <a className="btn-sec" href="https://wa.me/+201092527126" target="_blank" data-aos="fade-up" data-aos-delay="300">
               تواصل معنا
-            </a>                  </div>
+            </a>                  
+            </div> */}
             </div>
             </div>
         </section>

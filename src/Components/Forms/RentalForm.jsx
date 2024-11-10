@@ -9,6 +9,7 @@ import Spinner from "../../Shared/Spinner";
 import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
 import { useDispatch, useSelector } from "react-redux";
 import { addOfflineRent } from "../../app/Feature/offlineRentsSlice";
+import { useGetAllRentsWithoutPaginationQuery } from "../../app/Feature/API/AdditionalRents";
 
 const RentalForm = ({ isOpen, closeModal }) => {
   const [name, setName] = useState("");
@@ -19,6 +20,8 @@ const RentalForm = ({ isOpen, closeModal }) => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
 
+  const { data:allRents } =useGetAllRentsWithoutPaginationQuery()
+  const allCategories = [...new Set(allRents?.map((e) => e.name))]
   const [saveRent, { isLoading }] = useSaveRentsMutation();
 
   const isOnline = useContext(OnlineStatusContext);
@@ -26,15 +29,15 @@ const RentalForm = ({ isOpen, closeModal }) => {
   const dispatch = useDispatch();
   const offlineRents = useSelector((state) => state.offlineRents.rents) || [];
 
-  const allCategories = [
-    "تاج",
-    "هيربيز",
-    "خاتم",
-    "توينز",
-    "طرحه",
-    "عقد",
-    "حلق",
-  ];
+  // const allCategories = [
+  //   "تاج",
+  //   "هيربيز",
+  //   "خاتم",
+  //   "توينز",
+  //   "طرحه",
+  //   "عقد",
+  //   "حلق",
+  // ];
   const insuranceTypes = ["بطاقه", "كاش"];
   const statuses = ["تم الاسترجاع", "لم يتم الاسترجاع"];
 

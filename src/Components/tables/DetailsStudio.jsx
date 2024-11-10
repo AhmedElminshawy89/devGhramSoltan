@@ -41,7 +41,11 @@ const DetailsStudio = ({ isOpen, closeModal, initialValues }) => {
   const enter = initialValues?.enter || "غير محدد";
   const arrive = initialValues?.arrive || "غير محدد";
   const exit = initialValues?.exit || "غير محدد";
-  
+  const secondInstallment = initialValues?.secondInstallment || "غير محدد";
+  const dateOfSecondInstallment = initialValues?.DateOfTheSecondInstallment || "غير محدد";
+  const thirdInstallment = initialValues?.thirdInstallment || "غير محدد";
+  const dateOfThirdInstallment = initialValues?.DateOfTheThirdInstallment || "غير محدد";
+
   return (
     <div>
       <Transition appear show={isOpen} as={Fragment}>
@@ -103,14 +107,12 @@ const DetailsStudio = ({ isOpen, closeModal, initialValues }) => {
                         </div>
                       </div>
                     </div>
-
                     <div className="md:flex md:space-x-6 space-y-4 md:space-y-0 gap-4">
                       <div className="flex-1 bg-gradient-to-r from-teal-50 to-teal-100 rounded-lg p-6 shadow-md">
                         <h4 className="flex items-center text-lg font-semibold text-gray-700 mb-4">
                           <FaInfoCircle className="text-teal-600 mr-2" /> ملاحظات إضافية
                         </h4>
                         <ul className="list-disc pl-6 space-y-1 text-gray-600 text-start">
-{/* 
                           {notes && notes.length > 0 ? (
                             notes.map((note, index) => (
                               <li key={index}>
@@ -119,7 +121,7 @@ const DetailsStudio = ({ isOpen, closeModal, initialValues }) => {
                             ))
                           ) : (
                             <li>لا يوجد</li>
-                          )} */}
+                          )}
 
                         </ul>
                       </div>
@@ -154,7 +156,22 @@ const DetailsStudio = ({ isOpen, closeModal, initialValues }) => {
       </p>
     </div>
   </div>
-</div>
+  <div className="flex-1 bg-gradient-to-r from-pink-50 to-pink-100 rounded-lg p-6 shadow-md">
+                        <h4 className="flex items-center text-lg font-semibold text-gray-700 mb-4">
+                          <FaInfoCircle className="text-pink-600 mr-2" /> تفاصيل الأقساط
+                        </h4>
+                        <div className="grid grid-cols-1 text-gray-600">
+                          <div className="text-start">
+                            <p><strong>القسط الأول:</strong> {secondInstallment}</p>
+                            <p><strong>تاريخ القسط الأول:</strong> {dateOfSecondInstallment}</p>
+                          </div>
+                          <div className="text-start">
+                            <p><strong>القسط الثاني:</strong> {thirdInstallment}</p>
+                            <p><strong>تاريخ القسط الثاني:</strong> {dateOfThirdInstallment}</p>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
                   <div className="mt-6">
                     <button
                       type="button"

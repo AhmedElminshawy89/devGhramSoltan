@@ -23,7 +23,7 @@ const ContactPhone = () => {
           </a>
         </div>
         <div className="whatsapp">
-          <a href="https://wa.me/+201092527126" target="_blank" rel="noreferrer">
+          <a href="https://wa.me/Gharam" target="_blank" rel="noreferrer">
             <FaWhatsapp />
           </a>
         </div>
@@ -34,7 +34,7 @@ const ContactPhone = () => {
           </a>
         </div>
         <div className="messenger">
-          <a href="https://m.me/Roma.Hsn" target="_blank" rel="noreferrer">
+          <a href="https://m.me/Gharam.ml" target="_blank" rel="noreferrer">
             <FaFacebookMessenger />
           </a>
         </div>

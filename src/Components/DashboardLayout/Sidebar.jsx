@@ -22,12 +22,18 @@ import {
 } from "react-icons/fa";
 import { MdOutlineAddBusiness } from "react-icons/md";
 import CookieService from "../../Services/CookiesServices";
+import { FcAdvertising } from "react-icons/fc";
+import { MdImportantDevices } from "react-icons/md";
+import { FaArrowUpRightDots } from "react-icons/fa6";
+import { TbDoorEnter } from "react-icons/tb";
 
 const Sidebar = () => {
   const activeTab = useSelector((state) => state.tab.activeTab);
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const [searchQuery, setSearchQuery] = React.useState("");  // إضافة حالة للبحث
 
   const handleCloseDrawer = useCallback(() => {
     if (window.innerWidth < 992) {
@@ -70,19 +76,29 @@ const Sidebar = () => {
           { to: "/moderator/add-discount", icon: <RiDiscountPercentFill />, label: "إضافة الخصم" },
           { to: "/moderator/add-package", icon: <LuPackagePlus />, label: "إضافة باكدج" },
           { to: "/moderator/add-subpackage", icon: <BiCategory />, label: "إضافة باكدج فرعي" },
+          { to: "/moderator/packages/add-main-rents", icon: <TbDoorEnter />, label: "إضافة عناصر الايجار" },
+          { to: "/moderator/landing-page/add-banner", icon: <FcAdvertising />, label: "إضافة شريط الإعلان" },
+          { to: "/moderator/landing-page/add-important-section", icon: <MdImportantDevices />, label: "إضافة قسم اهتمامنا" },
+          { to: "/moderator/landing-page/what-distinguishes-us-section", icon: <FaArrowUpRightDots />, label: "إضافة قسم ما يميزنا" },
           { to: "/moderator/reports/monthly-employee-reports", icon: <TbReportAnalytics />, label: "تقارير شهريه للموظف" },
           { to: "/moderator/reports", icon: <TbReportAnalytics />, label: "التقارير" },
         ]
-      : [])
+      : []),
   ];
+
+  const filteredLinks = sidebarLinks.filter((link) => {
+    if (searchQuery === "") {
+      return true;
+    }
+    return link.label.includes(searchQuery)
+  });
+
   const handleLogout = () => {
     localStorage.removeItem("type");
     document.cookie = 'jwt=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     navigate('/Login');
     window.location.reload();
   };
-  
-  
 
   return (
     <div className={activeTab ? "" : "overlay"}>
@@ -91,9 +107,20 @@ const Sidebar = () => {
           <IoCloseSharp onClick={handleCloseDrawer} />
           <img src={logo} alt="غرام سنتر" loading="lazy" className="logo" />
         </div>
+        {type !== 'admin'&&(
+          <div className="sidebar-search">
+            <input
+              type="text"
+              placeholder="ابحث هنا..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        )}
+
         <div className="link-pages">
           <ul>
-            {sidebarLinks.map((link, index) => (
+            {filteredLinks.map((link, index) => (
               <li
                 key={index}
                 className={`${
@@ -120,4 +147,4 @@ const Sidebar = () => {
   );
 };
 
-export default React.memo(Sidebar);
+export default Sidebar;

@@ -36,13 +36,6 @@ const SecServices = () => {
 
   const isDarkMode = false; // Replace with your logic for dark mode
 
-  const toggleReadMore = (id) => {
-    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const truncateText = (text, length) => {
-    return text.length > length ? text.substring(0, length) + '...' : text;
-  };
 
   return (
     <section id="خدماتنا" className="section__container service__container">
@@ -51,7 +44,7 @@ const SecServices = () => {
           <h2 className="section__header">خدمتنا</h2>
           <p>بعض العروض المتاحة للحجز الآن</p>
         </div>
-        <a className="btn-sec" href="https://wa.me/+201092527126" target="_blank" rel="noopener noreferrer" data-aos="fade-up" data-aos-delay="300">
+        <a className="btn-sec" href="https://wa.me/Gharam" target="_blank" rel="noopener noreferrer" data-aos="fade-up" data-aos-delay="300">
           للتواصل عبر الواتساب
         </a>
       </div>
@@ -80,7 +73,7 @@ const SecServices = () => {
                   {`${e?.price ? `${e?.price.toLocaleString('ar-EG')}` : ''}`} 
               </div>
               <div className={`flex flex-row items-center justify-between pt-2 mt-auto px-3 py-2 border-t`}>
-              <a className="btn w-full text-center" href="https://wa.me/+201092527126" target="_blank">
+              <a className="btn w-full text-center" href="https://wa.me/Gharam" target="_blank">
               تواصل معنا
             </a>
               </div>

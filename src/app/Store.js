@@ -19,6 +19,8 @@ import LoginSlice from "./Feature/API/LoginSlice";
 import { MakeupApi } from "./Feature/API/MakeUp";
 import { ReportApi } from "./Feature/API/Reports";
 import { DailyApi } from "./Feature/API/Daily";
+import { LandApi } from "./Feature/API/Land";
+import { AdditionalRentsApi } from "./Feature/API/AdditionalRents";
 
 const store = configureStore({
   reducer: {
@@ -42,6 +44,8 @@ const store = configureStore({
     [MakeupApi.reducerPath]: MakeupApi.reducer,
     [ReportApi.reducerPath]: ReportApi.reducer,
     [DailyApi.reducerPath]: DailyApi.reducer,
+    [LandApi.reducerPath]: LandApi.reducer,
+    [AdditionalRentsApi.reducerPath]: AdditionalRentsApi.reducer,
   },
   middleware: (gDM) =>
     gDM().concat(
@@ -60,6 +64,8 @@ const store = configureStore({
       MakeupApi.middleware,
       ReportApi.middleware,
       DailyApi.middleware,
+      LandApi.middleware,
+      AdditionalRentsApi.middleware
     ),
 });
 

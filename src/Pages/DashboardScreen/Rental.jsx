@@ -5,15 +5,19 @@ import RentalForm from "../../Components/Forms/RentalForm";
 import { OnlineStatusContext } from "../../Provider/OnlineStatusProvider";
 import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
+import AdditionalRentsForm from './../../Components/Forms/AdditionalRentsForm';
 
 const Rental = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpen2, setIsOpen2] = useState(false);
   const isOnline = useContext(OnlineStatusContext);
 
   const backupRents = JSON.parse(localStorage.getItem("backuprents")) || [];
   const Number_of_data_offline = backupRents.length;
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
+  const openModal2 = () => setIsOpen2(true);
+  const closeModal2 = () => setIsOpen2(false);
 
   return (
     <div className="p-4">
@@ -30,6 +34,12 @@ const Rental = () => {
         >
           <FaSearch className="ml-3" /> بحث الايجار 
         </Link>
+        <button
+            onClick={openModal2}
+            className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
+          >
+            <VscSaveAs className="ml-3" /> اضافه عنصر ايجار
+          </button>
       </div>
         {!isOnline&&(
         <span className="text-lg font-semibold">
@@ -38,6 +48,7 @@ const Rental = () => {
         )}
       </div>
       <RentalForm closeModal={closeModal} isOpen={isOpen} />
+      <AdditionalRentsForm closeModal={closeModal2} isOpen={isOpen2} />
       <RentalTable />
     </div>
   );

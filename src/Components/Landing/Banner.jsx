@@ -30,7 +30,7 @@
                 كما ان سنتر غرام سلطان حاصل على البورد الامريكي و هي شهادة معتمدة دوليا.
               </p>
               <div className="space-x-6 space-y-4">
-                <a className="btn-banner" href="https://wa.me/+201092527126">للتواصل معنا</a>
+                <a className="btn-banner" href="https://wa.me/Gharam">للتواصل معنا</a>
               </div>
             </div>
           </div>

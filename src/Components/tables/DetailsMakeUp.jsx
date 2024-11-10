@@ -79,7 +79,7 @@ const DetailsMakeUp = ({ isOpen, closeModal, initialValues }) => {
               >
                 <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-xl bg-white p-8 shadow-lg transition-all">
                   <Dialog.Title as="h3" className="text-2xl font-bold leading-6 text-gray-800 mb-8 text-center">
-                  تفاصيل الفاتوره الخاصه ب العميل {} 
+                  تفاصيل الفاتوره الخاصه ب العميل {name} 
                   </Dialog.Title>
 
                   <div className="space-y-8">

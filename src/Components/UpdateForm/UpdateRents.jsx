@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import {
   updateOfflineRent,
 } from "../../app/Feature/offlineRentsSlice";
+import { useGetAllRentsWithoutPaginationQuery } from "../../app/Feature/API/AdditionalRents";
 
 const UpdateRental = ({ isOpen, closeModal, initialValues }) => {
   const [name, setName] = useState(initialValues.name || "");
@@ -30,18 +31,20 @@ const UpdateRental = ({ isOpen, closeModal, initialValues }) => {
   const [updateRent, { isLoading }] = useUpdateRentsMutation();
 
   const isOnline = useContext(OnlineStatusContext);
+  const { data:allRents } =useGetAllRentsWithoutPaginationQuery()
+  const allCategories = [...new Set(allRents?.map((e) => e.name))]
 
   const dispatch = useDispatch();
 
-  const allCategories = [
-    "تاج",
-    "هيربيز",
-    "خاتم",
-    "توينز",
-    "طرحه",
-    "عقد",
-    "حلق",
-  ];
+  // const allCategories = [
+  //   "تاج",
+  //   "هيربيز",
+  //   "خاتم",
+  //   "توينز",
+  //   "طرحه",
+  //   "عقد",
+  //   "حلق",
+  // ];
 
   const statuses = ["تم الاسترجاع", "لم يتم الاسترجاع"];
   const insuranceTypes = ["بطاقه", "كاش"];
