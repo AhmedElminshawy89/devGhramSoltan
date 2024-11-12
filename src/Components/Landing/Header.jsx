@@ -63,9 +63,13 @@ const Header = () => {
   if (isError) return;
 
   const backgroundImage =
-    mainLand && mainLand[activeSlide]?.photo ? mainLand[activeSlide].photo : '';
+  mainLand && mainLand.length > 0 && mainLand[activeSlide]?.photo 
+      ? mainLand[activeSlide].photo 
+      : mainLand && mainLand.length > 0 
+          ? mainLand[0].photo 
+          : null; 
 
-  // Handle next and previous slide manually
+
   const handleNext = () => {
     swiperRef.current.swiper.slideNext();
   };

@@ -17,7 +17,6 @@ import Spinner from "../../Shared/Spinner";
 import { useGetStudioDailyQuery } from "../../app/Feature/API/Daily";
 
 const UpdateStudioDaily = ({ isOpen, closeModal, initialValues,refetchSearch,refetchEmployees }) => {
-  console.log('================================',initialValues?.notes)
   const [discountType, setDiscountType] = useState("");
   const { data: ShowDiscountPrice } = useGetDiscountsPriceQuery(discountType&&discountType.value);
   const { data: getAllDiscount } = useGetallDiscountsWithoutPaginationQuery("");
@@ -107,7 +106,7 @@ const UpdateStudioDaily = ({ isOpen, closeModal, initialValues,refetchSearch,ref
       }
   
       const selectedPackage = uniqueCategories.find(
-        (pkg) => pkg.id === packageType
+        (pkg) => Number(pkg.id) === packageType
       );
       if (selectedPackage) {
         totalPrice -= Number(selectedPackage.price) || 0;
@@ -157,7 +156,7 @@ const UpdateStudioDaily = ({ isOpen, closeModal, initialValues,refetchSearch,ref
   const handleAdditionalServicePriceChange = (value) => setAdditionalServicePrice(value);
   useEffect(() => {
     if (isOpen) {
-      const initialCategory = uniqueCategories.find(category => category.id === initialValues.category_id);
+      const initialCategory = uniqueCategories.find(category => Number(category.id) === Number(initialValues.category_id));
       setPackageType(initialCategory ? { label: `${initialCategory.name} - ${initialCategory.price.toLocaleString("ar-EG")} جنيه`, value: initialCategory.id } : '');
     }
 
@@ -165,28 +164,40 @@ const UpdateStudioDaily = ({ isOpen, closeModal, initialValues,refetchSearch,ref
 
 useEffect(() => {
   if (isOpen) {
-    const initialDiscount = allDiscounts.find(disc => disc.id === initialValues.reason_discount_id);
+    const initialDiscount = allDiscounts.find(disc => Number(disc.id) === Number(initialValues.reason_discount_id));
     setDiscountType(initialDiscount ? { label: `${initialDiscount.discount}`, value: initialDiscount.id } : null);
   }
 }, [isOpen, allDiscounts, initialValues.reason_discount_id]);
 
 
 
-  useEffect(() => {
-    if (Array.isArray(ShowSubCategory) && Array.isArray(initialValues.notes)) {
-      const initialSelectedDetails = initialValues.notes.reduce((acc, note) => {
-        const subCategory = ShowSubCategory.find(sub => sub.item === note.key);
-        if (subCategory) {
-          acc.push({ value: subCategory.id, label: subCategory.item });
-        }
-        return acc;
-      }, []);
-      
-      setSelectedPackageDetails(initialSelectedDetails);
-    } else {
-      setSelectedPackageDetails([]);
+useEffect(() => {
+  let notesArray = initialValues.notes;
+
+  if (typeof notesArray === 'string') {
+    try {
+      notesArray = JSON.parse(notesArray);
+    } catch (error) {
+      console.error("Failed to parse notes:", error);
+      notesArray = []; 
     }
-  }, [initialValues.notes, ShowSubCategory]);
+  }
+
+  if (Array.isArray(ShowSubCategory) && Array.isArray(notesArray)) {
+    const initialSelectedDetails = notesArray.reduce((acc, note) => {
+      const subCategory = ShowSubCategory.find(sub => sub.item === note.key);
+      if (subCategory) {
+        acc.push({ value: subCategory.id, label: subCategory.item });
+      }
+      return acc;
+    }, []);
+    
+    setSelectedPackageDetails(initialSelectedDetails);
+  } else {
+    setSelectedPackageDetails([]);
+  }
+}, [initialValues.notes, ShowSubCategory]);
+
   
  
   

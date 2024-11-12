@@ -8,11 +8,12 @@ import { useUpdateMakeupInstallmentMutation } from "../../app/Feature/API/MakeUp
 import { useGetMakeUpDailyQuery } from "../../app/Feature/API/Daily";
 
 const MakeUpInstallment = ({ isOpen, closeModal, initialValues ,refetchSearch,refetchEmployees }) => {
-  const [total, setTotal] = useState(initialValues?.total || 0);
-  const [payment, setPayment] = useState(initialValues?.pay || 0);
-  const [secondInstallment, setSecondInstallment] = useState(initialValues?.secondInstallment || 0);
-  const [thirdInstallment, setThirdInstallment] = useState(initialValues?.thirdInstallment || 0);
-  const [remaining, setRemaining] = useState(initialValues?.rest || total - (payment + secondInstallment + thirdInstallment));
+  const [total, setTotal] = useState(Number(initialValues?.total) || 0);
+  const [payment, setPayment] = useState(Number(initialValues?.pay) || 0);
+  const [secondInstallment, setSecondInstallment] = useState(Number(initialValues?.secondInstallment) || 0);
+  const [thirdInstallment, setThirdInstallment] = useState(Number(initialValues?.thirdInstallment) || 0);
+  const [remaining, setRemaining] = useState(Number(initialValues?.rest) || 
+    (Number(initialValues?.total) - (Number(initialValues?.pay) + Number(initialValues?.secondInstallment) + Number(initialValues?.thirdInstallment))) || 0);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [notification, setNotification] = useState(null);
   const [saveStudio, { isLoading }] = useUpdateMakeupInstallmentMutation();
@@ -20,7 +21,7 @@ const MakeUpInstallment = ({ isOpen, closeModal, initialValues ,refetchSearch,re
 
   useEffect(() => {
     const calculatedRemaining = total - (payment + secondInstallment + thirdInstallment);
-    setRemaining(calculatedRemaining >= 0 ? calculatedRemaining : 0); // Prevent negative balance
+    setRemaining(calculatedRemaining >= 0 ? calculatedRemaining : 0); 
   }, [total, payment, secondInstallment, thirdInstallment]);
 
   const handlePaymentChange = (value) => {

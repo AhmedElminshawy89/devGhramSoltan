@@ -113,17 +113,28 @@ const DetailsStudio = ({ isOpen, closeModal, initialValues }) => {
                           <FaInfoCircle className="text-teal-600 mr-2" /> ملاحظات إضافية
                         </h4>
                         <ul className="list-disc pl-6 space-y-1 text-gray-600 text-start">
-                          {notes && notes.length > 0 ? (
-                            notes.map((note, index) => (
-                              <li key={index}>
-                                <strong>{note?.key ?? 'No Key'}:</strong> {note?.value ?? 'No Value'}
-                              </li>
-                            ))
-                          ) : (
-                            <li>لا يوجد</li>
-                          )}
-
-                        </ul>
+  {notes && notes !== 'null' ? (
+    typeof notes === 'string' ? (
+      JSON.parse(notes)
+        .filter((note) => note.key !== null && note.value !== null)
+        .map((note, index) => (
+          <li key={index}>
+            <strong>{note.key.replace(/\\/g, '')}:</strong> {note.value}
+          </li>
+        ))
+    ) : (
+      notes
+        .filter((note) => note.key !== null && note.value !== null)
+        .map((note, index) => (
+          <li key={index}>
+            <strong>{note.key.replace(/\\/g, '')}:</strong> {note.value}
+          </li>
+        ))
+    )
+  ) : (
+    <li>لا يوجد</li>
+  )}
+</ul>
                       </div>
 
                       <div className="flex-1 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-lg p-6 shadow-md">

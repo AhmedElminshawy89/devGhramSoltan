@@ -16,147 +16,6 @@ import { useSaveStudioMutation, useUpdateStudioMutation } from "../../app/Featur
 import Spinner from "../../Shared/Spinner";
 import { useGetStudioDailyQuery } from "../../app/Feature/API/Daily";
 
-const Invoice = React.forwardRef((props, ref) => {
-  const {
-    packageType,
-    selectedPackageDetails,
-    brideName,
-    phone,
-    city,
-    eventDate,
-    receiveDate,
-    total,
-    payment,
-    remaining,
-    discountName,
-    additionalService,
-    additionalServicePrice,
-    discountRate,
-    logo
-  } = props;
-
-  const now = new Date();
-  const options = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  };
-
-  return (
-    <div
-      ref={ref}
-      className="p-10 font-sans text-center bg-white shadow-lg rounded-lg"
-      style={{ direction: 'rtl' }}
-    >
-      <div className="border-b-2 pb-4 mb-4">
-        <div className="flex justify-center mb-2">
-          <img
-            src={logo}
-            alt="Logo"
-            className="w-32 h-auto"
-          />
-        </div>
-        <h1 className="text-lg font-semibold mb-1">مركز غرام سلطان يقدم فن المكياج والتصوير الاحترافي.</h1>
-        <p className="text-sm">تواصل معنا: 0472570908</p>
-      </div>
-
-      <table className="min-w-full divide-y divide-gray-200 text-right">
-        <tbody className="bg-white divide-y divide-gray-200">
-          <tr>
-            <td className="font-semibold px-4 py-2">تاريخ اليوم:</td>
-            <td className="px-4 py-2">{now.toLocaleDateString('ar-EG', options)}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2">الوقت:</td>
-            <td className="px-4 py-2">{now.toLocaleTimeString('ar-EG')}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2">اسم العميل:</td>
-            <td className="px-4 py-2">{brideName}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2">رقم التليفون:</td>
-            <td className="px-4 py-2">{phone}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2">البلد:</td>
-            <td className="px-4 py-2">{city}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2">تاريخ المناسبة:</td>
-            <td className="px-4 py-2">{eventDate ? new Date(eventDate).toLocaleDateString("ar-EG") : "غير متوفر"}</td>
-          </tr>
-          {receiveDate && (
-            <tr>
-              <td className="font-semibold px-4 py-2">تاريخ الاستلام:</td>
-              <td className="px-4 py-2">{new Date(receiveDate).toLocaleDateString("ar-EG")}</td>
-            </tr>
-          )}
-          <tr>
-            <td className="font-semibold px-4 py-2">نوع الباكدج:</td>
-            <td className="px-4 py-2">{packageType}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2">مرتجع من الباكدج:</td>
-            <td className="px-4 py-2">{selectedPackageDetails.map((detail) => detail.label).join(', ')}
-            </td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2">خدمة إضافية:</td>
-            <td className="px-4 py-2">{additionalService}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2">سعر الخدمة الإضافية:</td>
-            <td className="px-4 py-2">{`${additionalServicePrice ? additionalServicePrice.toLocaleString('ar-EG') + ' جنيه' : ''}`}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2">إجمالي:</td>
-            <td className="px-4 py-2">{`${total.toLocaleString('ar-EG')} جنيه`}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2">المبلغ المدفوع:</td>
-            <td className="px-4 py-2">{`${payment ? payment.toLocaleString('ar-EG') + ' جنيه' : ''}`}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2">المبلغ المتبقي:</td>
-            <td className="px-4 py-2">{`${remaining ? remaining.toLocaleString('ar-EG') + ' جنيه' : ''}`}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2">نوع الخصم:</td>
-            <td className="px-4 py-2">{discountName || "لا يوجد خصم"}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2">قيمة الخصم:</td>
-            <td className="px-4 py-2">{`${discountRate ? discountRate.toLocaleString('ar-EG') + ' جنيه' : ''}` || "لا يوجد"}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p className="text-md mb-1">
-        <strong>في حالة الإلغاء لا يسترد المبلغ المدفوع</strong>
-      </p>
-      <p className="text-md mb-1">
-        <strong>يرجى الاحتفاظ بالإيصال للمراجعة</strong>
-      </p>
-      <p className="text-md mb-1">
-        <strong>العنوان: دسوق - شارع الجيش <br /> م: 0472570908</strong>
-      </p>
-
-      <div className="mt-2">
-        <p className="text-md" style={{ textAlign: 'center', fontSize: '18px', marginTop: '20px' }}>
-          <strong>
-            تم تصميم وتطوير هذه المنصة بواسطة Coding Corner
-            <br />
-            رقم التواصل: 01002337574 - 01286552467
-          </strong>
-        </p>
-      </div>
-    </div>
-  );
-})
-
-
 const UpdateStudio = ({ isOpen, closeModal , initialValues }) => {
 
   const [discountType, setDiscountType] = useState("");
@@ -229,7 +88,7 @@ const UpdateStudio = ({ isOpen, closeModal , initialValues }) => {
       }
   
       const selectedPackage = uniqueCategories.find(
-        (pkg) => pkg.id === packageType
+        (pkg) => Number(pkg.id) === packageType
       );
       if (selectedPackage) {
         totalPrice -= Number(selectedPackage.price) || 0;
@@ -237,7 +96,7 @@ const UpdateStudio = ({ isOpen, closeModal , initialValues }) => {
   
       selectedPackageDetails.forEach((detail) => {
         const subCategory = ShowSubCategory.find(
-          (sub) => sub.id === detail.value
+          (sub) => Number(sub.id) === detail.value
         );
         if (subCategory) {
           totalPrice -= Number(subCategory.price) || 0;
@@ -279,7 +138,7 @@ const UpdateStudio = ({ isOpen, closeModal , initialValues }) => {
   const handleAdditionalServicePriceChange = (value) => setAdditionalServicePrice(value);
   useEffect(() => {
     if (isOpen) {
-      const initialCategory = uniqueCategories.find(category => category.id === initialValues.category_id);
+      const initialCategory = uniqueCategories.find(category => Number(category.id) === Number(initialValues.category_id));
       setPackageType(initialCategory ? { label: `${initialCategory.name} - ${initialCategory.price.toLocaleString("ar-EG")} جنيه`, value: initialCategory.id } : '');
     }
 
@@ -287,28 +146,38 @@ const UpdateStudio = ({ isOpen, closeModal , initialValues }) => {
 
 useEffect(() => {
   if (isOpen) {
-    const initialDiscount = allDiscounts.find(disc => disc.id === initialValues.reason_discount_id);
+    const initialDiscount = allDiscounts.find(disc => Number(disc.id )=== Number(initialValues.reason_discount_id));
     setDiscountType(initialDiscount ? { label: `${initialDiscount.discount}`, value: initialDiscount.id } : null);
   }
 }, [isOpen, allDiscounts, initialValues.reason_discount_id]);
 
 
+useEffect(() => {
+  let notesArray = initialValues.notes;
 
-  useEffect(() => {
-    if (Array.isArray(ShowSubCategory) && Array.isArray(initialValues.notes)) {
-      const initialSelectedDetails = initialValues.notes.reduce((acc, note) => {
-        const subCategory = ShowSubCategory.find(sub => sub.item === note.key);
-        if (subCategory) {
-          acc.push({ value: subCategory.id, label: subCategory.item });
-        }
-        return acc;
-      }, []);
-      
-      setSelectedPackageDetails(initialSelectedDetails);
-    } else {
-      setSelectedPackageDetails([]);
+  if (typeof notesArray === 'string') {
+    try {
+      notesArray = JSON.parse(notesArray);
+    } catch (error) {
+      console.error("Failed to parse notes:", error);
+      notesArray = []; 
     }
-  }, [initialValues.notes, ShowSubCategory]);
+  }
+
+  if (Array.isArray(ShowSubCategory) && Array.isArray(notesArray)) {
+    const initialSelectedDetails = notesArray.reduce((acc, note) => {
+      const subCategory = ShowSubCategory.find(sub => sub.item === note.key);
+      if (subCategory) {
+        acc.push({ value: subCategory.id, label: subCategory.item });
+      }
+      return acc;
+    }, []);
+    
+    setSelectedPackageDetails(initialSelectedDetails);
+  } else {
+    setSelectedPackageDetails([]);
+  }
+}, [initialValues.notes, ShowSubCategory]);
   
  
   
@@ -772,26 +641,6 @@ isClearable
           </div>
         </Dialog>
       </Transition>
-      <div style={{ display: "none" }}>
-      <Invoice
-        ref={invoiceRef}
-        packageType={packageType.label}
-        selectedPackageDetails={selectedPackageDetails}
-        brideName={brideName}
-        phone={phone}
-        city={city}
-        eventDate={eventDate}
-        receiveDate={receiveDate}
-        total={total}
-        payment={payment}
-        remaining={remaining}
-        discountName={discountType&&discountType.label}
-        additionalService={additionalService}
-        additionalServicePrice={additionalServicePrice}
-        discountRate={discountRate}
-        logo={logo}
-      />
-    </div>
     </div>
   );
 };

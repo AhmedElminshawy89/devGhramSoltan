@@ -62,13 +62,17 @@ const MakeUpTableDaily = () => {
   };
   const handleDetails = async (employeeId) => {
     const employeeToEdit =
-       employees?.makeups?.data.find((emp) => emp.id === employeeId)
+      searchQuery === ""
+        ? employees?.makeups?.data.find((emp) => emp.id === employeeId)
+        : searchedEmployees.makeup.find((emp) => emp.id === employeeId);
        setEditMakeupDetails(employeeToEdit);
   };
 
   const handleEditInstallMent = async (employeeId) => {
     const employeeToEdit =
-    employees?.makeups?.data.find((emp) => emp.id === employeeId)
+      searchQuery === ""
+        ? employees?.makeups?.data.find((emp) => emp.id === employeeId)
+        : searchedEmployees.makeup.find((emp) => emp.id === employeeId);
     setEditMakeupInstallMent(employeeToEdit);
   };
   

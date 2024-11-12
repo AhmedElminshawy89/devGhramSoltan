@@ -188,6 +188,7 @@ header {
     justify-content: space-between;
     z-index: 55555555555555555;
     color: #000 !important;
+    top: 0 !important;
 }
 
 .link a:hover {

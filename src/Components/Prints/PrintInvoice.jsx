@@ -20,6 +20,10 @@ const convertTo12HourFormat = (time) => {
 };
 
 const PrintInvoice = forwardRef(({ employee }, ref) => {
+  const isValidDate = (date) => {
+    return date instanceof Date && !isNaN(date);
+  };
+  
   const now = new Date();
   const options = {
     weekday: 'long',
@@ -27,161 +31,173 @@ const PrintInvoice = forwardRef(({ employee }, ref) => {
     month: 'long',
     day: 'numeric',
   };
-
+  
   return (
     <div
       ref={ref}
-      className="p-10 font-sans text-center bg-white shadow-lg rounded-lg"
       style={{
-        width: '80mm',
-        padding: '10px',
-        fontSize: '12px',
+        // width: "80mm",
+        padding: "10mm",
+        fontFamily: "Arial, sans-serif",
         direction: 'rtl',
+         textAlign: "center"
       }}
     >
-      <div className="border-b-2 pb-4 mb-4">
-        <div className="flex justify-center mb-2">
+          <div         style={{
+          display:'flex', justifyContent:'center',
+          alignItems: 'center'
+  
+          }}>
           <img
             src={logo}
             alt="Logo"
-            className="w-32 h-auto"
+            style={{ width: "30mm", height: "auto", marginBottom: "2px" }}
           />
+          </div>
+      <div>
+        <div
+          style={{
+            borderBottom: "1px solid #eee",
+            padding: "4mm 0",
+          }}
+        >
+          <p className="mb-1 text-lg">
+            <strong>اسم العميل:</strong> {employee?.name}
+          </p>
+          <p className="mb-1 text-lg">
+            <strong>رقم التليفون:</strong> {employee?.phone}
+          </p>
+          <p className="mb-1 text-lg">
+            <strong>البلد:</strong> {employee?.address}
+          </p>
+          <p className="mb-1 text-lg">
+            <strong>تاريخ المناسبة:</strong>{" "}
+            {isValidDate(new Date(employee?.appropriate)) ? new Date(employee?.appropriate).toLocaleDateString('ar-EG') : "تاريخ غير صالح"}
+          </p>
+          {employee?.receivedDate &&(
+          <p className="mb-1 text-lg">
+            <strong>تاريخ الاستلام:</strong>{" "}
+            {new Date(employee?.receivedDate).toLocaleDateString("ar-EG")}         </p>
+          )}
+          {employee?.enter&&(
+          <p className="mb-1 text-lg">
+            <strong>معاد الدخول:</strong>{" "}
+            {convertTo12HourFormat(employee.enter)}          </p>
+          )}
+          {employee?.arrive &&(
+          <p className="mb-1 text-lg">
+            <strong>معاد الوصول:</strong>{" "}
+            {convertTo12HourFormat(employee.arrive )}          </p>
+          )}
+          {employee?.exit  &&(
+          <p className="mb-1 text-lg">
+            <strong>معاد الخروج:</strong>{" "}
+            {convertTo12HourFormat(employee.exit  )}          </p>
+          )}
+          <p className="mb-1">
+            <strong>تاريخ اليوم:</strong> {now.toLocaleDateString('ar-EG', options)}
+          </p>
+          <p className="mb-1">
+            <strong>الوقت:</strong> {now.toLocaleTimeString('ar-EG')}
+          </p>
         </div>
-        <h1 className="text-xl font-semibold mb-1">مركز غرام سلطان يقدم فن المكياج والتصوير الاحترافي.</h1>
-        <p className="text-lg">تواصل معنا: 0472570908</p>
+        <div
+          style={{
+            padding: "4mm 0",
+          }}
+        >
+          <p className="mb-1">
+            <strong>نوع الباكدج:</strong> {employee?.category?.name}
+          </p>
+          <p className="mb-1">
+  <strong>مرتجع من الباكدج:</strong>{" "}
+  {(() => {
+    let notesArray = employee?.notes;
+
+    if (typeof notesArray === 'string') {
+      try {
+        notesArray = JSON.parse(notesArray);
+      } catch (error) {
+        console.error("Failed to parse notes:", error);
+        notesArray = []; 
+      }
+    }
+
+    return Array.isArray(notesArray)
+      ? notesArray.map((detail) => detail.key).join(', ')
+      : "لا يوجد";
+  })()}
+</p>
+
+          <p className="mb-1">
+            <strong>خدمة إضافية:</strong> {employee?.addService}
+          </p>
+          <p className="mb-1">
+            <strong>سعر الخدمة الإضافية:</strong>{" "}
+            {`${employee?.priceService ? `${employee?.priceService.toLocaleString('ar-EG')} جنيه` : ''}`}
+            </p>
+            {employee?.dateService && (
+                      <p className="mb-1">
+                      <strong>تاريخ الخدمة الإضافية:</strong>{" "}
+                      {isValidDate(new Date(employee?.dateService)) ? new Date(employee?.dateService).toLocaleDateString('ar-EG') : "تاريخ غير صالح"}
+                      </p>
+            )}
+            {employee?.typeHair && (
+            <p className="mb-1">
+            <strong>نوع القسم الاخر:</strong>{" "}
+            {employee?.typeHair}
+            </p>
+            )}
+            {employee?.priceHair && (
+            <p className="mb-1">
+            <strong>سعر القسم الاخر:</strong>{" "}
+            {employee?.priceHair}
+            </p>
+            )}
+            
+              {employee?.dateHair && (
+            <p className="mb-1">
+            <strong>تاريخ القسم الاخر:</strong>{" "}
+            {employee?.dateHair}
+            </p>
+            )}
+          <p className="mb-1">
+            <strong>إجمالي :</strong> {`${employee?.total.toLocaleString('ar-EG')} جنيه`}
+          </p>
+          <p className="mb-1">
+            <strong>المبلغ المدفوع:</strong>{" "}
+            {`${employee?.pay ? `${employee?.pay.toLocaleString('ar-EG')} جنيه` : ''}`}
+            </p>
+          <p className="mb-1">
+            <strong>المبلغ المتبقي:</strong>{" "}
+            {`${employee?.rest ? `${employee?.rest.toLocaleString('ar-EG')} جنيه` : ''}`}
+          </p>
+          <p className="mb-1">
+            <strong>نوع الخصم:</strong> {employee?.discount?.discount?employee?.discount?.discount:""}
+          </p>
+          <p className="mb-1">
+            <strong>قيمة الخصم:</strong>{" "}
+            {`${employee?.discount?.price ? `${employee?.discount?.price.toLocaleString('ar-EG')} جنيه` : ''}`}
+          </p>
+        </div>
       </div>
-
-      <table className="min-w-full divide-y divide-gray-200 text-right">
-        <tbody className="bg-white divide-y divide-gray-200">
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">تاريخ اليوم:</td>
-            <td className="px-4 py-2 text-xl">{now.toLocaleDateString('ar-EG', options)}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">الوقت:</td>
-            <td className="px-4 py-2 text-xl">{now.toLocaleTimeString('ar-EG')}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">اسم العميل:</td>
-            <td className="px-4 py-2 text-xl">{employee?.name}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">رقم التليفون:</td>
-            <td className="px-4 py-2 text-xl">{employee?.phone}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">البلد:</td>
-            <td className="px-4 py-2 text-xl">{employee?.address}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">تاريخ المناسبة:</td>
-            <td className="px-4 py-2 text-xl">{new Date(employee?.appropriate).toLocaleDateString("ar-EG")}</td>
-          </tr>
-          {employee?.receivedDate && (
-            <tr>
-              <td className="font-semibold px-4 py-2 text-xl">تاريخ الاستلام:</td>
-              <td className="px-4 py-2 text-xl">{new Date(employee?.receivedDate).toLocaleDateString("ar-EG")}</td>
-            </tr>
-          )}
-          {employee?.enter && (
-            <tr>
-              <td className="font-semibold px-4 py-2 text-xl">معاد الدخول:</td>
-              <td className="px-4 py-2 text-xl">{convertTo12HourFormat(employee.enter)}</td>
-            </tr>
-          )}
-          {employee?.arrive && (
-            <tr>
-              <td className="font-semibold px-4 py-2 text-xl">معاد الوصول:</td>
-              <td className="px-4 py-2 text-xl">{convertTo12HourFormat(employee?.arrive)}</td>
-            </tr>
-          )}
-          {employee?.exit && (
-            <tr>
-              <td className="font-semibold px-4 py-2 text-xl">معاد الخروج:</td>
-              <td className="px-4 py-2 text-xl">{convertTo12HourFormat(employee.exit)}</td>
-            </tr>
-          )}
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">نوع الباكدج:</td>
-            <td className="px-4 py-2 text-xl">{employee?.category?.name}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">مرتجع من الباكدج:</td>
-            <td className="px-4 py-2 text-xl">{employee?.notes?.map((e) => e.key).join(', ')}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">خدمة إضافية:</td>
-            <td className="px-4 py-2 text-xl">{employee?.addService}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">سعر الخدمة الإضافية:</td>
-            <td className="px-4 py-2 text-xl">{`${employee?.priceService ? `${employee?.priceService.toLocaleString('ar-EG')} جنيه` : ''}`}</td>
-          </tr>
-          {employee?.dateService && (
-            <tr>
-              <td className="font-semibold px-4 py-2 text-xl">تاريح الخدمه الاضافيه:</td>
-              <td className="px-4 py-2 text-xl">{new Date(employee?.dateService).toLocaleDateString("ar-EG")}</td>
-            </tr>
-          )}
-          {employee?.typeHair && (
-            <tr>
-              <td className="font-semibold px-4 py-2 text-xl">نوع القسم الاخر:</td>
-              <td className="px-4 py-2 text-xl">{employee?.typeHair}</td>
-            </tr>
-          )}
-          {employee?.priceHair && (
-            <tr>
-              <td className="font-semibold px-4 py-2 text-xl">سعر القسم الاخر:</td>
-              <td className="px-4 py-2 text-xl">{employee?.typeHair}</td>
-            </tr>
-          )}
-            {employee?.dateHair && (
-            <tr>
-              <td className="font-semibold px-4 py-2 text-xl">تاريخ القسم الاخر:</td>
-              <td className="px-4 py-2 text-xl">{new Date(employee?.dateHair).toLocaleDateString("ar-EG")}</td>
-            </tr>
-          )}
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">إجمالي:</td>
-            <td className="px-4 py-2 text-xl">{`${employee?.total.toLocaleString('ar-EG')} جنيه`}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">المبلغ المدفوع:</td>
-            <td className="px-4 py-2 text-xl">{`${employee?.pay ? `${employee?.pay.toLocaleString('ar-EG')} جنيه` : ''}`}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">المبلغ المتبقي:</td>
-            <td className="px-4 py-2 text-xl">{`${employee?.rest ? `${employee?.rest.toLocaleString('ar-EG')} جنيه` : ''}`}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">نوع الخصم:</td>
-            <td className="px-4 py-2 text-xl">{employee?.discount?.discount || "لا يوجد خصم"}</td>
-          </tr>
-          <tr>
-            <td className="font-semibold px-4 py-2 text-xl">قيمة الخصم:</td>
-            <td className="px-4 py-2 text-xl">{`${employee?.discount?.price ? `${employee?.discount?.price.toLocaleString('ar-EG')} جنيه` : ''}` || "لا يوجد"}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p className="text-xl mb-1 border-t pt-[5px]">
-        <strong>في حالة الإلغاء لا يسترد المبلغ المدفوع</strong>
+      <p className="mb-1 text-md text-center">
+        <strong>في حاله الالغاء لا يسترد المبلغ المدفوع</strong>
       </p>
-      <p className="text-xl mb-1">
-        <strong>يرجى الاحتفاظ بالإيصال للمراجعة</strong>
+      <p className="mb-1 text-md text-center">
+        <strong>يرجي الاحتفاظ بالايصال للمراجعه</strong>
       </p>
-      <p className="text-xl mb-1">
-        <strong>العنوان: دسوق - شارع الجيش <br /> م: 0472570908</strong>
+      <p className="mb-1 text-md text-center">
+        <strong>العنوان: دسوق - شارع الجيش <br/> م: 0472570908</strong>
       </p>
-
       <div className="mt-2 border-t pt-[5px]">
-        <p className="text-xl flex items-center justify-center gap-1 " style={{ textAlign: 'center', fontSize: '18px', marginTop: '20px' }}>
-          <strong>
-            تم تصميم وتطوير هذه المنصة بواسطة Coding Corner
-          </strong>
-          <img src={qrcode} alt="qr-code" className="w-[90px] h-[90px] object-cover"/>
-        </p>
-      </div>
+          <p className="text-xl flex items-center justify-center gap-1 " style={{ textAlign: 'center', fontSize: '18px', marginTop: '20px' }}>
+            <strong>
+              تم تصميم وتطوير هذه المنصة بواسطة Coding Corner
+            </strong>
+            <img src={qrcode} alt="qr-code" className="w-[50px] h-[50px] object-cover"/>
+          </p>
+        </div>
     </div>
   );
 });

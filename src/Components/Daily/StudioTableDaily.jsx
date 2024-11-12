@@ -99,13 +99,17 @@ const StudioTableDaily = () => {
 
   const handleDetails = async (employeeId) => {
     const employeeToEdit =
-       employees.data.find((emp) => emp.id === employeeId)
+    searchQuery === ""
+    ? employees.data.find((emp) => emp.id === employeeId)
+    : searchedEmployees.studio.find((emp) => emp.id === employeeId);
        setEditMakeupDetails(employeeToEdit);
   };
 
   const handleEditInstallMent = async (employeeId) => {
     const employeeToEdit =
-    employees.data.find((emp) => emp.id === employeeId)
+    searchQuery === ""
+    ? employees.data.find((emp) => emp.id === employeeId)
+    : searchedEmployees.studio.find((emp) => emp.id === employeeId);
     setEditMakeupInstallMent(employeeToEdit);
   };
   
