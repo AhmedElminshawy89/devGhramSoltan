@@ -311,7 +311,7 @@ return (
       e.preventDefault();
       setFormSubmitted(true);
       const phoneRegex = /^(\+?\d{1,3}[- ]?)?\d{10}$/;
-      if (packageType && brideName && phone && city && eventDate && receiveDate && total) {
+      if (packageType && brideName && phone && city && eventDate && receiveDate && total && payment) {
         if (!phone.match(phoneRegex)) {
           setNotification({
             type: "error",
@@ -666,9 +666,14 @@ return (
                             id="payment"
                             value={payment}
                             onChange={handlePaymentChange}
-                            className={`shadow appearance-none border
-                              rounded w-full py-2 px-3 text-gray-700 leading-tight
-                               focus:outline-none focus:shadow-outline `}                          />
+                            className={`shadow appearance-none border rounded 
+                              w-full py-2 px-3 text-gray-700 leading-tight
+                               focus:outline-none focus:shadow-outline
+                               ${
+                                formSubmitted && !payment
+                                  ? "border-red-500"
+                                  : ""
+                              } `}                        />
                         </div>
                         <div className="mb-4">
                           <label

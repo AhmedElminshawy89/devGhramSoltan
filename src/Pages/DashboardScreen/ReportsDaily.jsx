@@ -34,45 +34,42 @@ const ReportsDaily = () => {
     const totalLoans = data?.totalPriceLoans || 0;
     const totalExpenses = data?.totalPriceExpenses || 0;
     const totalDaily = data?.totalDaily || 0;
-
-    function calculateTodayInstallments(data) {
+    function calculateTodayInstallmentsForCustomers(data) {
         const today = new Date().toISOString().split('T')[0]; 
-        let totalMakeupInstallments = 0;
-        let totalStudioInstallments = 0;
+        const makeupInstallments = {};
+        const studioInstallments = {};
     
         data?.makeups?.forEach(makeup => {
+            if (!makeupInstallments[makeup.name]) makeupInstallments[makeup.name] = 0;
             if (makeup?.DateOfTheFirstInstallment === today && makeup.pay) {
-                totalMakeupInstallments += parseFloat(makeup.pay);
+                makeupInstallments[makeup.name] += parseFloat(makeup.pay);
             }
             if (makeup?.DateOfTheSecondInstallment === today && makeup.secondInstallment) {
-                totalMakeupInstallments += parseFloat(makeup.secondInstallment);
+                makeupInstallments[makeup.name] += parseFloat(makeup.secondInstallment);
             }
             if (makeup?.DateOfTheThirdInstallment === today && makeup.thirdInstallment) {
-                totalMakeupInstallments += parseFloat(makeup.thirdInstallment);
+                makeupInstallments[makeup.name] += parseFloat(makeup.thirdInstallment);
             }
         });
     
         data?.studio?.forEach(studio => {
+            if (!studioInstallments[studio.name]) studioInstallments[studio.name] = 0;
             if (studio?.DateOfTheFirstInstallment === today && studio.pay) {
-                totalStudioInstallments += parseFloat(studio.pay);
+                studioInstallments[studio.name] += parseFloat(studio.pay);
             }
             if (studio?.DateOfTheSecondInstallment === today && studio.secondInstallment) {
-                totalStudioInstallments += parseFloat(studio.secondInstallment);
+                studioInstallments[studio.name] += parseFloat(studio.secondInstallment);
             }
             if (studio?.DateOfTheThirdInstallment === today && studio.thirdInstallment) {
-                totalStudioInstallments += parseFloat(studio.thirdInstallment);
+                studioInstallments[studio.name] += parseFloat(studio.thirdInstallment);
             }
         });
     
-        return {
-            totalMakeupInstallments,
-            totalStudioInstallments
-        };
+        return { makeupInstallments, studioInstallments };
     }
     
-    const { totalMakeupInstallments, totalStudioInstallments } = calculateTodayInstallments(data);
-    console.log("مجموع الأقساط المستحقة اليوم في makeups:", totalMakeupInstallments);
-    console.log("مجموع الأقساط المستحقة اليوم في studio:", totalStudioInstallments);
+    const { makeupInstallments, studioInstallments } = calculateTodayInstallmentsForCustomers(data);
+    
     
 
     const combinedData = [
@@ -80,7 +77,7 @@ const ReportsDaily = () => {
           serviceType: "ميكاب",
           customerName: item.name,
           phone: item.phone,
-          total: totalMakeupInstallments,
+          total: makeupInstallments[item.name] || 0,
           rest: item.rest,
           total_Price: item.total,
         //   date: item.created_at,
@@ -90,7 +87,7 @@ const ReportsDaily = () => {
           serviceType: "استوديو",
           customerName: item.name,
           phone: item.phone,
-          total: totalStudioInstallments,
+          total: studioInstallments[item.name] || 0,
           rest: item.rest,
           total_Price: item.total,
         //   date: item.receivedDate,

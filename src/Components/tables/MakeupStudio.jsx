@@ -163,11 +163,26 @@ const StudioSearch = () => {
         customBodyRender: (value) => `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`,
       },
     },
+    // {
+    //   name: "pay",
+    //   label: "المدفوع",
+    //   options: {
+    //     customBodyRender: (value) => `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`,
+    //   },
+    // },
     {
-      name: "pay",
-      label: "المدفوع",
+      name: "totalPaid",
+      label: "إجمالي المدفوع",
       options: {
-        customBodyRender: (value) => `${new Intl.NumberFormat("ar-EG").format(value)} جنيه`,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const studioData = searchData[tableMeta.rowIndex];
+          const pay = studioData?.pay ? parseFloat(studioData.pay) : 0;
+          const secondInstallment = studioData?.secondInstallment ? parseFloat(studioData.secondInstallment) : 0;
+          const thirdInstallment = studioData?.thirdInstallment ? parseFloat(studioData.thirdInstallment) : 0;
+          const totalPaid = pay + secondInstallment + thirdInstallment;
+  
+          return `${new Intl.NumberFormat("ar-EG").format(totalPaid)} جنيه`;
+        },
       },
     },
     {

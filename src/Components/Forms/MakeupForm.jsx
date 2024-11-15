@@ -334,7 +334,7 @@ const MakeupForm = ({ isOpen, closeModal }) => {
     e.preventDefault();
     setFormSubmitted(true);
     const phoneRegex = /^(\+?\d{1,3}[- ]?)?\d{10}$/;
-    if (packageType && brideName && phone && city && eventDate  && total) {
+    if (packageType && brideName && phone && city && eventDate  && total && payment) {
       if (!phone.match(phoneRegex)) {
         setNotification({
           type: "error",
@@ -675,9 +675,14 @@ const MakeupForm = ({ isOpen, closeModal }) => {
                           id="payment"
                           value={payment}
                           onChange={handlePaymentChange}
-                          className={`shadow appearance-none border
-                            rounded w-full py-2 px-3 text-gray-700 leading-tight
-                             focus:outline-none focus:shadow-outline `}                          />
+                          className={`shadow appearance-none border rounded 
+                            w-full py-2 px-3 text-gray-700 leading-tight
+                             focus:outline-none focus:shadow-outline
+                             ${
+                              formSubmitted && !payment
+                                ? "border-red-500"
+                                : ""
+                            } `}                       />
                       </div>
                       <div className="mb-4">
                         <label
@@ -824,13 +829,13 @@ isClearable
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="bg-white text-[#20b2aa] border border-[#20b2aa] p-2 rounded-lg text-lg font-semibold flex items-center"
+                    className="bg-white text-[#f3c74d] border border-[#f3c74d] p-2 rounded-lg text-lg font-semibold flex items-center"
                   >
                     <AiOutlineClose className="ml-3" /> إلغاء
                   </button>
                   <button
                     type="submit"
-                    className="bg-[#20b2aa] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
+                    className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
                   >
                         {isLoading ? (
                           <Spinner />
