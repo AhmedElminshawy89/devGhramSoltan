@@ -110,8 +110,15 @@ const DetailsMakeUp = ({ isOpen, closeModal, initialValues }) => {
                         </h4>
                         <div className="grid grid-cols-1 text-gray-600">
                           <div className="text-start">
-                            <p><strong>المدفوع:</strong> {pay}</p>
-                            <p><strong>الإجمالي:</strong> {total}</p>
+                          <p className=" text-start"><strong>الدفعه الاولي:</strong> {pay}</p>
+                          <p className="text-start">
+                            <strong>اجمالي المدفوع:</strong>
+                            { 
+                              (isNaN(Number(pay)) ? 0 : Number(pay)) + 
+                              (isNaN(Number(secondInstallment)) ? 0 : Number(secondInstallment)) + 
+                              (isNaN(Number(thirdInstallment)) ? 0 : Number(thirdInstallment))
+                            }
+                          </p>                            <p><strong>الإجمالي:</strong> {total}</p>
                           </div>
                           <div className="text-start">
                             <p><strong>الباقي:</strong> {rest}</p>

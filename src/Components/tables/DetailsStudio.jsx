@@ -100,7 +100,15 @@ const DetailsStudio = ({ isOpen, closeModal, initialValues }) => {
                           <FaMoneyBillWave className="text-green-600 mr-2" /> تفاصيل الدفع
                         </h4>
                         <div className="grid grid-cols-1 text-gray-600">
-                          <p className=" text-start"><strong>المدفوع:</strong> {pay}</p>
+                          <p className=" text-start"><strong>الدفعه الاولي:</strong> {pay}</p>
+                          <p className="text-start">
+                            <strong>اجمالي المدفوع:</strong>
+                            { 
+                              (isNaN(Number(pay)) ? 0 : Number(pay)) + 
+                              (isNaN(Number(secondInstallment)) ? 0 : Number(secondInstallment)) + 
+                              (isNaN(Number(thirdInstallment)) ? 0 : Number(thirdInstallment))
+                            }
+                          </p>
                           <p className=" text-start"><strong>الإجمالي:</strong> {total}</p>
                           <p className=" text-start"><strong>الباقي:</strong> {rest}</p>
                           <p className=" text-start"><strong>الحالة:</strong> {status}</p>

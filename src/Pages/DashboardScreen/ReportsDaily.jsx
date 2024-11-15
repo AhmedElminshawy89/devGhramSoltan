@@ -35,12 +35,54 @@ const ReportsDaily = () => {
     const totalExpenses = data?.totalPriceExpenses || 0;
     const totalDaily = data?.totalDaily || 0;
 
+    function calculateTodayInstallments(data) {
+        const today = new Date().toISOString().split('T')[0]; 
+        let totalMakeupInstallments = 0;
+        let totalStudioInstallments = 0;
+    
+        data?.makeups?.forEach(makeup => {
+            if (makeup?.DateOfTheFirstInstallment === today && makeup.pay) {
+                totalMakeupInstallments += parseFloat(makeup.pay);
+            }
+            if (makeup?.DateOfTheSecondInstallment === today && makeup.secondInstallment) {
+                totalMakeupInstallments += parseFloat(makeup.secondInstallment);
+            }
+            if (makeup?.DateOfTheThirdInstallment === today && makeup.thirdInstallment) {
+                totalMakeupInstallments += parseFloat(makeup.thirdInstallment);
+            }
+        });
+    
+        data?.studio?.forEach(studio => {
+            if (studio?.DateOfTheFirstInstallment === today && studio.pay) {
+                totalStudioInstallments += parseFloat(studio.pay);
+            }
+            if (studio?.DateOfTheSecondInstallment === today && studio.secondInstallment) {
+                totalStudioInstallments += parseFloat(studio.secondInstallment);
+            }
+            if (studio?.DateOfTheThirdInstallment === today && studio.thirdInstallment) {
+                totalStudioInstallments += parseFloat(studio.thirdInstallment);
+            }
+        });
+    
+        return {
+            totalMakeupInstallments,
+            totalStudioInstallments
+        };
+    }
+    
+    const { totalMakeupInstallments, totalStudioInstallments } = calculateTodayInstallments(data);
+    console.log("مجموع الأقساط المستحقة اليوم في makeups:", totalMakeupInstallments);
+    console.log("مجموع الأقساط المستحقة اليوم في studio:", totalStudioInstallments);
+    
+
     const combinedData = [
       ...(data?.makeups || []).map(item => ({
           serviceType: "ميكاب",
           customerName: item.name,
           phone: item.phone,
-          total: item.total,
+          total: totalMakeupInstallments,
+          rest: item.rest,
+          total_Price: item.total,
         //   date: item.created_at,
           status: item.status,
       })),
@@ -48,7 +90,9 @@ const ReportsDaily = () => {
           serviceType: "استوديو",
           customerName: item.name,
           phone: item.phone,
-          total: item.total,
+          total: totalStudioInstallments,
+          rest: item.rest,
+          total_Price: item.total,
         //   date: item.receivedDate,
           status: item.status,
       })),
@@ -97,8 +141,16 @@ const ReportsDaily = () => {
     },
       {
           name: "total",
-          label: "الإجمالي",
+          label: "اجمالي المدفوع",
       },
+      {
+        name: "rest",
+        label: "الباقي",
+    },
+      {
+        name: "total_Price",
+        label: "اجمالي الفاتوره",
+    },
     //   {
     //       name: "date",
     //       label: "تاريخ",
