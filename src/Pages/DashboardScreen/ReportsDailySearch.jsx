@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import MUIDataTable from "mui-datatables";
 import { Table, TableFooter, TableRow, TableCell } from '@mui/material';
 import host from '../../host/Host';
+import Spinner from '../../Shared/Spinner';
 
 const ReportsDailySearch = () => {
     const [data, setData] = useState(null);
@@ -39,7 +40,7 @@ const ReportsDailySearch = () => {
         if (date) {
             fetchData();
         }
-    }, [date, fetchData]);
+    }, [date]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -162,8 +163,8 @@ const ReportsDailySearch = () => {
                     onChange={(e) => setDate(e.target.value)}
                     className="border rounded p-2"
                 />
-                <button type="submit" className="bg-[#20b2aa] text-white p-2 w-[120px] flex justify-center rounded-lg text-lg font-semibold flex items-center">
-                    {isLoading ? "جاري البحث..." : "بحث"}
+                <button type="submit" className="bg-[#20b2aa] text-white p-2 w-[70px] flex justify-center rounded-lg text-lg font-semibold flex items-center">
+                    {isLoading ? <Spinner /> : "بحث"}
                 </button>
             </form>
             <div className="mt-4">
