@@ -22,7 +22,6 @@ import CookieService from "../Services/CookiesServices";
 import LandingPage from "../Pages/LandingPage/LandingPage";
 import MakeupSearch from "../Components/tables/MakeupSearch";
 import StudioSearch from "../Components/tables/MakeupStudio";
-import WorkersReport from "../Components/tables/WorkersReport";
 import QuicklySearch from "../Components/tables/QuicklySearch";
 import RentsSearch from "../Components/tables/RentsSearch";
 import ExpensesSearch from "../Components/tables/ExpensesSearch";
@@ -34,10 +33,13 @@ import DiscountSearch from "../Components/tables/DiscountSearch";
 import PackagesSearch from "../Components/tables/PackagesSearch";
 import SubPackagesSearch from "../Components/tables/SubPackagesSearch";
 import ReportsDaily from "../Pages/DashboardScreen/ReportsDaily";
+import ReportsDailySearch from "../Pages/DashboardScreen/ReportsDailySearch";
 import AddBanner from "../Pages/DashboardScreen/AddBanner";
 import AddImportantLand from "../Pages/DashboardScreen/AddImportantLand";
 import AddAdvantage from "../Pages/DashboardScreen/AddAdvantage";
 import AddAdditionsalRents from "../Pages/DashboardScreen/AddAdditionsalRents";
+import WorkersReport from "../Pages/DashboardScreen/WorkersReports";
+import LoanReportsEmployee from "../Pages/DashboardScreen/LoanReportsEmployee";
 
 const Routing = () => {
   const navigate = useNavigate();
@@ -73,6 +75,7 @@ const Routing = () => {
           <Route path="reservations/makeup/search" element={<MakeupSearch />} />
           <Route path="reservations/studio/search" element={<StudioSearch />} />
           <Route path="reports/monthly-employee-reports" element={<WorkersReport />} />
+          <Route path="reports/employee-loans-reports" element={<LoanReportsEmployee/>} />
           <Route path="reservations/works/quick-work" element={<QuicklySearch />} />
           <Route path="reservations/works/rents/search" element={<RentsSearch />} />
           <Route path="reservations/works/expenses/search" element={<ExpensesSearch />} />
@@ -94,6 +97,7 @@ const Routing = () => {
           <Route path="add-subpackage" element={<AddSubPackage />} />
           <Route path="reports" element={<Reports />} />
           <Route path="reports/daily" element={<ReportsDaily />} />
+          <Route path="reports/daily/search" element={<ReportsDailySearch />} />
         </Route>
         <Route path='/Login' element={<Login/>}/>
       </Routes>

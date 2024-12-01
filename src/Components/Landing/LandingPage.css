@@ -1104,7 +1104,7 @@ section {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: goldenrod;
+  background: #a5a5a5;
 }
 
 ::-webkit-scrollbar-thumb:hover {

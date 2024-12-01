@@ -56,75 +56,80 @@ const Login = () => {
   };
 
   return (
-    <section className="bg-white h-[100vh]">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <div className="flex items-center mb-6 text-2xl font-semibold text-gray-900">
-          <img className="w-52" src={logo} alt="غرام سلطان" />
-        </div>
-        <div className="w-full bg-gray-50 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center">
-              تسجيل الدخول
-            </h1>
-            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                >
-                  البريد الالكتروني
-                </label>
-                <input
-                  type="text"
-                  name="email"
-                  id="email"
-                  className={`bg-white border ${
-                    emailError ? "border-red-500" : "border-gray-300"
-                  } text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5`}
-                  placeholder="البريد الالكتروني"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                {emailError && (
-                  <p className="text-red-500 text-sm mt-1">{emailError}</p>
-                )}
-              </div>
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                >
-                  كلمه المرور
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  placeholder="••••••••"
-                  className={`bg-white border ${
-                    passwordError ? "border-red-500" : "border-gray-300"
-                  } text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5`}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                {passwordError && (
-                  <p className="text-red-500 text-sm mt-1">{passwordError}</p>
-                )}
-              </div>
-              <button
-                type="submit"
-                className="w-full text-white bg-[#E9C357] hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                disabled={loading}
+    <section className="h-screen flex flex-col md:flex-row">
+      <div className="flex flex-col items-center justify-center bg-gradient-to-r from-[#20b2aa] to-[#48c9b0] text-white w-full md:w-1/2 px-10 py-20">
+        <img src={logo} alt="Logo" className="w-40 h-auto mb-8 animate-fadeIn" />
+        <h1 className="text-4xl font-bold mb-4 animate-fadeIn">مرحباً بعودتك!</h1>
+        <p className="text-lg text-center animate-fadeIn">
+          يسعدنا أن نقدم لك تجربة تسجيل دخول مميزة. يرجى إدخال بياناتك للوصول إلى حسابك.
+        </p>
+      </div>
+
+      <div className="flex items-center justify-center w-full md:w-1/2 bg-gray-100 px-8 md:mt-0 mt-8">
+        <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-6">
+          <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">
+            تسجيل الدخول
+          </h1>
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div>
+              <label
+                htmlFor="email"
+                className="block mb-2 text-sm font-medium text-gray-600"
               >
-                {loading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
-              </button>
+                البريد الالكتروني
+              </label>
+              <input
+                type="text"
+                name="email"
+                id="email"
+                className={`bg-gray-50 border ${
+                  emailError ? "border-red-500" : "border-gray-300"
+                } text-gray-900 sm:text-sm rounded-lg focus:ring-2 focus:ring-[#20b2aa] focus:outline-none block w-full p-3`}
+                placeholder="أدخل البريد الالكتروني"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              {emailError && (
+                <p className="text-red-500 text-sm mt-2">{emailError}</p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="password"
+                className="block mb-2 text-sm font-medium text-gray-600"
+              >
+                كلمة المرور
+              </label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                className={`bg-gray-50 border ${
+                  passwordError ? "border-red-500" : "border-gray-300"
+                } text-gray-900 sm:text-sm rounded-lg focus:ring-2 focus:ring-[#20b2aa] focus:outline-none block w-full p-3`}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              {passwordError && (
+                <p className="text-red-500 text-sm mt-2">{passwordError}</p>
+              )}
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-[#20b2aa] text-white hover:bg-[#1e8f8a] focus:ring-4 focus:outline-none focus:ring-[#20b2aa] font-medium rounded-lg text-sm px-5 py-3 transition-all duration-300 ease-in-out"
+              disabled={loading}
+            >
+              {loading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
+            </button>
+            <div className="text-center mt-4">
               {error && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-red-500 text-sm mt-3">
                   فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.
                 </p>
               )}
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       </div>
     </section>

@@ -225,12 +225,12 @@ const LoansReports = () => {
           />
         </div>
         <div className="flex gap-4 w-full items-center">
-          <button onClick={handleSearchDate} disabled={loadingSearch}
-          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center">
+        <button onClick={handleSearchDate} disabled={loadingSearch}
+          className="bg-[#20b2aa] text-white p-2 rounded-lg text-lg font-semibold flex items-center">
             {loadingSearch ? "جاري البحث..." : "ابحث"}
           </button>
           <button onClick={handleResetSearch} disabled={loadingSearch}
-          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center">
+          className="bg-[#20b2aa] text-white p-2 rounded-lg text-lg font-semibold flex items-center">
           <IoIosRefresh/>
           </button>
         </div>

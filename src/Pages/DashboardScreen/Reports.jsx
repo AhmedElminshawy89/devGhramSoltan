@@ -10,15 +10,15 @@ const Reports = () => {
   return (
     <div className="p-4">
       <Tab.Group>
-        <Tab.List className="flex p-1 space-x-1 bg-[#f3c74d] rounded-xl flex-col sm:flex-row">
+        <Tab.List className="flex p-1 space-x-1 bg-[#20b2aa]  rounded-xl flex-col sm:flex-row">
           <Tab as={Fragment}>
             {({ selected }) => (
               <button
-                className={`w-full py-2.5 text-xl leading-5 font-bold text-black rounded-lg ${
-                  selected
-                    ? "bg-white shadow"
-                    : "text-black hover:bg-white/[0.12] hover:text-black"
-                }`}
+              className={`w-full py-2.5 text-xl leading-5 font-bold text-black rounded-lg ${
+                selected
+                  ? "bg-white shadow"
+                  : "text-white hover:bg-white/[0.12]"
+              }`}
               >
                 حجوزات استوديو
               </button>
@@ -27,11 +27,11 @@ const Reports = () => {
           <Tab as={Fragment}>
             {({ selected }) => (
               <button
-                className={`w-full py-2.5 text-xl leading-5 font-bold text-black rounded-lg ${
-                  selected
-                    ? "bg-white shadow"
-                    : "text-black hover:bg-white/[0.12] hover:text-black"
-                }`}
+              className={`w-full py-2.5 text-xl leading-5 font-bold text-black rounded-lg ${
+                selected
+                  ? "bg-white shadow"
+                  : "text-white hover:bg-white/[0.12]"
+              }`}
               >
                 حجوزات ميكاب
               </button>
@@ -40,11 +40,11 @@ const Reports = () => {
           <Tab as={Fragment}>
             {({ selected }) => (
               <button
-                className={`w-full py-2.5 text-xl leading-5 font-bold text-black rounded-lg ${
-                  selected
-                    ? "bg-white shadow"
-                    : "text-black hover:bg-white/[0.12] hover:text-black"
-                }`}
+              className={`w-full py-2.5 text-xl leading-5 font-bold text-black rounded-lg ${
+                selected
+                  ? "bg-white shadow"
+                  : "text-white hover:bg-white/[0.12]"
+              }`}
               >
                 مصروفات 
               </button>
@@ -53,11 +53,11 @@ const Reports = () => {
           <Tab as={Fragment}>
             {({ selected }) => (
               <button
-                className={`w-full py-2.5 text-xl leading-5 font-bold text-black rounded-lg ${
-                  selected
-                    ? "bg-white shadow"
-                    : "text-black hover:bg-white/[0.12] hover:text-black"
-                }`}
+              className={`w-full py-2.5 text-xl leading-5 font-bold text-black rounded-lg ${
+                selected
+                  ? "bg-white shadow"
+                  : "text-white hover:bg-white/[0.12]"
+              }`}
               >
                 السلف 
               </button>

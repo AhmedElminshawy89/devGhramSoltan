@@ -228,13 +228,13 @@ const PackageForm = ({ isOpen, closeModal }) => {
                       <button
                         type="button"
                         onClick={closeModal}
-                        className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center"
+                        className="bg-wite text-[#20b2aa] border border-[#20b2aa] p-2 rounded-lg text-lg font-semibold flex items-center"
                       >
                         <AiOutlineClose className="ml-3" /> إلغاء
                       </button>
                       <button
                         type="submit"
-                        className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
+                        className="bg-[#20b2aa] text-white p-2 rounded-lg text-lg font-semibold flex items-center"
                       >
                         {isLoading ? (
                           <Spinner />

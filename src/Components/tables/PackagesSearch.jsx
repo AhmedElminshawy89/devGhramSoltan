@@ -157,8 +157,8 @@ const PackagesSearch = () => {
                   isLoading ? "py-1 px-1 pb-1" : "py-1 px-4"
                 } font-semibold text-lg rounded-full whitespace-nowrap ${
                   value === "off"
-                    ? "bg-black text-white"
-                    : "bg-[#f3c74d] text-black"
+                    ? "bg-white text-[#20b2aa] border border-[#20b2aa]"
+                    : "bg-[#20b2aa] text-white"
                 }`}
               >
                 {isLoading ? (
@@ -259,7 +259,7 @@ const PackagesSearch = () => {
           value={searchQuery}
           onChange={handleSearchChange}
         />
-        <button type="submit" className="bg-[#f3c74d] text-black px-6 py-2 rounded-lg text-lg font-semibold flex items-center">
+        <button type="submit" className="bg-[#20b2aa] text-white px-6 py-2 rounded-lg text-lg font-semibold flex items-center">
           {isLoading ? <Spinner /> : 'بحث'}
         </button>
       </form>

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import MUIDataTable from "mui-datatables";
 import { Table, TableFooter, TableRow, TableCell } from '@mui/material';
 import host from '../../host/Host';
+import { Link } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
 
 const ReportsDaily = () => {
     const [data, setData] = useState(null);
@@ -34,6 +36,7 @@ const ReportsDaily = () => {
     const totalLoans = data?.totalPriceLoans || 0;
     const totalExpenses = data?.totalPriceExpenses || 0;
     const totalDaily = data?.totalDaily || 0;
+    
     function calculateTodayInstallmentsForCustomers(data) {
         const today = new Date().toISOString().split('T')[0]; 
         const makeupInstallments = {};
@@ -217,13 +220,20 @@ const ReportsDaily = () => {
 
     return (
         <div>
-            <div className="mt-8">
+                  <div className="flex gap-4 items-center mt-2">
+
+        <Link to={'/moderator/reports/daily/search'}
+          className="bg-wite text-[#20b2aa] border border-[#20b2aa] p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
+        >
+          <FaSearch className="ml-3" />بحث التقارير اليوميه        </Link>
+      </div>
+            <div className="mt-2">
                 <MUIDataTable
                     title={"تقارير يوميه"}
                     data={combinedData}
                     columns={columns}
                     options={options}
-                />
+                />+
                 <Table>
                     <TableFooter>
                         <TableRow>

@@ -46,6 +46,9 @@ export const SearchApi = createApi({
     searchMakeUpDate: build.query({
       query: (date) => `/searchMakeupDate?date=${date}`,
     }),
+    searchHairDate: build.query({
+      query: (date) => `/searchHair?today=${date}`,
+    }),
     searchStudioDate: build.query({
       query: (date) => `/searchStudioDate?date=${date}`,
     }),
@@ -67,6 +70,7 @@ export const {
   useSearchMakeUpQuery,
   useSearchMakeUpDateQuery,
   useSearchStudioDateQuery,
+  useSearchHairDateQuery,
 
 
   useLazySearchEmployeeQuery,

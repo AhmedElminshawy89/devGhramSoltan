@@ -157,8 +157,8 @@ const PackageTable = () => {
                 isLoading ? "py-1 px-1 pb-1" : "py-1 px-4"
               } font-semibold text-lg rounded-full whitespace-nowrap ${
                 value === "off"
-                  ? "bg-black text-white"
-                  : "bg-[#f3c74d] text-black"
+                    ? "bg-white text-[#20b2aa] border border-[#20b2aa]"
+                    : "bg-[#20b2aa] text-white"
               }`}
             >
               {isLoading ? (

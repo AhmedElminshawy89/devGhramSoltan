@@ -28,13 +28,13 @@ const Expenses = () => {
         <div className="flex gap-4 items-center">
         <button
           onClick={openModal}
-          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
+          className="bg-[#20b2aa] text-white p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
         >
           <VscSaveAs className="ml-3" /> المصروفات
         </button>
 
         <Link to={'/moderator/reservations/works/expenses/search'}
-          className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
+          className="bg-wite text-[#20b2aa] border border-[#20b2aa] p-2 rounded-lg text-lg font-semibold flex items-center mb-10"
         >
           <FaSearch className="ml-3" /> بحث المصروفات 
         </Link>

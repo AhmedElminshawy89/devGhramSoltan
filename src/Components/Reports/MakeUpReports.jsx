@@ -155,8 +155,8 @@ const MakeUpReports = () => {
                   ? "py-1 px-4" : "py-1 px-4"
                 } font-semibold text-lg rounded-full whitespace-nowrap ${
                   value === "لم يتم الدفع"
-                    ? "bg-black text-white"
-                    : "bg-[#f3c74d] text-black"
+                    ? "bg-white text-[#20b2aa] border border-[#20b2aa]"
+                    : "bg-[#20b2aa] text-white"
                 }`}
               >
                 { value}
@@ -380,12 +380,12 @@ const MakeUpReports = () => {
           />
         </div>
         <div className="flex gap-4 w-full items-center">
-          <button onClick={handleSearchDate} disabled={loadingSearch}
-          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center">
+        <button onClick={handleSearchDate} disabled={loadingSearch}
+          className="bg-[#20b2aa] text-white p-2 rounded-lg text-lg font-semibold flex items-center">
             {loadingSearch ? "جاري البحث..." : "ابحث"}
           </button>
           <button onClick={handleResetSearch} disabled={loadingSearch}
-          className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center">
+          className="bg-[#20b2aa] text-white p-2 rounded-lg text-lg font-semibold flex items-center">
           <IoIosRefresh/>
           </button>
         </div>

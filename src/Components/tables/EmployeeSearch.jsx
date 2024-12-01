@@ -184,7 +184,7 @@ const EmployeeSearch = () => {
           className="flex-1 shadow border-gray-400 rounded"
           placeholder="اختر اسم الموظف"
         />
-        <button type="submit" className="bg-[#f3c74d] text-black px-6 py-2 rounded-lg text-lg font-semibold flex items-center">
+        <button type="submit" className="bg-[#20b2aa] text-white px-6 py-2 rounded-lg text-lg font-semibold flex items-center">
           {isSearching ? <Spinner /> : 'بحث'}
         </button>
       </form>

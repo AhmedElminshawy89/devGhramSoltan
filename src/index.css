@@ -26,8 +26,8 @@ li {
 }
 
 ::selection{
-  background-color: #f3c74d;
-  color: #000;
+  background-color: #20b2aa;
+  color: #fff;
 }
 .dashboard-layout {
   display: flex;
@@ -42,6 +42,10 @@ li {
   border-right: 1px solid #eceff1;
   transition: width 0.3s ease;
   z-index: 5;
+  -webkit-transition: width 0.3s ease;
+  -moz-transition: width 0.3s ease;
+  -ms-transition: width 0.3s ease;
+  -o-transition: width 0.3s ease;
 }
 
 .sidebar-mobile {
@@ -63,6 +67,10 @@ li {
   margin-right: 20%;
   width: 80%;
   transition: margin-right 0.3s ease, width 0.3s ease;
+  -webkit-transition: margin-right 0.3s ease, width 0.3s ease;
+  -moz-transition: margin-right 0.3s ease, width 0.3s ease;
+  -ms-transition: margin-right 0.3s ease, width 0.3s ease;
+  -o-transition: margin-right 0.3s ease, width 0.3s ease;
 }
 
 .content-navbar-mobile {
@@ -158,11 +166,17 @@ li {
 }
 
 .sidebar-layout .link-pages ul .active-link {
-  background-color: #e9c357;
+  background-color: #20b2aa;
+  color: #fff !important;
   border-radius: 7px;
 }
+.sidebar-layout .link-pages ul .active-link p,
+.sidebar-layout .link-pages ul .active-link svg{
+  color: #fff !important;
+}
 .sidebar-mobile .link-pages ul .active-link {
-  background-color: #e9c357;
+  background-color: #20b2aa;
+  color: #fff !important;
   border-radius: 7px;
   padding-top: 12px;
   height: 44px;
@@ -191,7 +205,11 @@ li {
     border-right: 1px solid #eceff1;
     transition: width 0.3s ease;
     width: 100%;
-  }
+    -webkit-transition: width 0.3s ease;
+    -moz-transition: width 0.3s ease;
+    -ms-transition: width 0.3s ease;
+    -o-transition: width 0.3s ease;
+}
 
   .overlay {
     position: fixed;
@@ -244,11 +262,11 @@ li {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #e9c357;
+  background: #eee;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #f3c74d;
+  background: #eee;
 }
 
 /* Table Mui */
@@ -274,7 +292,10 @@ li {
   direction: ltr;
 }
 .tss-1832qqn-MUIDataTableHeadRow-root {
-  background-color: #f3c74d !important;
+  background-color: #20b2aa !important;
+}
+.tss-gm6zfk-MUIDataTableHeadCell-fixedHeader {
+  color: #fff !important;
 }
 .tss-gm6zfk-MUIDataTableHeadCell-fixedHeader {
   position: -webkit-sticky;

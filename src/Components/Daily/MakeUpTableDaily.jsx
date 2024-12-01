@@ -335,10 +335,10 @@ const MakeUpTableDaily = () => {
                 className={`${
                   value === "لم يتم الدفع"
                   ? "py-1 px-4" : "py-1 px-4"
-                } font-semibold text-lg rounded-full whitespace-nowrap ${
+                } font-semibold text-lg rounded-full whitespace-nowrap text-center ${
                   value === "لم يتم الدفع"
-                    ? "bg-black text-white"
-                    : "bg-[#f3c74d] text-black"
+                    ? "bg-white text-[#20b2aa] border border-[#20b2aa]"
+                    : "bg-[#20b2aa] text-white"
                 }`}
               >
                 {value}
@@ -357,10 +357,10 @@ const MakeUpTableDaily = () => {
               <p
                 className={`${
                   displayValue === "لا" ? "py-1 px-4" : "py-1 px-4"
-                } font-semibold text-lg rounded-full whitespace-nowrap ${
+                } font-semibold text-lg rounded-full whitespace-nowrap text-center ${
                   displayValue === "لا"
-                    ? "bg-black text-white"
-                    : "bg-[#f3c74d] text-black"
+                    ? "bg-white text-[#20b2aa] border border-[#20b2aa]"
+                    : "bg-[#20b2aa] text-white"
                 }`}
               >
                 {displayValue}

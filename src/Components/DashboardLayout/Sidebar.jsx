@@ -81,6 +81,7 @@ const Sidebar = () => {
           { to: "/moderator/landing-page/add-important-section", icon: <MdImportantDevices />, label: "إضافة قسم اهتمامنا" },
           { to: "/moderator/landing-page/what-distinguishes-us-section", icon: <FaArrowUpRightDots />, label: "إضافة قسم ما يميزنا" },
           { to: "/moderator/reports/monthly-employee-reports", icon: <TbReportAnalytics />, label: "تقارير شهريه للموظف" },
+          { to: "/moderator/reports/employee-loans-reports", icon: <TbReportAnalytics />, label: "تقارير السلف للموظف" },
           { to: "/moderator/reports", icon: <TbReportAnalytics />, label: "التقارير" },
         ]
       : []),

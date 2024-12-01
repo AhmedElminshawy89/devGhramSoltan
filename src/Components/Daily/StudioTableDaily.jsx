@@ -347,7 +347,7 @@ const StudioTableDaily = () => {
                 className={`${
                   value === "لم يتم الدفع"
                   ? "py-1 px-4" : "py-1 px-4"
-                } font-semibold text-lg rounded-full whitespace-nowrap ${
+                } font-semibold text-lg rounded-full whitespace-nowrap text-center  ${
                   value === "لم يتم الدفع"
                     ? "bg-white text-[#20b2aa] border border-[#20b2aa]"
                     : "bg-[#20b2aa] text-white"

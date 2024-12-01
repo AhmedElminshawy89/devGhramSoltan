@@ -12,6 +12,8 @@ const StudioInstallMent = ({ isOpen, closeModal, initialValues,refetchSearch,ref
   const [payment, setPayment] = useState(Number(initialValues?.pay )|| 0);
   const [secondInstallment, setSecondInstallment] = useState(Number(initialValues?.secondInstallment) || 0);
   const [thirdInstallment, setThirdInstallment] = useState(Number(initialValues?.thirdInstallment) || 0);
+  const [DateOfTheSecondInstallment, setDateOfTheSecondInstallment  ] = useState(Number(initialValues?.DateOfTheSecondInstallment  ) || 0);
+  const [DateOfTheThirdInstallment, setDateOfTheThirdInstallment] = useState(Number(initialValues?.DateOfTheThirdInstallment) || 0);
   const [remaining, setRemaining] = useState(Number(initialValues?.rest) || 
   (Number(initialValues?.total) - (Number(initialValues?.pay) + Number(initialValues?.secondInstallment) + Number(initialValues?.thirdInstallment))) || 0);
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -59,6 +61,9 @@ const StudioInstallMent = ({ isOpen, closeModal, initialValues,refetchSearch,ref
       setNotification(null);
     }
   };
+  const type = localStorage.getItem("type");
+
+  const typeToSend = type === "super_admin" ? "superAdmin" : type;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,11 +72,14 @@ const StudioInstallMent = ({ isOpen, closeModal, initialValues,refetchSearch,ref
     if (total  && remaining >= 0) {
       const formData = new FormData();
       formData.append("id", initialValues?.id);
+      formData.append("type", typeToSend);
       formData.append("total", total);
       formData.append("pay", payment);
       formData.append("rest", remaining);
       formData.append("secondInstallment", secondInstallment);
       formData.append("thirdInstallment", thirdInstallment);
+      formData.append("DateOfTheSecondInstallment", DateOfTheSecondInstallment);
+      formData.append("DateOfTheThirdInstallment", DateOfTheThirdInstallment);
       try {
         const response = await saveStudio({
             id: initialValues.id,
@@ -219,19 +227,49 @@ const StudioInstallMent = ({ isOpen, closeModal, initialValues,refetchSearch,ref
                             onChange={handleThirdInstallmentChange}
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
                           />
-                        </div>
+                        </div>                        {type === "super_admin" &&(
+                          <>
+                            <div className="mb-4">
+                              <label className="block text-gray-700 text-sm font-bold mb-2 text-start" htmlFor="secondInstallment">
+                              تاريخ القسط الثاني 
+                              </label>
+                              <input
+                                id="secondInstallmentdate"
+                                type="date"
+                                value={DateOfTheSecondInstallment}
+                                onChange={(value) => setDateOfTheSecondInstallment(value)}
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
+                              />
+
+                            </div>
+                            <div className="mb-4">
+                              <label className="block text-gray-700 text-sm font-bold mb-2 text-start" htmlFor="thirdInstallment">
+                              تاريخ القسط الثالث
+                              </label>
+                              <input
+                                id="DateOfTheThirdInstallment"
+                                type="date"
+                                value={DateOfTheThirdInstallment}
+                                onChange={(value) => setDateOfTheThirdInstallment(value)}
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
+                              />
+                            </div>
+                        
+                          </>
+                        )}
                       </div>
+
                       <div className="flex items-center justify-start gap-4 mt-4">
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="bg-black text-white p-2 rounded-lg text-lg font-semibold flex items-center"
+                    className="bg-wite text-[#20b2aa] border border-[#20b2aa] p-2 rounded-lg text-lg font-semibold flex items-center"
                   >
                     <AiOutlineClose className="ml-3" /> إلغاء
                   </button>
                   <button
                     type="submit"
-                    className="bg-[#f3c74d] text-black p-2 rounded-lg text-lg font-semibold flex items-center"
+                    className="bg-[#20b2aa] text-white p-2 rounded-lg text-lg font-semibold flex items-center"
                   >
                         {isLoading ? (
                           <Spinner />
