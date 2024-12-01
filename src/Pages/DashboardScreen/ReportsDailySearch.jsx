@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useCallback, useEffect, useState } from 'react';
 import MUIDataTable from "mui-datatables";
 import { Table, TableFooter, TableRow, TableCell } from '@mui/material';
 import host from '../../host/Host';
@@ -9,7 +10,7 @@ const ReportsDailySearch = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         setIsLoading(true);
         setError(null);
         try {
@@ -31,14 +32,14 @@ const ReportsDailySearch = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    });
     
 
     useEffect(() => {
         if (date) {
             fetchData();
         }
-    }, [date]);
+    }, [date, fetchData]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -47,7 +48,7 @@ const ReportsDailySearch = () => {
 
     const totalMakeup = data?.totalInstallmentsSum || 0;
     const totalStudio = data?.totalPriceStudio || 0;
-    const totalWorks = data?.totalPriceWorks || 0;
+    const totalWorks = data?.$totalPriceWorks || 0;
     const totalLoans = data?.totalPriceLoans || 0;
     const totalExpenses = data?.totalPriceExpenses || 0;
     const totalDaily = data?.totalDaily || 0;
@@ -161,7 +162,7 @@ const ReportsDailySearch = () => {
                     onChange={(e) => setDate(e.target.value)}
                     className="border rounded p-2"
                 />
-                <button type="submit" className="bg-[#20b2aa] text-white p-2 w-[70px] flex justify-center rounded-lg text-lg font-semibold flex items-center">
+                <button type="submit" className="bg-[#20b2aa] text-white p-2 w-[120px] flex justify-center rounded-lg text-lg font-semibold flex items-center">
                     {isLoading ? "جاري البحث..." : "بحث"}
                 </button>
             </form>
@@ -171,22 +172,46 @@ const ReportsDailySearch = () => {
                 <Table>
                     <TableFooter>
                         <TableRow>
-                            <TableCell colSpan={4} align="right">إجمالي الميكاب: {totalMakeup} جنيه</TableCell>
+                            <TableCell colSpan={4} align="right" style={{ fontWeight: "bold" }}>
+                                <p className='text-xl'>
+                                    إجمالي الميكاب: {totalMakeup} جنيه
+                                </p>
+                            </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell colSpan={4} align="right">إجمالي الاستوديو: {totalStudio} جنيه</TableCell>
+                            <TableCell colSpan={4} align="right" style={{ fontWeight: "bold" }}>
+                                <p className='text-xl'>
+                                    إجمالي الاستوديو: {totalStudio} جنيه
+                                </p>
+                            </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell colSpan={4} align="right">إجمالي الشغل: {totalWorks} جنيه</TableCell>
+                            <TableCell colSpan={4} align="right" style={{ fontWeight: "bold" }}>
+                                <p className='text-xl'>
+                                    إجمالي الشغل: {totalWorks} جنيه
+                                </p>
+                            </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell colSpan={4} align="right">إجمالي السلف: {totalLoans} جنيه</TableCell>
+                            <TableCell colSpan={4} align="right" style={{ fontWeight: "bold" }}>
+                                <p className='text-xl'>
+                                    إجمالي السلف: {totalLoans} جنيه
+                                </p>
+                            </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell colSpan={4} align="right">إجمالي المصروفات: {totalExpenses} جنيه</TableCell>
+                            <TableCell colSpan={4} align="right" style={{ fontWeight: "bold" }}>
+                                <p className='text-xl'>
+                                    إجمالي المصروفات: {totalExpenses} جنيه
+                                </p>
+                            </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell colSpan={4} align="right">الباقي: {totalDaily} جنيه</TableCell>
+                            <TableCell colSpan={4} align="right" style={{ fontWeight: "bold" }}>
+                                <p className='text-xl'>
+                                    الباقي: {totalDaily} جنيه
+                                </p>
+                            </TableCell>
                         </TableRow>
                     </TableFooter>
                 </Table>

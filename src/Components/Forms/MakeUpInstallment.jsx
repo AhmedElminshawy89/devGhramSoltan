@@ -61,7 +61,8 @@ const MakeUpInstallment = ({ isOpen, closeModal, initialValues ,refetchSearch,re
       setNotification(null);
     }
   };
-  const type = String(localStorage.getItem("type"));
+  const type = localStorage.getItem("type");
+  console.log("type",type);
 
 const typeToSend = type === "super_admin" ? "superAdmin" : type;
 
