@@ -5,7 +5,7 @@ import host from '../../host/Host';
 
 const ReportsDailySearch = () => {
     const [data, setData] = useState(null);
-    const [date, setDate] = useState(null);
+    const [date, setDate] = useState(() => new Date().toISOString().split("T")[0]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -15,8 +15,8 @@ const ReportsDailySearch = () => {
         try {
             const response = await fetch(`${host}/api/superAdmin/reports/searchDateDailyTotal?search=${date}`);
             const result = await response.json();
-            if (result.status) {
-                setData(result.data);
+            if (result) {
+                setData(result?.data);
             } else {
                 setError('Failed to fetch data.');
             }
@@ -154,7 +154,7 @@ const ReportsDailySearch = () => {
                     onChange={(e) => setDate(e.target.value)}
                     className="border rounded p-2"
                 />
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+                <button type="submit" className="bg-[#20b2aa] text-white p-2 w-[70px] flex justify-center rounded-lg text-lg font-semibold flex items-center">
                     {isLoading ? "جاري البحث..." : "بحث"}
                 </button>
             </form>

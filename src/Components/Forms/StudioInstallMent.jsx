@@ -61,7 +61,7 @@ const StudioInstallMent = ({ isOpen, closeModal, initialValues,refetchSearch,ref
       setNotification(null);
     }
   };
-  const type = localStorage.getItem("type");
+  const type = String(localStorage.getItem("type"));
 
   const typeToSend = type === "super_admin" ? "superAdmin" : type;
 
