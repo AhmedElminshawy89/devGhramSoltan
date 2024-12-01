@@ -8,12 +8,18 @@ const ReportsDailySearch = () => {
     const [date, setDate] = useState(() => new Date().toISOString().split("T")[0]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-
+    
     const fetchData = async () => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await fetch(`${host}/api/superAdmin/reports/searchDateDailyTotal?search=${date}`);
+            const response = await fetch(`${host}/api/superAdmin/reports/searchDateDailyTotal`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ search: date }),
+            });
             const result = await response.json();
             if (result) {
                 setData(result?.data);
@@ -26,6 +32,7 @@ const ReportsDailySearch = () => {
             setIsLoading(false);
         }
     };
+    
 
     useEffect(() => {
         if (date) {
