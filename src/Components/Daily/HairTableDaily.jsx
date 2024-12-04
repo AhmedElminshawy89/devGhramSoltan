@@ -36,6 +36,7 @@ const HairTableDaily = () => {
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
     setCurrentPage(1);
+    refetchSearchResults()
   };
   
 
@@ -59,27 +60,30 @@ const HairTableDaily = () => {
 options: {
   customBodyRender: (value, tableMeta, updateValue) => {
     let studioData;
-
     if (searchQuery === "") {
-      // Use `studioData` when searchQuery is empty
       studioData = employees?.hairs?.data?.[tableMeta.rowIndex];
       return studioData?.typeHair || "لا يوجد";
     } else {
-      // Use `searchedEmployees` when there is a searchQuery
       studioData = searchedEmployees?.hairs?.[tableMeta.rowIndex];
       return studioData?.category?.name || "";
     }
   },
 },
-
     },
     {
         name: "priceHair",
         label: "السعر",
         options: {
           customBodyRender: (value, tableMeta, updateValue) => {
-            const studioData = employees?.hairs?.data?.[tableMeta.rowIndex]
-            return studioData?.priceHair || "لا يوجد";
+            let studioData;
+        
+            if (searchQuery === "") {
+              const studioData = employees?.hairs?.data?.[tableMeta.rowIndex]
+              return studioData?.priceHair || "لا يوجد";
+            } else {
+              studioData = searchedEmployees?.hairs?.[tableMeta.rowIndex];
+              return studioData?.priceHair || "";
+            }
           },
         },
       }
@@ -140,7 +144,7 @@ options: {
     search: false,
   };
 
-  const dataToDisplay = employees?.hairs?.data
+  const dataToDisplay = searchQuery ? searchedEmployees?.hairs :employees?.hairs?.data
 
   return (
     <>

@@ -63,7 +63,7 @@ const MakeUpInstallment = ({ isOpen, closeModal, initialValues ,refetchSearch,re
   };
   const type = JSON.parse(localStorage.getItem("type"));
 
-const typeToSend = type === "super_admin" ? "superAdmin" : type;
+const typeToSend = type === "super_admin" ? "superAdmin" : 'admin';
 
   const handleSubmit = async (e) => {
     e.preventDefault();

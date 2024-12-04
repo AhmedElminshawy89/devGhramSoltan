@@ -7,7 +7,7 @@ import LoadingSpinner from "../Pages/Loading";
 
 const DashboardLayout = () => {
 
-  const [loading , setLoading] = useState(true);
+  const [loading , setLoading] = useState(false);
   const activeTab = useSelector((state) => state.tab.activeTab);
 
   const contentNavbarClass = activeTab
@@ -16,14 +16,14 @@ const DashboardLayout = () => {
 
     useEffect(()=>{
       const timer = setTimeout(() => {
-        setLoading(false);
+        setLoading(true);
       }, 2000);
 
       return () => clearTimeout(timer);
 
     },[])
 
-    if(loading){
+    if(loading) {
       <LoadingSpinner/>
     }
 

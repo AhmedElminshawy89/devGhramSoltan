@@ -74,8 +74,8 @@ li {
 }
 
 .content-navbar-mobile {
-  margin-right: 80px;
-  width: calc(100% - 80px);
+    margin-right: 80px;
+    width: calc(100% - 80px);
     transition: margin-right 0.3s ease, width 0.3s ease;
 }
 
@@ -386,11 +386,12 @@ li {
 }
 .ant-pagination-item-active{
   font-weight: 600 !important;
-  border-color: #f3c74d !important;
-  background-color: #f3c74d !important;
+  border-color: #20b2aa !important;
+  background-color: #20b2aa !important;
+  color: #fff !important;
 }
 .ant-pagination-item-active>a{
-  color: #000 !important;
+  color: #fff !important;
 }
 .tss-iwylj0-MUIDataTableBodyCell-responsiveStackedSmallParent {
   white-space: nowrap !important;
