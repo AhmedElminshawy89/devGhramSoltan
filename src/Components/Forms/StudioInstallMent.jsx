@@ -238,7 +238,7 @@ const StudioInstallMent = ({ isOpen, closeModal, initialValues,refetchSearch,ref
                                 id="secondInstallmentdate"
                                 type="date"
                                 value={DateOfTheSecondInstallment}
-                                onChange={(value) => setDateOfTheSecondInstallment(value)}
+                                onChange={(event) => setDateOfTheSecondInstallment(event.target.value)}
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
                               />
 
@@ -251,7 +251,7 @@ const StudioInstallMent = ({ isOpen, closeModal, initialValues,refetchSearch,ref
                                 id="DateOfTheThirdInstallment"
                                 type="date"
                                 value={DateOfTheThirdInstallment}
-                                onChange={(value) => setDateOfTheThirdInstallment(value)}
+                                onChange={(event) => setDateOfTheThirdInstallment(event.target.value)}
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
                               />
                             </div>
