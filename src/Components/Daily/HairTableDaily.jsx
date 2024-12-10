@@ -65,7 +65,7 @@ options: {
       return studioData?.typeHair || "لا يوجد";
     } else {
       studioData = searchedEmployees?.hairs?.[tableMeta.rowIndex];
-      return studioData?.category?.name || "";
+      return studioData?.typeHair || "";
     }
   },
 },

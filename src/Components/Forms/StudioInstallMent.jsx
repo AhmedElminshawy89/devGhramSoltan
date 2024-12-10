@@ -12,8 +12,8 @@ const StudioInstallMent = ({ isOpen, closeModal, initialValues,refetchSearch,ref
   const [payment, setPayment] = useState(Number(initialValues?.pay )|| 0);
   const [secondInstallment, setSecondInstallment] = useState(Number(initialValues?.secondInstallment) || 0);
   const [thirdInstallment, setThirdInstallment] = useState(Number(initialValues?.thirdInstallment) || 0);
-  const [DateOfTheSecondInstallment, setDateOfTheSecondInstallment  ] = useState(Number(initialValues?.DateOfTheSecondInstallment  ) || 0);
-  const [DateOfTheThirdInstallment, setDateOfTheThirdInstallment] = useState(Number(initialValues?.DateOfTheThirdInstallment) || 0);
+  const [DateOfTheSecondInstallment, setDateOfTheSecondInstallment  ] = useState(initialValues?.DateOfTheSecondInstallment || "");
+  const [DateOfTheThirdInstallment, setDateOfTheThirdInstallment] = useState(initialValues?.DateOfTheThirdInstallment || "");
   const [remaining, setRemaining] = useState(Number(initialValues?.rest) || 
   (Number(initialValues?.total) - (Number(initialValues?.pay) + Number(initialValues?.secondInstallment) + Number(initialValues?.thirdInstallment))) || 0);
   const [formSubmitted, setFormSubmitted] = useState(false);
