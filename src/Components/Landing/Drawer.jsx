@@ -54,6 +54,11 @@ const Drawer = ({ isOpen, onClose }) => {
             >
               <a href="#ما_يميزنا">ما يميزنا</a>
             </li>
+            <li
+              className={`link`}
+            >
+              <a href="https://ghazl.onrender.com/prices.html" target="_blank">اسعار خدمات السنتر</a>
+            </li>
           </ul>
         <div className="drawer__socials">
         <p className="flex gap-2  justify-end flex-row-reverse">

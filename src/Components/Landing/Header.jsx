@@ -135,6 +135,11 @@ const Header = () => {
             >
               <a href="#ما_يميزنا">ما يميزنا</a>
             </li>
+            <li
+              className={`link`}
+            >
+              <a href="https://ghazl.onrender.com/prices.html" target="_blank">اسعار خدمات السنتر</a>
+            </li>
           </ul>
           <button className="btn btn-bar" onClick={handleDrawerOpen}>
             <FaBars />

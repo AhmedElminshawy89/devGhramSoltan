@@ -3,6 +3,7 @@ import { FaInstagram, FaPhoneAlt, FaWhatsapp, FaFacebookMessenger, FaYoutube, Fa
 import { RiContactsBookUploadFill, RiCloseFill } from "react-icons/ri";
 import { MdConnectWithoutContact } from "react-icons/md";
 import { FaThreads } from 'react-icons/fa6';
+import { IoChatbox } from "react-icons/io5";
 
 const ContactPhone = () => {
   const [showContacts, setShowContacts] = useState(false);
@@ -13,12 +14,15 @@ const ContactPhone = () => {
 
   return (
     <>
+      <div className={`chat-btn-wrapper`} onClick={() => window.open('https://ghazl.onrender.com/', "_blank", "noopener,noreferrer")}>
+        <IoChatbox />
+      </div>
       <div className={`contact-btn-wrapper ${showContacts ? 'close' : ''}`} onClick={toggleContacts}>
         {showContacts ? <RiCloseFill /> : <MdConnectWithoutContact />}
       </div>
       <div className={`contact-list ${showContacts ? 'show' : ''}`}>
         <div className="phone">
-          <a href="tel:012018182726" target="_blank" rel="noreferrer">
+          <a href="tel:0472570908" target="_blank" rel="noreferrer">
             <FaPhoneAlt />
           </a>
         </div>
@@ -50,10 +54,27 @@ const ContactPhone = () => {
         </div>
       </div>
       <style jsx>{`
-        .contact-btn-wrapper {
+        .chat-btn-wrapper {
           position: fixed;
           right: 5px;
           bottom: 70px;
+          background: goldenrod;
+          width: 46px;
+          height: 46px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #ffffff;
+          font-size: 34px;
+          border-radius: 50%;
+          cursor: pointer;
+          z-index: 555;
+          transition: transform 0.3s ease-in-out;
+        }
+        .contact-btn-wrapper {
+          position: fixed;
+          right: 5px;
+          bottom: 125px;
           background: goldenrod;
           width: 46px;
           height: 46px;
@@ -73,7 +94,7 @@ const ContactPhone = () => {
         .contact-list {
           position: fixed;
           right: 5px;
-          bottom: 130px;
+          bottom: 185px;
           display: flex;
           flex-direction: column;
           gap: 10px;
@@ -84,6 +105,7 @@ const ContactPhone = () => {
         .contact-list.show {
           transform: translateY(0);
           opacity: 1;
+          z-index:555;
         }
         .phone, .whatsapp, .instagram, .messenger, .youtube ,.tik-tok {
           background: goldenrod;

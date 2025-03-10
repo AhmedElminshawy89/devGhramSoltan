@@ -352,15 +352,20 @@ const MakeUpTableDaily = () => {
         name: "dateService",
         options: {
           customBodyRender: (value, tableMeta, updateValue) => {
-            const displayValue = value !== null ? "نعم" : "لا"; 
+            const today = new Date().toISOString().split('T')[0];
+            let displayValue = "لا";
+        
+            if (value !== null) {
+              const hennaDate = new Date(value).toISOString().split('T')[0];
+              displayValue = hennaDate === today ? "نعم" : `لا - ${hennaDate}`;
+            }
+        
             return (
               <p
-                className={`${
-                  displayValue === "لا" ? "py-1 px-4" : "py-1 px-4"
-                } font-semibold text-lg rounded-full whitespace-nowrap text-center ${
-                  displayValue === "لا"
-                    ? "bg-white text-[#20b2aa] border border-[#20b2aa]"
-                    : "bg-[#20b2aa] text-white"
+                className={`py-1 px-4 font-semibold text-lg rounded-full whitespace-nowrap text-center ${
+                  displayValue === "نعم"
+                    ? "bg-[#20b2aa] text-white"
+                    : "bg-white text-[#20b2aa] border border-[#20b2aa]"
                 }`}
               >
                 {displayValue}
@@ -368,7 +373,36 @@ const MakeUpTableDaily = () => {
             );
           },
         },
+        
       },
+      {
+        label: "هل يوجد ميكاب ؟",
+        name: "appropriate",
+        options: {
+          customBodyRender: (value, tableMeta, updateValue) => {
+            const today = new Date().toISOString().split('T')[0];
+            let displayValue = "لا";
+      
+            if (value !== null) {
+              const dateValue = new Date(value).toISOString().split('T')[0];
+              displayValue = dateValue === today ? "نعم" : `لا - ${dateValue}`;
+            }
+      
+            return (
+              <p
+                className={`py-1 px-4 font-semibold text-lg rounded-full whitespace-nowrap text-center ${
+                  displayValue === "نعم"
+                    ? "bg-[#20b2aa] text-white"
+                    : "bg-white text-[#20b2aa] border border-[#20b2aa]"
+                }`}
+              >
+                {displayValue}
+              </p>
+            );
+          },
+        },
+      }
+,      
     {
       name: "total",
       label: "الاجمالي",
